@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{ca112e56-74fb-42cd-a4c3-380d86916a05}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\ShaderHelper.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Rendering_Dx12\ShaderHelper.cpp" />
+  </ItemGroup>
+</Project>
