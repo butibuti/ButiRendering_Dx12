@@ -32,7 +32,7 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 			D3D12_LOGIC_OP_NOOP,
 			D3D12_COLOR_WRITE_ENABLE_ALL,
 		};
-		for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+		for (std::uint32_t i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
 			RenderTarget[i] = defaultRenderTargetBlendDesc;
 	}
 	ButiD3DX12_BLEND_DESC(const BlendMode& arg_blend)
@@ -79,30 +79,29 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 		D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
 		}
-		for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+		for (std::uint32_t i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
 			RenderTarget[i] = defaultRenderTargetBlendDesc;
 	}
 };
-static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc, std::vector<D3D12_INPUT_ELEMENT_DESC>& vec_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob, std::vector<int>& arg_vec_outputformat, const BlendMode arg_BlendMode, const TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
+static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc, std::vector<D3D12_INPUT_ELEMENT_DESC>& vec_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob, std::vector<std::int32_t>& arg_vec_outputformat, const BlendMode arg_BlendMode, const TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
 
 
 	//ZeroMemory(&RetDesc, sizeof(RetDesc));
-	RetDesc.InputLayout = { vec_inputLayout.data(),
-		(UINT)vec_inputLayout.size() };
+	RetDesc.InputLayout = { vec_inputLayout.data(),static_cast<std::uint32_t>(vec_inputLayout.size()) };
 	RetDesc.pRootSignature = rootSignature.Get();
 	RetDesc.VS =
 	{
-		reinterpret_cast<UINT8*>(arg_vertexShaderBlob->GetBufferPointer()),
+		reinterpret_cast<std::uint8_t*>(arg_vertexShaderBlob->GetBufferPointer()),
 		arg_vertexShaderBlob->GetBufferSize()
 	};
 	RetDesc.PS =
 	{
-		reinterpret_cast<UINT8*>(arg_pixelShaderBlob->GetBufferPointer()),
+		reinterpret_cast<std::uint8_t*>(arg_pixelShaderBlob->GetBufferPointer()),
 		arg_pixelShaderBlob->GetBufferSize()
 	};
 	if (arg_geometryShaderBlob) {
 		RetDesc.GS = {
-			reinterpret_cast<UINT8*>(arg_geometryShaderBlob->GetBufferPointer()),
+			reinterpret_cast<std::uint8_t*>(arg_geometryShaderBlob->GetBufferPointer()),
 			arg_geometryShaderBlob->GetBufferSize()
 		};
 	}
@@ -123,7 +122,7 @@ D3D12_COMPARISON_FUNC_LESS,false, D3D12_DEFAULT_STENCIL_READ_MASK, D3D12_DEFAULT
 
 	auto size = arg_vec_outputformat.size();
 	RetDesc.NumRenderTargets = size;
-	for (int i = 0; i < size; i++) {
+	for (std::int32_t i = 0; i < size; i++) {
 		RetDesc.RTVFormats[i] = (DXGI_FORMAT)arg_vec_outputformat[i];
 	}
 
@@ -230,7 +229,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDirect(const D3
 
 	return Ret;
 }
-static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateCbvSrvUavHeap(const UINT arg_numDescriptorHeap, ID3D12Device& device) {
+static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateCbvSrvUavHeap(const std::uint32_t arg_numDescriptorHeap, ID3D12Device& device) {
 	//CbvSrvデスクプリタヒープ
 	D3D12_DESCRIPTOR_HEAP_DESC CbvSrvHeapDesc = {};
 	CbvSrvHeapDesc.NumDescriptors = arg_numDescriptorHeap;
@@ -238,7 +237,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateCbvSrvUavHeap(c
 	CbvSrvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	return CreateDirect(CbvSrvHeapDesc, device);
 }
-static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateSamplerHeap(const UINT arg_numDescriptorHeap, ID3D12Device& device) {
+static inline Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateSamplerHeap(const std::uint32_t arg_numDescriptorHeap, ID3D12Device& device) {
 	//サンプラーデスクプリタヒープ
 	D3D12_DESCRIPTOR_HEAP_DESC SamplerHeapDesc = {};
 	SamplerHeapDesc.NumDescriptors = arg_numDescriptorHeap;
@@ -336,12 +335,12 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateDirect(const D3D
 	return Ret;
 }
 
-static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const UINT materialCount, const UINT srvCount, const UINT samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc, ID3D12Device& arg_device) {
+static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc, ID3D12Device& arg_device) {
 
 
 
 	std::vector< D3D12_DESCRIPTOR_RANGE> ranges;
-	for (UINT i = 0; i < srvCount; i++) {
+	for (std::uint32_t i = 0; i < srvCount; i++) {
 		D3D12_DESCRIPTOR_RANGE in;
 		in.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
 		in.NumDescriptors = 1;
@@ -350,7 +349,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 		in.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 		ranges.push_back(in);
 	}
-	for (UINT i = 0; i < samplerCount; i++) {
+	for (std::uint32_t i = 0; i < samplerCount; i++) {
 
 		D3D12_DESCRIPTOR_RANGE sampler;
 
@@ -370,7 +369,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 	cbv.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 	ranges.push_back(cbv);
 
-	for (UINT i = 0; i < materialCount; i++) {
+	for (std::uint32_t i = 0; i < materialCount; i++) {
 
 		D3D12_DESCRIPTOR_RANGE in;
 		in.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
@@ -382,7 +381,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 	}
 
 	std::vector<D3D12_ROOT_PARAMETER> rootParameters;
-	for (UINT i = 0; i < srvCount; i++) {
+	for (std::uint32_t i = 0; i < srvCount; i++) {
 		D3D12_ROOT_PARAMETER in;
 		in.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -391,7 +390,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 		rootParameters.push_back(in);
 	}
 
-	for (UINT i = 0; i < samplerCount; i++) {
+	for (std::uint32_t i = 0; i < samplerCount; i++) {
 		D3D12_ROOT_PARAMETER in;
 		in.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
@@ -407,7 +406,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 	cbvParam.DescriptorTable.pDescriptorRanges = &ranges[srvCount + samplerCount];
 	rootParameters.push_back(cbvParam);
 
-	for (UINT i = 0; i < materialCount; i++) {
+	for (std::uint32_t i = 0; i < materialCount; i++) {
 		D3D12_ROOT_PARAMETER in;
 		in.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
@@ -428,7 +427,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 }
 
 namespace ResourceBarrierHelper {
-static inline D3D12_RESOURCE_BARRIER GetResourceBarrierTransition(ID3D12Resource* arg_p_resource, const D3D12_RESOURCE_STATES arg_before, const D3D12_RESOURCE_STATES arg_after, const UINT arg_subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, const D3D12_RESOURCE_BARRIER_FLAGS arg_flags = D3D12_RESOURCE_BARRIER_FLAG_NONE)
+static inline D3D12_RESOURCE_BARRIER GetResourceBarrierTransition(ID3D12Resource* arg_p_resource, const D3D12_RESOURCE_STATES arg_before, const D3D12_RESOURCE_STATES arg_after, const std::uint32_t arg_subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES, const D3D12_RESOURCE_BARRIER_FLAGS arg_flags = D3D12_RESOURCE_BARRIER_FLAG_NONE)
 {
 	D3D12_RESOURCE_BARRIER output;
 	output.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -480,7 +479,7 @@ static inline D3D12_RESOURCE_DESC GetBufferResourceDesc(const UINT64 arg_width, 
 }
 
 namespace HeapPropertiesHelper {
-static inline D3D12_HEAP_PROPERTIES GetHeapProp(const D3D12_HEAP_TYPE arg_type, const UINT arg_creationNodeMask = 1, const	UINT arg_nodeMask = 1) {
+static inline D3D12_HEAP_PROPERTIES GetHeapProp(const D3D12_HEAP_TYPE arg_type, const std::uint32_t arg_creationNodeMask = 1, const	std::uint32_t arg_nodeMask = 1) {
 	D3D12_HEAP_PROPERTIES output;
 
 	output.Type = arg_type;
@@ -493,7 +492,7 @@ static inline D3D12_HEAP_PROPERTIES GetHeapProp(const D3D12_HEAP_TYPE arg_type, 
 }
 }
 namespace DeviceHelper {
-static inline unsigned long long int GetRequiredIntermediateSize(ID3D12Resource* arg_p_DestinationResource,ID3D12Device& arg_device, const UINT arg_FirstSubresource, const UINT arg_NumSubresources) {
+static inline std::uint64_t GetRequiredIntermediateSize(ID3D12Resource* arg_p_DestinationResource,ID3D12Device& arg_device, const std::uint32_t arg_FirstSubresource, const std::uint32_t arg_NumSubresources) {
 
 	D3D12_RESOURCE_DESC Desc = arg_p_DestinationResource->GetDesc();
 	UINT64 RequiredSize = 0;
@@ -502,13 +501,13 @@ static inline unsigned long long int GetRequiredIntermediateSize(ID3D12Resource*
 
 	return RequiredSize;
 }
-inline void MemcpySubresource(	const D3D12_MEMCPY_DEST* arg_p_dest,	const D3D12_SUBRESOURCE_DATA* arg_p_src, const size_t arg_rowSizeInBytes, const UINT arg_numRows, const UINT arg_numSlices)
+inline void MemcpySubresource(	const D3D12_MEMCPY_DEST* arg_p_dest,	const D3D12_SUBRESOURCE_DATA* arg_p_src, const size_t arg_rowSizeInBytes, const std::uint32_t arg_numRows, const std::uint32_t arg_numSlices)
 {
-	for (UINT z = 0; z < arg_numSlices; ++z)
+	for (std::uint32_t z = 0; z < arg_numSlices; ++z)
 	{
 		BYTE* pDestSlice = reinterpret_cast<BYTE*>(arg_p_dest->pData) + arg_p_dest->SlicePitch * z;
 		const BYTE* pSrcSlice = reinterpret_cast<const BYTE*>(arg_p_src->pData) + arg_p_src->SlicePitch * z;
-		for (UINT y = 0; y < arg_numRows; ++y)
+		for (std::uint32_t y = 0; y < arg_numRows; ++y)
 		{
 			memcpy(pDestSlice + arg_p_dest->RowPitch * y,
 				pSrcSlice + arg_p_src->RowPitch * y,
@@ -516,8 +515,8 @@ inline void MemcpySubresource(	const D3D12_MEMCPY_DEST* arg_p_dest,	const D3D12_
 		}
 	}
 }
-static inline unsigned long long int UpdateSubresources( ID3D12GraphicsCommandList* arg_p_cmdList, ID3D12Resource* arg_p_destinationResource,ID3D12Resource* arg_p_intermediate,
-	 UINT arg_firstSubresource, UINT arg_numSubresources,UINT64 arg_requiredSize,const D3D12_PLACED_SUBRESOURCE_FOOTPRINT* arg_p_layouts,const UINT* arg_p_numRows,const UINT64* arg_p_rowSizesInBytes,
+static inline std::uint64_t UpdateSubresources( ID3D12GraphicsCommandList* arg_p_cmdList, ID3D12Resource* arg_p_destinationResource,ID3D12Resource* arg_p_intermediate,
+	 std::uint32_t arg_firstSubresource, std::uint32_t arg_numSubresources,UINT64 arg_requiredSize,const D3D12_PLACED_SUBRESOURCE_FOOTPRINT* arg_p_layouts,const std::uint32_t* arg_p_numRows,const UINT64* arg_p_rowSizesInBytes,
 const D3D12_SUBRESOURCE_DATA* pSrcData)
 {
 	// Minor validation
@@ -539,7 +538,7 @@ const D3D12_SUBRESOURCE_DATA* pSrcData)
 		return 0;
 	}
 
-	for (UINT i = 0; i < arg_numSubresources; ++i)
+	for (std::uint32_t i = 0; i < arg_numSubresources; ++i)
 	{
 		if (arg_p_rowSizesInBytes[i] > (SIZE_T)-1) return 0;
 		D3D12_MEMCPY_DEST DestData = { pData + arg_p_layouts[i].Offset, arg_p_layouts[i].Footprint.RowPitch, arg_p_layouts[i].Footprint.RowPitch * arg_p_numRows[i] };
@@ -551,10 +550,10 @@ const D3D12_SUBRESOURCE_DATA* pSrcData)
 	{
 		D3D12_BOX SrcBox;
 
-		SrcBox.left = UINT(arg_p_layouts[0].Offset);
+		SrcBox.left = std::uint32_t(arg_p_layouts[0].Offset);
 		SrcBox.top = 0;
 		SrcBox.front = 0;
-		SrcBox.right = UINT(arg_p_layouts[0].Offset + arg_p_layouts[0].Footprint.Width);
+		SrcBox.right = std::uint32_t(arg_p_layouts[0].Offset + arg_p_layouts[0].Footprint.Width);
 		SrcBox.bottom = 1;
 		SrcBox.back = 1;
 		arg_p_cmdList->CopyBufferRegion(
@@ -562,7 +561,7 @@ const D3D12_SUBRESOURCE_DATA* pSrcData)
 	}
 	else
 	{
-		for (UINT i = 0; i < arg_numSubresources; ++i)
+		for (std::uint32_t i = 0; i < arg_numSubresources; ++i)
 		{
 			D3D12_TEXTURE_COPY_LOCATION Dst;
 			Dst.pResource = arg_p_destinationResource;
@@ -579,11 +578,11 @@ const D3D12_SUBRESOURCE_DATA* pSrcData)
 }
 
 
-static inline unsigned long long int UpdateSubresources( ID3D12GraphicsCommandList* arg_p_cmdList, ID3D12Resource* arg_p_destinationResource, ID3D12Resource* arg_p_intermediate, const long long int arg_intermediateOffset,
-	const UINT arg_firstSubresource, const UINT arg_numSubresources, D3D12_SUBRESOURCE_DATA* arg_p_srcData)
+static inline std::uint64_t UpdateSubresources( ID3D12GraphicsCommandList* arg_p_cmdList, ID3D12Resource* arg_p_destinationResource, ID3D12Resource* arg_p_intermediate, const std::int64_t arg_intermediateOffset,
+	const std::uint32_t arg_firstSubresource, const std::uint32_t arg_numSubresources, D3D12_SUBRESOURCE_DATA* arg_p_srcData)
 {
-	unsigned long long int RequiredSize = 0;
-	unsigned long long int MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * arg_numSubresources;
+	std::uint64_t RequiredSize = 0;
+	std::uint64_t MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(std::uint32_t) + sizeof(UINT64)) * arg_numSubresources;
 	if (MemToAlloc > SIZE_MAX)
 	{
 		return 0;
@@ -595,7 +594,7 @@ static inline unsigned long long int UpdateSubresources( ID3D12GraphicsCommandLi
 	}
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT* pLayouts = reinterpret_cast<D3D12_PLACED_SUBRESOURCE_FOOTPRINT*>(pMem);
 	UINT64* pRowSizesInBytes = reinterpret_cast<UINT64*>(pLayouts + arg_numSubresources);
-	UINT* pNumRows = reinterpret_cast<UINT*>(pRowSizesInBytes + arg_numSubresources);
+	std::uint32_t* pNumRows = reinterpret_cast<std::uint32_t*>(pRowSizesInBytes + arg_numSubresources);
 
 	D3D12_RESOURCE_DESC Desc = arg_p_destinationResource->GetDesc();
 	ID3D12Device* pDevice;
@@ -603,18 +602,18 @@ static inline unsigned long long int UpdateSubresources( ID3D12GraphicsCommandLi
 	pDevice->GetCopyableFootprints(&Desc, arg_firstSubresource, arg_numSubresources, arg_intermediateOffset, pLayouts, pNumRows, pRowSizesInBytes, &RequiredSize);
 	pDevice->Release();
 
-	unsigned long long int Result = DeviceHelper:: UpdateSubresources(arg_p_cmdList, arg_p_destinationResource, arg_p_intermediate, arg_firstSubresource, arg_numSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, arg_p_srcData);
+	std::uint64_t Result = DeviceHelper:: UpdateSubresources(arg_p_cmdList, arg_p_destinationResource, arg_p_intermediate, arg_firstSubresource, arg_numSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, arg_p_srcData);
 	HeapFree(GetProcessHeap(), 0, pMem);
 	return Result;
 }
-template <UINT MaxSubresources>
+template <std::uint32_t MaxSubresources>
 static inline UINT64 UpdateSubresources(
 	ID3D12GraphicsCommandList* arg_p_cmdList,ID3D12Resource* arg_p_destinationResource,ID3D12Resource* arg_p_intermediate,
-	const UINT64 arg_intermediateOffset, const UINT arg_firstSubresource,const UINT arg_numSubresources,D3D12_SUBRESOURCE_DATA* arg_p_srcData)
+	const UINT64 arg_intermediateOffset, const std::uint32_t arg_firstSubresource,const std::uint32_t arg_numSubresources,D3D12_SUBRESOURCE_DATA* arg_p_srcData)
 {
 	UINT64 RequiredSize = 0;
 	D3D12_PLACED_SUBRESOURCE_FOOTPRINT Layouts[MaxSubresources];
-	UINT NumRows[MaxSubresources];
+	std::uint32_t NumRows[MaxSubresources];
 	UINT64 RowSizesInBytes[MaxSubresources];
 
 	D3D12_RESOURCE_DESC Desc = arg_p_destinationResource->GetDesc();

@@ -14,9 +14,12 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)MeshPrimitive.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)RenderingStatus.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\ShaderHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.cpp" />

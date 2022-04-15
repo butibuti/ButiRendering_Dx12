@@ -119,7 +119,7 @@ void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const std::s
 	}
 
 	shaderWriter.WriteStart(dirPath + fileName + extension);
-	shaderWriter.WriteVariable<int>(buffer->GetBufferSize());
+	shaderWriter.WriteVariable<std::int32_t>(buffer->GetBufferSize());
 	shaderWriter.WriteCharactor((char*)buffer->GetBufferPointer(), buffer->GetBufferSize());
 	shaderWriter.WriteEnd();
 }
@@ -134,22 +134,22 @@ void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const std::s
 //	auto fileName = StringHelper::GetFileName(filePath, false);
 //	BinaryWriter inputLayoutWriter;
 //	inputLayoutWriter.WriteStart(dirPath + fileName + ".dx11ied");
-//	inputLayoutWriter.WriteVariable<int>(vec_inputElementDesc.size());
-//	for (int i = 0; i < vec_inputElementDesc.size(); i++) {
+//	inputLayoutWriter.WriteVariable<std::int32_t>(vec_inputElementDesc.size());
+//	for (std::int32_t i = 0; i < vec_inputElementDesc.size(); i++) {
 //		auto write = vec_inputElementDesc.at(i);
 //		std::string semantic = write.SemanticName;
-//		inputLayoutWriter.WriteVariable<int>(semantic.size());
+//		inputLayoutWriter.WriteVariable<std::int32_t>(semantic.size());
 //		inputLayoutWriter.WriteCharactor(semantic);
 //		inputLayoutWriter.WriteVariable<DXGI_FORMAT>(write.Format);
-//		inputLayoutWriter.WriteVariable<UINT>(write.InputSlot);
-//		inputLayoutWriter.WriteVariable<UINT>(write.AlignedByteOffset);
+//		inputLayoutWriter.WriteVariable<std::uint32_t>(write.InputSlot);
+//		inputLayoutWriter.WriteVariable<std::uint32_t>(write.AlignedByteOffset);
 //		inputLayoutWriter.WriteVariable<D3D11_INPUT_CLASSIFICATION>(write.InputSlotClass);
-//		inputLayoutWriter.WriteVariable<UINT>(write.InstanceDataStepRate);
-//		inputLayoutWriter.WriteVariable<UINT>(write.SemanticIndex);
+//		inputLayoutWriter.WriteVariable<std::uint32_t>(write.InstanceDataStepRate);
+//		inputLayoutWriter.WriteVariable<std::uint32_t>(write.SemanticIndex);
 //	}
 //	inputLayoutWriter.WriteEnd();
 //
-//	for (int i = 0; i < vec_inputElementDesc.size(); i++) {
+//	for (std::int32_t i = 0; i < vec_inputElementDesc.size(); i++) {
 //
 //		delete (vec_inputElementDesc.at(i).SemanticName);
 //	}
@@ -168,22 +168,22 @@ void ButiEngine::ShaderHelper::InputLayoutCompileDx12(const std::string& source,
 	BinaryWriter inputLayoutWriter;
 	inputLayoutWriter.WriteStart(dirPath + fileName + ".dx12ied");
 	auto descsSize = vec_inputElementDesc.size();
-	inputLayoutWriter.WriteVariable<int>(descsSize);
-	for (int i = 0; i < vec_inputElementDesc.size(); i++) {
+	inputLayoutWriter.WriteVariable<std::int32_t>(descsSize);
+	for (std::int32_t i = 0; i < vec_inputElementDesc.size(); i++) {
 		auto write = vec_inputElementDesc.at(i);
 		std::string semantic = write.SemanticName;
-		inputLayoutWriter.WriteVariable<int>(semantic.size());
+		inputLayoutWriter.WriteVariable<std::int32_t>(semantic.size());
 		inputLayoutWriter.WriteCharactor(semantic);
 		inputLayoutWriter.WriteVariable<DXGI_FORMAT>(write.Format);
-		inputLayoutWriter.WriteVariable<UINT>(write.InputSlot);
-		inputLayoutWriter.WriteVariable<UINT>(write.AlignedByteOffset);
+		inputLayoutWriter.WriteVariable<std::uint32_t>(write.InputSlot);
+		inputLayoutWriter.WriteVariable<std::uint32_t>(write.AlignedByteOffset);
 		inputLayoutWriter.WriteVariable<D3D12_INPUT_CLASSIFICATION>(write.InputSlotClass);
-		inputLayoutWriter.WriteVariable<UINT>(write.InstanceDataStepRate);
-		inputLayoutWriter.WriteVariable<UINT>(write.SemanticIndex);
+		inputLayoutWriter.WriteVariable<std::uint32_t>(write.InstanceDataStepRate);
+		inputLayoutWriter.WriteVariable<std::uint32_t>(write.SemanticIndex);
 	}
 	inputLayoutWriter.WriteEnd();
 
-	for (int i = 0; i < vec_inputElementDesc.size(); i++) {
+	for (std::int32_t i = 0; i < vec_inputElementDesc.size(); i++) {
 
 		delete (vec_inputElementDesc.at(i).SemanticName);
 	}
@@ -202,8 +202,8 @@ void ButiEngine::ShaderHelper::OutputLayoutCompileDx12(const std::string& source
 	BinaryWriter outputLayoutWriter;
 	outputLayoutWriter.WriteStart(dirPath + fileName + ".psoutput");
 	auto outputsSize = vec_formats.size();
-	outputLayoutWriter.WriteVariable<int>(outputsSize);
-	for (int i = 0; i < vec_formats.size(); i++) {
+	outputLayoutWriter.WriteVariable<std::int32_t>(outputsSize);
+	for (std::int32_t i = 0; i < vec_formats.size(); i++) {
 		auto write = vec_formats.at(i);
 		outputLayoutWriter.WriteVariable<DXGI_FORMAT>(write);
 	}
@@ -414,7 +414,7 @@ DXGI_FORMAT ButiEngine::ShaderHelper::GetFormat(const std::string& arg_formatStr
 	{
 		return  DXGI_FORMAT_R32G32_SINT;
 	}
-	else if (arg_formatStr == "int")
+	else if (arg_formatStr == "std::int32_t")
 	{
 		return  DXGI_FORMAT_R32_SINT;
 	}
