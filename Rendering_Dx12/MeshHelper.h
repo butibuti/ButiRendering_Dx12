@@ -5,48 +5,48 @@ namespace ButiEngine {
 	{
 	public:
 		~MeshHelper();
-		static void ReverseWinding(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices);
-		static Vector3 GetCircleTangent(std::int32_t i, std::int32_t tessellation);
-		static Vector3 GetCircleVector(std::int32_t size, std::int32_t tessellation);
+		static void ReverseWinding(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_vertices, std::vector<std::uint32_t>& arg_ref_indices);
+		static Vector3 GetCircleTangent(std::int32_t arg_index, std::int32_t arg_tessellation);
+		static Vector3 GetCircleVector(std::int32_t arg_size, std::int32_t arg_tessellation);
 		
 		//
-		static void CreateTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateTriangle(Vector3 arg_point1, Vector3 arg_point2, Vector3 arg_point3, const std::vector<Color>& arg_colors, bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData);
 		
-		static void CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData);
 		
-		static void CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData,bool flat);
+		static void CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData,bool arg_flat);
 		
-		static void CreateSphere(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateSphere(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
-		static void CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
 		static void CreateCylinderCap(const std::vector<Color>& arg_colors,std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 size, std::int32_t tessellation, bool isTop);
 		
-		static void CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
-		static void CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 				
-		static void CreatePlane(const Vector2 size,const Vector3 offset,const float tilt,const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
-		static void CreateReversiblePlane(const Vector2 size,const Vector3 offset,float tilt,  float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreatePlane(const Vector2 size,const Vector3 offset,const float tilt,const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+		static void CreateReversiblePlane(const Vector2 size,const Vector3 offset,float tilt,  float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
-		static void CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
 		static void VertexFlatConverter(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& outputVertecies);
 
 		static void VertexAttachColor(const std::vector<Color>& arg_colors,std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_vertecies);
 
-		static void CreateCirclePolygon(const float radius,const std::uint32_t	tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateCirclePolygon(const float radius,const std::uint32_t	tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 
-		static void CreateCameraFrustum(const float angle, const float width,const float height,const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateCameraFrustum(const float angle, const float width,const float height,const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 		
-		static void CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData);
+		static void CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 
 
 		template<typename T, typename U>
-		static void VertexConvert(const ButiRendering::MeshPrimitive<T>& inputMeshData, ButiRendering::MeshPrimitive<U>& outputMeshData) {
-			outputMeshData.vertices.clear();
-			outputMeshData.vertices.reserve(inputMeshData.vertices.size());
-			outputMeshData.indices = inputMeshData.indices;
+		static void VertexConvert(const ButiRendering::MeshPrimitive<T>& inputMeshData, ButiRendering::MeshPrimitive<U>& arg_ref_outputMeshData) {
+			arg_ref_outputMeshData.vertices.clear();
+			arg_ref_outputMeshData.vertices.reserve(inputMeshData.vertices.size());
+			arg_ref_outputMeshData.indices = inputMeshData.indices;
 			for (std::int32_t i = 0,size= inputMeshData.vertices.size(); i <size ; i++) {
 				U outVertex;
 				outVertex.position = inputMeshData.vertices.at(i).position;
@@ -126,9 +126,9 @@ namespace ButiEngine {
 					outVertex.SDEF_R0 = inputMeshData.vertices.at(i).SDEF_R0;
 					outVertex.SDEF_R1 = inputMeshData.vertices.at(i).SDEF_R1;
 				}
-				outputMeshData.vertices.push_back(outVertex);
+				arg_ref_outputMeshData.vertices.push_back(outVertex);
 			}
-			outputMeshData.eightCorner = inputMeshData.eightCorner;
+			arg_ref_outputMeshData.eightCorner = inputMeshData.eightCorner;
 		}
 
 	private:
