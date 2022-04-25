@@ -8,7 +8,7 @@ enum VertexFlag {
 	UV_ex1 = 0b100000000, UV_ex2 = 0b1000000000, UV_ex3 = 0b1000000000, UV_ex4 = 0b1000000000,
 
 };
-enum class VertexType {
+enum class VertexType:std::uint8_t {
 	Vertex_UV ,
 	Vertex_Normal ,
 	Vertex_UV_Normal,
@@ -132,13 +132,13 @@ struct PMX {
 }
 struct Vertex_UV :public VertexInformation::Vertex, public VertexInformation::UV
 {
-	friend class VertexHelper;
+	
 	Vertex_UV(const Vector3& arg_position, const Vector2& arg_uv) :Vertex(arg_position), UV(arg_uv) {}
 	Vertex_UV() {}
 };
 struct Vertex_Normal :public VertexInformation::Vertex, public VertexInformation::Normal
 {
-	friend class VertexHelper;
+	
 	Vertex_Normal(const Vector3& arg_position, const Vector3& arg_normal) :Vertex(arg_position), Normal(arg_normal)
 	{
 	}
@@ -148,7 +148,7 @@ struct Vertex_Normal :public VertexInformation::Vertex, public VertexInformation
 };
 struct Vertex_Color :public VertexInformation::Vertex, public VertexInformation::Color
 {
-	friend class VertexHelper;
+	
 
 	Vertex_Color(const Vector3& arg_position, const Vector4& arg_color) :Vertex(arg_position), Color(arg_color)
 	{}
@@ -156,33 +156,33 @@ struct Vertex_Color :public VertexInformation::Vertex, public VertexInformation:
 };
 struct Vertex_UV_Color :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Color
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_UV_Normal :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal
 {
-	friend class VertexHelper;
+	
 	static VertexType GetType() {
 		return VertexType::Vertex_UV_Normal;
 	}
 };
 struct Vertex_UV_Normal_UVex01 :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::UV_ex1
 {
-	friend class VertexHelper;
+	
 
 };
 struct Vertex_UV_Normal_UVex02 :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::UV_ex1, public VertexInformation::UV_ex2
 {
-	friend class VertexHelper;
+	
 
 };
 struct Vertex_UV_Normal_UVex03 :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::UV_ex1, public VertexInformation::UV_ex2, public VertexInformation::UV_ex3
 {
-	friend class VertexHelper;
+	
 
 };
 struct Vertex_UV_Normal_UVex04 :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::UV_ex1, public VertexInformation::UV_ex2, public VertexInformation::UV_ex3, public VertexInformation::UV_ex4
 {
-	friend class VertexHelper;
+	
 
 };
 
@@ -205,15 +205,15 @@ struct Vertex_Model_SingleBone_UVex01 :public Vertex_Model_SingleBone, public Ve
 };
 struct Vertex_Model_SingleBone_UVex02 :public Vertex_Model_SingleBone_UVex01, public VertexInformation::UV_ex2
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_SingleBone_UVex03 :public Vertex_Model_SingleBone_UVex02, public VertexInformation::UV_ex3
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_SingleBone_UVex04 :public Vertex_Model_SingleBone_UVex03, public VertexInformation::UV_ex4
 {
-	friend class VertexHelper;
+	
 };
 
 
@@ -252,64 +252,216 @@ struct Vertex_Model_QuadBone_Tangent :public VertexInformation::Vertex, public V
 
 struct Vertex_Model_QuadBone_UVex01 :public Vertex_Model_QuadBone, public VertexInformation::UV_ex1
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_QuadBone_UVex02 :public Vertex_Model_QuadBone_UVex01, public VertexInformation::UV_ex2
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_QuadBone_UVex03 :public Vertex_Model_QuadBone_UVex02, public VertexInformation::UV_ex3
 {
-	friend class VertexHelper;
 };
 struct Vertex_Model_QuadBone_UVex04 :public Vertex_Model_QuadBone_UVex03, public VertexInformation::UV_ex4
 {
-	friend class VertexHelper;
 };
 
 struct Vertex_Model_SdefBone :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::SDEFBone
 {
-	friend class VertexHelper;
+	
 };
 
 
 struct Vertex_Model_SdefBone_UVex01 :public Vertex_Model_SdefBone, public VertexInformation::UV_ex1
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_SdefBone_UVex02 :public Vertex_Model_SdefBone_UVex01, public VertexInformation::UV_ex2
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_SdefBone_UVex03 :public Vertex_Model_SdefBone_UVex02, public VertexInformation::UV_ex3
 {
-	friend class VertexHelper;
+	
 };
 struct Vertex_Model_SdefBone_UVex04 :public Vertex_Model_SdefBone_UVex03, public VertexInformation::UV_ex4
 {
-	friend class VertexHelper;
+	
 };
 
 struct Vertex_Model_PMX :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::PMX
 {
-	friend class VertexHelper;
+	using type_quad = Vertex_Model_QuadBone;
+	using type_single = Vertex_Model_SingleBone;
+	using type_double = Vertex_Model_DoubleBone;
+	using type_sdef = Vertex_Model_SdefBone;
+	using this_type = Vertex_Model_PMX;
+	Vertex_Model_PMX(){}
+	this_type& operator=(const type_single arg_other) {
+		position = arg_other.position;
+		uv = arg_other.uv;
+		normal = arg_other.normal;
+		boneIndex_1 = arg_other.boneIndex;
+		weight_1 = 1.0f;
+		weight_2 = -1;
+		weight_3 = -1;
+		weight_4 = -1;
+		return *this;
+	}
+	this_type& operator=(const type_double arg_other) {
+		position = arg_other.position;
+		uv = arg_other.uv;
+		normal = arg_other.normal;
+		boneIndex_1 = arg_other.boneIndex_1;
+		boneIndex_2 = arg_other.boneIndex_2;
+		weight_1 = arg_other.weight;
+		weight_2 = 1.0f-weight_1;
+		weight_3 = -1;
+		weight_4 = -1;
+		return *this;
+	}
+	this_type& operator=(const type_quad arg_other) {
+
+		position = arg_other.position;
+		uv = arg_other.uv;
+		normal = arg_other.normal;
+		boneIndex_1 = arg_other.boneIndex_1;
+		boneIndex_2 = arg_other.boneIndex_2;
+		boneIndex_3 = arg_other.boneIndex_3;
+		boneIndex_4 = arg_other.boneIndex_4;
+		weight_1 = arg_other.weight_1;
+		weight_2 = arg_other.weight_2;
+		weight_3 = arg_other.weight_3;
+		weight_4 = arg_other.weight_4;
+		return *this;
+	}
+	this_type& operator=(const type_sdef arg_other) {
+		position = arg_other.position;
+		uv = arg_other.uv;
+		normal = arg_other.normal;
+		boneIndex_1 = arg_other.boneIndex_1;
+		boneIndex_2 = arg_other.boneIndex_2;
+		weight_1 = arg_other.weight;
+		weight_2 = 1.0f - weight_1;
+		weight_3 = -1;
+		weight_4 = -1;
+		SDEF_C = arg_other.SDEF_C;
+		SDEF_R0 = arg_other.SDEF_R0;
+		SDEF_R1 = arg_other.SDEF_R1;
+		return *this;
+	}
 };
 
 struct Vertex_Model_PMX_UVex01 :public Vertex_Model_PMX, public VertexInformation::UV_ex1
 {
-	friend class VertexHelper;
+	using type_quad = Vertex_Model_QuadBone_UVex01;
+	using type_single = Vertex_Model_SingleBone_UVex01;
+	using type_double = Vertex_Model_DoubleBone_UVex01;
+	using type_sdef = Vertex_Model_SdefBone_UVex01;
+	using this_type = Vertex_Model_PMX_UVex01;
+	this_type& operator=(const type_single arg_other) {
+		static_cast<Vertex_Model_PMX&>(*this) = arg_other;
+		exuv1 = arg_other.exuv1;
+		return *this;
+	}
+	this_type& operator=(const type_double arg_other) {
+		static_cast<Vertex_Model_PMX&>(*this) = arg_other;
+		exuv1 = arg_other.exuv1;
+		return *this;
+	}
+	this_type& operator=(const type_quad arg_other) {
+		static_cast<Vertex_Model_PMX&>(*this) = arg_other;
+		exuv1 = arg_other.exuv1;
+		return *this;
+	}
+	this_type& operator=(const type_sdef arg_other) {
+		static_cast<Vertex_Model_PMX&>(*this) = arg_other;
+		exuv1 = arg_other.exuv1;
+		return *this;
+	}
 };
 struct Vertex_Model_PMX_UVex02 :public Vertex_Model_PMX_UVex01, public VertexInformation::UV_ex2
 {
-	friend class VertexHelper;
+	using type_quad = Vertex_Model_QuadBone_UVex02;
+	using type_single = Vertex_Model_SingleBone_UVex02;
+	using type_double = Vertex_Model_DoubleBone_UVex02;
+	using type_sdef = Vertex_Model_SdefBone_UVex02;
+	using this_type = Vertex_Model_PMX_UVex02;
+	this_type& operator=(const type_single arg_other) {
+		static_cast<Vertex_Model_PMX_UVex01&>(*this) = arg_other;
+		exuv2 = arg_other.exuv2;
+		return *this;
+	}
+	this_type& operator=(const type_double arg_other) {
+		static_cast<Vertex_Model_PMX_UVex01&>(*this) = arg_other;
+		exuv2 = arg_other.exuv2;
+		return *this;
+	}
+	this_type& operator=(const type_quad arg_other) {
+		static_cast<Vertex_Model_PMX_UVex01&>(*this) = arg_other;
+		exuv2 = arg_other.exuv2;
+		return *this;
+	}
+	this_type& operator=(const type_sdef arg_other) {
+		static_cast<Vertex_Model_PMX_UVex01&>(*this) = arg_other;
+		exuv2 = arg_other.exuv2;
+		return *this;
+	}
 };
 struct Vertex_Model_PMX_UVex03 :public Vertex_Model_PMX_UVex02, public VertexInformation::UV_ex3
 {
-	friend class VertexHelper;
+	using type_quad = Vertex_Model_QuadBone_UVex03;
+	using type_single = Vertex_Model_SingleBone_UVex03;
+	using type_double = Vertex_Model_DoubleBone_UVex03;
+	using type_sdef = Vertex_Model_SdefBone_UVex03;
+	using this_type = Vertex_Model_PMX_UVex03;
+	this_type& operator=(const type_single arg_other) {
+		static_cast<Vertex_Model_PMX_UVex02&>(*this) = arg_other;
+		exuv3 = arg_other.exuv3;
+		return *this;
+	}
+	this_type& operator=(const type_double arg_other) {
+		static_cast<Vertex_Model_PMX_UVex02&>(*this) = arg_other;
+		exuv3 = arg_other.exuv3;
+		return *this;
+	}
+	this_type& operator=(const type_quad arg_other) {
+		static_cast<Vertex_Model_PMX_UVex02&>(*this) = arg_other;
+		exuv3 = arg_other.exuv3;
+		return *this;
+	}
+	this_type& operator=(const type_sdef arg_other) {
+		static_cast<Vertex_Model_PMX_UVex02&>(*this) = arg_other;
+		exuv3 = arg_other.exuv3;
+		return *this;
+	}
 };
 struct Vertex_Model_PMX_UVex04 :public Vertex_Model_PMX_UVex03, public VertexInformation::UV_ex4
 {
-	friend class VertexHelper;
+	using type_quad = Vertex_Model_QuadBone_UVex04;
+	using type_single = Vertex_Model_SingleBone_UVex04;
+	using type_double = Vertex_Model_DoubleBone_UVex04;
+	using type_sdef = Vertex_Model_SdefBone_UVex04;
+	using this_type = Vertex_Model_PMX_UVex04;
+	this_type& operator=(const type_single arg_other) {
+		static_cast<Vertex_Model_PMX_UVex03&>(*this) = arg_other;
+		exuv4 = arg_other.exuv4;
+		return *this;
+	}
+	this_type& operator=(const type_double arg_other) {
+		static_cast<Vertex_Model_PMX_UVex03&>(*this) = arg_other;
+		exuv4 = arg_other.exuv4;
+		return *this;
+	}
+	this_type& operator=(const type_quad arg_other) {
+		static_cast<Vertex_Model_PMX_UVex03&>(*this) = arg_other;
+		exuv4 = arg_other.exuv4;
+		return *this;
+	}
+	this_type& operator=(const type_sdef arg_other) {
+		static_cast<Vertex_Model_PMX_UVex03&>(*this) = arg_other;
+		exuv4 = arg_other.exuv4;
+		return *this;
+	}
 };
 }
 struct Vertex_Normal_Color :public VertexInformation::Vertex, public VertexInformation::Normal, public VertexInformation::Color

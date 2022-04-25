@@ -272,8 +272,10 @@ public:
 	virtual const void* GetVertexData()const = 0;
 	virtual const std::uint32_t* GetIndexData()const = 0;
 	virtual std::uint32_t GetVertexType()const = 0;
+	virtual void SetIndex(const Value_ptr< std::vector<std::uint32_t>>& arg_vlp_vec_index) = 0;
 	virtual void SetIndex(const std::vector<std::uint32_t>& arg_vec_index) = 0;
 	virtual std::vector<std::uint32_t>& GetIndex() = 0;
+	virtual Value_ptr< std::vector<std::uint32_t>> GetIndexValuePtr()const = 0;
 	inline void SetBoxSurfaces(const BoxSurface& arg_boxSurface) {
 		eightCorner.up_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.front);
 		eightCorner.up_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.front);
@@ -305,10 +307,10 @@ class MeshPrimitive : public MeshPrimitiveBase {
 public:
 	void Clear() {
 		vertices.clear();
-		indices.clear();
+		if (indices) {
+			indices->clear();
+		}		
 	}
-	std::vector<T> vertices;
-	std::vector<std::uint32_t> indices;
 	std::uint32_t GetVertexSize()const override {
 		return sizeof(T);
 	}
@@ -316,13 +318,13 @@ public:
 		return vertices.data();
 	}
 	const std::uint32_t* GetIndexData()const override{
-		return indices.data();
+		return indices->data();
 	}
 	std::uint32_t GetVertexCount()const override {
 		return vertices.size();
 	}
 	std::uint32_t GetIndexCount()const override {
-		return indices.size();
+		return indices->size();
 	}
 	std::uint32_t GetVertexType()const override {
 		std::uint32_t output=0;
@@ -376,15 +378,21 @@ public:
 		}
 		return output;
 	}
+	void SetIndex(const Value_ptr< std::vector<std::uint32_t>>& arg_vlp_vec_index)override {
+		indices = arg_vlp_vec_index;
+	}
 	void SetIndex(const std::vector<std::uint32_t>& arg_vec_index)override {
-		indices = arg_vec_index;
+		indices = make_value<std::vector<std::uint32_t>>(arg_vec_index);
 	}
 	std::vector<std::uint32_t>& GetIndex()override {
+		return *indices;
+	}
+	Value_ptr< std::vector<std::uint32_t>> GetIndexValuePtr()const override {
 		return indices;
 	}
 	bool IsHitRay(const Line& arg_line, Vector3* arg_p_pos, Vector3* arg_p_normal) override {
 		assert(0 && "Œ»ÝŽg—p’âŽ~’†");
-		for (auto itr = indices.begin(),endItr= indices.end(); itr != endItr; itr = itr + 3) {
+		for (auto itr = indices->begin(),endItr= indices->end(); itr != endItr; itr = itr + 3) {
 
 			/*if (Geometry::SurfaceHit::IsHitLinePolygon(arg_line, *arg_p_pos, vertices.at(*itr).position, vertices.at(*(itr + 1)).position, vertices.at(*(itr + 2)).position)) {
 
@@ -395,6 +403,10 @@ public:
 		}
 		return false;
 	}
+	std::vector<T> vertices;
+
+private:
+	Value_ptr< std::vector<std::uint32_t>> indices;
 };
 
 

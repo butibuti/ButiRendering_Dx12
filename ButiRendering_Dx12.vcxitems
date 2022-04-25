@@ -14,15 +14,16 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)MeshPrimitive.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)RenderingStatus.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Rendering_Dx12\ShaderHelper.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)Vertex.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\MeshHelper.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\MeshPrimitive.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\RenderingStatus.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\Rendering_Dx12\ShaderHelper_Dx12.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\ResourceInterface.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Header\Vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)Rendering_Dx12\MeshHelper.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)Rendering_Dx12\ShaderHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\MeshHelper.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Source\Rendering_Dx12\ShaderHelper_Dx12.cpp" />
   </ItemGroup>
 </Project>

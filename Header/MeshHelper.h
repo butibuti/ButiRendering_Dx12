@@ -46,7 +46,7 @@ namespace ButiEngine {
 		static void VertexConvert(const ButiRendering::MeshPrimitive<T>& inputMeshData, ButiRendering::MeshPrimitive<U>& arg_ref_outputMeshData) {
 			arg_ref_outputMeshData.vertices.clear();
 			arg_ref_outputMeshData.vertices.reserve(inputMeshData.vertices.size());
-			arg_ref_outputMeshData.indices = inputMeshData.indices;
+			arg_ref_outputMeshData.SetIndex( inputMeshData.GetIndexValuePtr());
 			for (std::int32_t i = 0,size= inputMeshData.vertices.size(); i <size ; i++) {
 				U outVertex;
 				outVertex.position = inputMeshData.vertices.at(i).position;

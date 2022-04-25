@@ -2,7 +2,7 @@
 #pragma comment(lib, "d3dcompiler.lib")
 #include <d3dcompiler.h>
 #include <d3dx12.h>
-#include "ShaderHelper.h"
+#include "../../Header/Rendering_Dx12/ShaderHelper_Dx12.h"
 void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const CompileType& type)
 {
 	enum ShaderType{

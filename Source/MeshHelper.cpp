@@ -1,5 +1,5 @@
 #include"stdafx.h"
-#include "MeshHelper.h"
+#include "../Header/MeshHelper.h"
 ButiEngine::MeshHelper::~MeshHelper()
 {
 }
@@ -57,7 +57,7 @@ void ButiEngine::MeshHelper::CreateTriangle(Vector3 point1, Vector3 point2, Vect
 	};
 	VertexAttachColor(arg_colors, vertices);
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
@@ -147,7 +147,7 @@ void ButiEngine::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vect
 	VertexAttachColor(arg_colors, vertices);
 
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData, bool flat)
@@ -247,7 +247,7 @@ void ButiEngine::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& 
 	if (colorType == ColorAttachType::SingleColor)
 		VertexAttachColor(arg_colors, vertices);
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 
@@ -302,7 +302,7 @@ void ButiEngine::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellatio
 
 			Vector3 normal = Vector3(dx, dy, dz).GetNormalize();
 			Vector3 pos = Vector3(dx * size.x, dy * size.y, dz * size.z);
-			Vector3 tangent= normal != Vector3::YAxis?  normal.GetCross(Vector3::YAxis): Vector3::XAxis;
+			Vector3 tangent= normal != Vector3Const::YAxis?  normal.GetCross(Vector3Const::YAxis): Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v), normal,tangent));
 		}
 	}
@@ -328,7 +328,7 @@ void ButiEngine::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellatio
 
 
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
@@ -369,7 +369,7 @@ void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t 
 		if (i == 0||i== verticalSegments) {
 			auto pos = Vector3(0, dy * size.y, 0);
 			Vector3 normal = pos.GetNormalize();
-			Vector3 tangent = normal != Vector3::YAxis ? normal.GetCross(Vector3::YAxis) : Vector3::XAxis;
+			Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) : Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(0, v), normal,tangent));
 			continue;
 		}
@@ -388,7 +388,7 @@ void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t 
 
 			auto pos = Vector3(dx * size.x, dy * size.y, dz * size.z);
 			Vector3 normal = pos.GetNormalize();
-			Vector3 tangent = normal != Vector3::YAxis ? normal.GetCross(Vector3::YAxis) :Vector3::XAxis;
+			Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) :Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v), normal,tangent));
 		}
 	}
@@ -399,7 +399,7 @@ void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t 
 
 
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 size, std::int32_t tessellation, bool isTop)
@@ -423,7 +423,7 @@ void ButiEngine::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_col
 
 	Vector3 normal = Vector3(0,1,0);
 	Vector2 textureScale =Vector2 (-0.5f,-0.5f);
-	Vector3 tangent = normal != Vector3::YAxis ? normal.GetCross(Vector3::YAxis) :Vector3::XAxis;
+	Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) :Vector3Const::XAxis;
 
 	if (!isTop)
 	{
@@ -446,7 +446,7 @@ void ButiEngine::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_col
 void ButiEngine::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	size.y /= 2;
-
+	std::vector<std::uint32_t> vec_index;
 	Vector3 topOffset = Vector3(0,size.y,0) ;
 
 	float radius = size.x / 2;
@@ -466,22 +466,22 @@ void ButiEngine::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation,
 
 		Vector3 normal = GetCircleTangent(i, tessellation).GetCross( topOffset - pt);
 		normal.Normalize();
-		Vector3 tangent = normal != Vector3::YAxis ?  normal.GetCross(Vector3::YAxis) :  Vector3::XAxis;
+		Vector3 tangent = normal != Vector3Const::YAxis ?  normal.GetCross(Vector3Const::YAxis) :  Vector3Const::XAxis;
 		outputMeshData.vertices .push_back(Vertex::Vertex_UV_Normal_Tangent_Color(topOffset, Vector2(0,0), normal,tangent));
 		outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pt, textureCoordinate, normal,tangent ));
 		
-		outputMeshData.indices.push_back((std::uint32_t)(i * 2));
-		outputMeshData.indices.push_back((std::uint32_t)((i * 2 + 3) % (stride * 2)));
-		outputMeshData.indices.push_back((std::uint32_t)((i * 2 + 1) % (stride * 2)));
+		vec_index.push_back((std::uint32_t)(i * 2));
+		vec_index.push_back((std::uint32_t)((i * 2 + 3) % (stride * 2)));
+		vec_index.push_back((std::uint32_t)((i * 2 + 1) % (stride * 2)));
 	}
 
-	CreateCylinderCap(arg_colors, outputMeshData.vertices, outputMeshData.indices, size, tessellation, false);
+	CreateCylinderCap(arg_colors, outputMeshData.vertices, vec_index, size, tessellation, false);
 	//RHÇ©ÇÁLHÇ…ïœçX
-	ReverseWinding(outputMeshData.vertices,outputMeshData.indices);
+	ReverseWinding(outputMeshData.vertices, vec_index);
 
 	VertexFlatConverter(outputMeshData.vertices);
 	VertexAttachColor(arg_colors,outputMeshData.vertices);
-
+	outputMeshData.SetIndex(vec_index);
 }
 
 void ButiEngine::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
@@ -551,7 +551,7 @@ void ButiEngine::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3
 
 			auto normal = Vector3(dx, dy, dz);
 			auto pos = Vector3(dx * size.x + CenterPos.x, dy * size.x + CenterPos.y, dz * size.x + CenterPos.z);
-			Vector3 tangent = normal != Vector3::YAxis ?  normal.GetCross(Vector3::YAxis) :  Vector3::XAxis;
+			Vector3 tangent = normal != Vector3Const::YAxis ?  normal.GetCross(Vector3Const::YAxis) :  Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v),normal,tangent));
 		}
 	}
@@ -588,7 +588,7 @@ void ButiEngine::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3
 
 
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset,const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate,  const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
@@ -620,7 +620,7 @@ void ButiEngine::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset
 	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0, 0, -1.0f);
-	Vector3 tangent = normal != Vector3::YAxis ? tangent = normal.GetCross(Vector3::YAxis) : tangent = Vector3::XAxis;
+	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	for (std::uint32_t i = 0; i < arg_horizontalSeparate + 1; i++) {
 		for (std::int32_t j = 0; j < arg_verticalSeparate + 1; j++) {
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - size.x / 2 +tilt*j , horizontalUnit * j - size.y / 2, 0)+offset, Vector2((verticalUnit * i / size.x), (1 - horizontalUnit * j / size.y)) * UVMax, normal,tangent));
@@ -645,7 +645,7 @@ void ButiEngine::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 
@@ -679,7 +679,7 @@ void ButiEngine::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vec
 	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0,0,-1.0f);
-	Vector3 tangent = normal != Vector3::YAxis ? tangent = normal.GetCross(Vector3::YAxis) : tangent = Vector3::XAxis;
+	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	for (std::uint32_t i = 0; i < arg_horizontalSeparate + 1; i++) {
 		for (std::int32_t j = 0; j < arg_verticalSeparate + 1; j++) {
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - size.x / 2 + tilt * j, horizontalUnit * j - size.y / 2, 0) + offset, Vector2((verticalUnit * i / size.x), (1 - horizontalUnit * j / size.y)) * UVMax, normal,tangent));
@@ -711,7 +711,7 @@ void ButiEngine::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vec
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
@@ -719,7 +719,7 @@ void ButiEngine::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Colo
 	size.x *= 0.5f;
 	size.y *= 0.5f;
 	Vector3 normal = Vector3(0, 0, -1.0f);
-	Vector3 tangent = normal != Vector3::YAxis ? tangent = normal.GetCross(Vector3::YAxis) : tangent = Vector3::XAxis;
+	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices
 	{
 		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(0, size.y, 0.0f),Vector2(0.0f,0.0f),normal,tangent),//0
@@ -739,7 +739,7 @@ void ButiEngine::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Colo
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices = indices;
+	outputMeshData.SetIndex(indices);
 }
 
 
@@ -769,8 +769,7 @@ void ButiEngine::MeshHelper::VertexAttachColor(const std::vector<Color>& arg_col
 
 void ButiEngine::MeshHelper::CreateCirclePolygon(const float radius, const std::uint32_t tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
-	outputMeshData.vertices.clear();
-	outputMeshData.indices.clear();
+	outputMeshData.Clear();
 	if (tessellation < 3) {
 		CreateCube(Vector3(radius, radius, radius), std::vector<Vector4>{}, outputMeshData, true);
 		return;
@@ -835,12 +834,13 @@ void ButiEngine::MeshHelper::CreateCirclePolygon(const float radius, const std::
 	surface.back = 0;
 
 	outputMeshData.vertices = vertices;
-	outputMeshData.indices=indices ;
+	outputMeshData.SetIndex(indices);
 }
 
 void ButiEngine::MeshHelper::CreateCameraFrustum(const float angle, const float width, const float height, const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	outputMeshData.Clear();
+	std::vector<std::uint32_t> vec_index;
 	Matrix4x4 projInv=Matrix4x4::PersepectiveFovLH(
 		MathHelper::ToRadian(angle),
 		width / height,
@@ -858,36 +858,36 @@ void ButiEngine::MeshHelper::CreateCameraFrustum(const float angle, const float 
 	Vector3 rightbottom =( projInv * Vector4(1, -1, 1, 1)).GetVec3() * farclip;//4
 
 	Vector3 normal = Vector3(0, 0, -1.0f);
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(top, Vector2(), Vector3(0, 0, -1), Vector3::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftup, Vector2(), Vector3(0, 0, -1), Vector3::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftbottom, Vector2(), Vector3(0, 0, -1), Vector3::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightup, Vector2(), Vector3(0, 0, -1), Vector3::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightbottom, Vector2(), Vector3(0, 0, -1), Vector3::XAxis));
+	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(top, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
 
-	outputMeshData.indices.push_back(0);
-	outputMeshData.indices.push_back(1);
-	outputMeshData.indices.push_back(3);
+	vec_index.push_back(0);
+	vec_index.push_back(1);
+	vec_index.push_back(3);
 
-	outputMeshData.indices.push_back(0);
-	outputMeshData.indices.push_back(3);
-	outputMeshData.indices.push_back(4);
+	vec_index.push_back(0);
+	vec_index.push_back(3);
+	vec_index.push_back(4);
 
-	outputMeshData.indices.push_back(0);
-	outputMeshData.indices.push_back(2);
-	outputMeshData.indices.push_back(1);
+	vec_index.push_back(0);
+	vec_index.push_back(2);
+	vec_index.push_back(1);
 
-	outputMeshData.indices.push_back(0);
-	outputMeshData.indices.push_back(4);
-	outputMeshData.indices.push_back(2);
+	vec_index.push_back(0);
+	vec_index.push_back(4);
+	vec_index.push_back(2);
 
-	outputMeshData.indices.push_back(2);
-	outputMeshData.indices.push_back(3);
-	outputMeshData.indices.push_back(1);
+	vec_index.push_back(2);
+	vec_index.push_back(3);
+	vec_index.push_back(1);
 
-	outputMeshData.indices.push_back(2);
-	outputMeshData.indices.push_back(4);
-	outputMeshData.indices.push_back(3);
-
+	vec_index.push_back(2);
+	vec_index.push_back(4);
+	vec_index.push_back(3);
+	outputMeshData.SetIndex(vec_index);
 	outputMeshData.eightCorner.up_left_front = Vector3(leftup);
 	outputMeshData.eightCorner.up_right_front = Vector3(rightup);
 	outputMeshData.eightCorner.down_left_front = Vector3(leftbottom);
@@ -902,14 +902,16 @@ void ButiEngine::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t 
 {
 	outputMeshData.Clear();
 	outputMeshData.vertices.reserve(arg_particleCount);
-	outputMeshData.indices.reserve(arg_particleCount);
+	std::vector<std::uint32_t> vec_index;
+	vec_index.reserve(arg_particleCount);
 	auto vertex = Vertex::Vertex_UV_Normal_Tangent_Color();
 	//vertex.position = Vector3(10000000000000000, 10000000000000000, 1000000000000000);
 	//vertex.uv.x = 1.0;
 	for (std::uint32_t i = 0; i < arg_particleCount; i++) {
 		outputMeshData.vertices.push_back(vertex);
-		outputMeshData.indices.push_back(i);
+		vec_index.push_back(i);
 	}
+	outputMeshData.SetIndex(vec_index);
 }
 
 
