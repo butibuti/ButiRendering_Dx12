@@ -35,42 +35,42 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 		for (std::uint32_t i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
 			RenderTarget[i] = defaultRenderTargetBlendDesc;
 	}
-	ButiD3DX12_BLEND_DESC(const BlendMode& arg_blend)
+	ButiD3DX12_BLEND_DESC(const ButiRendering::BlendMode& arg_blend)
 	{
 		AlphaToCoverageEnable = FALSE;
 		IndependentBlendEnable = FALSE;
 		D3D12_RENDER_TARGET_BLEND_DESC defaultRenderTargetBlendDesc;
 
 		switch (arg_blend) {
-		case BlendMode::AlphaBlend:
+		case ButiRendering::BlendMode::AlphaBlend:
 			defaultRenderTargetBlendDesc = { TRUE, FALSE,
 			D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
 			D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
 			D3D12_LOGIC_OP_AND_REVERSE,
 			D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
-		case BlendMode::Addition:
+		case ButiRendering::BlendMode::Addition:
 			defaultRenderTargetBlendDesc = { TRUE, FALSE,
 		D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_ONE, D3D12_BLEND_OP_ADD,
 		D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
 		D3D12_LOGIC_OP_NOOP,
 		D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
-		case BlendMode::Subtruction:
+		case ButiRendering::BlendMode::Subtruction:
 			defaultRenderTargetBlendDesc = { TRUE, FALSE,
 		D3D12_BLEND_INV_SRC_COLOR, D3D12_BLEND_ONE, D3D12_BLEND_OP_ADD,
 		D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
 		D3D12_LOGIC_OP_NOOP,
 		D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
-		case BlendMode::Reverse:
+		case ButiRendering::BlendMode::Reverse:
 			defaultRenderTargetBlendDesc = { TRUE, FALSE,
 		D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_ONE, D3D12_BLEND_OP_REV_SUBTRACT,
 		D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_SUBTRACT,
 		D3D12_LOGIC_OP_NOOP,
 		D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
-		case BlendMode::NoBlend:
+		case ButiRendering::BlendMode::NoBlend:
 			//AlphaToCoverageEnable = TRUE;
 			defaultRenderTargetBlendDesc = { FALSE, FALSE,
 		D3D12_BLEND_ONE, D3D12_BLEND_ZERO, D3D12_BLEND_OP_ADD,
@@ -83,7 +83,7 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 			RenderTarget[i] = defaultRenderTargetBlendDesc;
 	}
 };
-static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc, std::vector<D3D12_INPUT_ELEMENT_DESC>& vec_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob, std::vector<std::int32_t>& arg_vec_outputformat, const BlendMode arg_BlendMode, const TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
+static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc, std::vector<D3D12_INPUT_ELEMENT_DESC>& vec_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob, std::vector<std::int32_t>& arg_vec_outputformat, const ButiRendering::BlendMode arg_BlendMode, const ButiRendering::TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
 
 
 	//ZeroMemory(&RetDesc, sizeof(RetDesc));

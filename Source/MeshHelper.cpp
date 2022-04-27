@@ -1,11 +1,11 @@
 #include"stdafx.h"
 #include "../Header/MeshHelper.h"
-ButiEngine::MeshHelper::~MeshHelper()
+ButiEngine::ButiRendering::MeshHelper::~MeshHelper()
 {
 }
 
 
-void ButiEngine::MeshHelper::ReverseWinding(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices)
+void ButiEngine::ButiRendering::MeshHelper::ReverseWinding(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices)
 {
 	if ((ref_indices.size() % 3) != 0)
 		return;
@@ -20,7 +20,7 @@ void ButiEngine::MeshHelper::ReverseWinding(std::vector<Vertex::Vertex_UV_Normal
 }
 
 
-ButiEngine::Vector3 ButiEngine::MeshHelper::GetCircleTangent(std::int32_t i, std::int32_t tessellation)
+ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleTangent(std::int32_t i, std::int32_t tessellation)
 {
 	float angle = (i * BM_2PI / tessellation) + BM_PIDIV2;
 	float dx, dz;
@@ -31,7 +31,7 @@ ButiEngine::Vector3 ButiEngine::MeshHelper::GetCircleTangent(std::int32_t i, std
 	return v;
 }
 
-ButiEngine::Vector3 ButiEngine::MeshHelper::GetCircleVector(std::int32_t size, std::int32_t tessellation)
+ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleVector(std::int32_t size, std::int32_t tessellation)
 {
 	float angle = size * BM_2PI / tessellation;
 	float dx, dz;
@@ -45,7 +45,7 @@ ButiEngine::Vector3 ButiEngine::MeshHelper::GetCircleVector(std::int32_t size, s
 
 
 
-void ButiEngine::MeshHelper::CreateTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices{
 
@@ -60,7 +60,7 @@ void ButiEngine::MeshHelper::CreateTriangle(Vector3 point1, Vector3 point2, Vect
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	enum class ColorAttachType {
 		SingleColor, AllColor, FourColor, SixColor
@@ -150,7 +150,7 @@ void ButiEngine::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vect
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData, bool flat)
+void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData, bool flat)
 {
 	enum class ColorAttachType {
 	SingleColor,AllColor,FourColor,SixColor
@@ -251,7 +251,7 @@ void ButiEngine::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& 
 }
 
 
-void ButiEngine::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	if (tessellation < 3) {
 		CreateCube(size, arg_colors, outputMeshData, true);
@@ -331,7 +331,7 @@ void ButiEngine::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellatio
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	if (tessellation < 3) {
 		CreateCube(size, arg_colors, outputMeshData, true);
@@ -402,7 +402,7 @@ void ButiEngine::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t 
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 size, std::int32_t tessellation, bool isTop)
+void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 size, std::int32_t tessellation, bool isTop)
 {
 	// indices.
 	for (size_t i = 0; i < tessellation - 2; i++)
@@ -443,7 +443,7 @@ void ButiEngine::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_col
 	}
 }
 
-void ButiEngine::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	size.y /= 2;
 	std::vector<std::uint32_t> vec_index;
@@ -484,7 +484,7 @@ void ButiEngine::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation,
 	outputMeshData.SetIndex(vec_index);
 }
 
-void ButiEngine::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	if (tessellation < 3) {
 		CreateCube(size, arg_colors, outputMeshData,true);
@@ -591,7 +591,7 @@ void ButiEngine::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset,const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate,  const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset,const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate,  const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	ButiRendering::BoxSurface surface;
 	surface.up = size.y * 0.5f+tilt;
@@ -650,7 +650,7 @@ void ButiEngine::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset
 
 
 
-void ButiEngine::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vector3 offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vector3 offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	ButiRendering::BoxSurface surface;
 	surface.up = size.y * 0.5f + tilt;
@@ -714,7 +714,7 @@ void ButiEngine::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vec
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	size.x *= 0.5f;
 	size.y *= 0.5f;
@@ -743,14 +743,14 @@ void ButiEngine::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Colo
 }
 
 
-void ButiEngine::MeshHelper::VertexFlatConverter(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& outputVertices)
+void ButiEngine::ButiRendering::MeshHelper::VertexFlatConverter(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& outputVertices)
 {
 	for (auto itr = outputVertices.begin(); itr != outputVertices.end(); itr++) {
 		itr->normal = itr->position.GetNormalize();
 	}
 }
 
-void ButiEngine::MeshHelper::VertexAttachColor(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_vertecies)
+void ButiEngine::ButiRendering::MeshHelper::VertexAttachColor(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_vertecies)
 {
 	if (arg_colors.size() <= 0) {
 		return;
@@ -767,7 +767,7 @@ void ButiEngine::MeshHelper::VertexAttachColor(const std::vector<Color>& arg_col
 	return;
 }
 
-void ButiEngine::MeshHelper::CreateCirclePolygon(const float radius, const std::uint32_t tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float radius, const std::uint32_t tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	outputMeshData.Clear();
 	if (tessellation < 3) {
@@ -837,7 +837,7 @@ void ButiEngine::MeshHelper::CreateCirclePolygon(const float radius, const std::
 	outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::MeshHelper::CreateCameraFrustum(const float angle, const float width, const float height, const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float angle, const float width, const float height, const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	outputMeshData.Clear();
 	std::vector<std::uint32_t> vec_index;
@@ -898,7 +898,7 @@ void ButiEngine::MeshHelper::CreateCameraFrustum(const float angle, const float 
 	outputMeshData.eightCorner.down_right_back=Vector3();
 }
 
-void ButiEngine::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
 {
 	outputMeshData.Clear();
 	outputMeshData.vertices.reserve(arg_particleCount);

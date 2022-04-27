@@ -4,6 +4,25 @@
 namespace ButiEngine {
 namespace ButiRendering {
 
+enum class CullMode {
+	none = 1, front = 2, back = 3
+};
+enum class BlendMode {
+	AlphaBlend = 0, Addition = 1, Subtruction = 2, Reverse = 3, NoBlend = 4
+};
+enum class BillBoardMode {
+	none = 0, full = 1, x = 2, y = 3, z = 4,
+};
+enum class DrawFixParam {
+	none, removeRotation, removeDecimalPart, removeDecimalPartXY, removeDecimalPartYZ, removeDecimalPartXZ
+};
+enum class TopologyType {
+	triangleList = 4, point = 1, line = 2, triangle = 3, pointList = 1,
+};
+enum class FillMode {
+	solid = 3, wire = 2
+};
+
 enum class PrimitiveTopology : std::uint8_t
 {
 	TriangleList,

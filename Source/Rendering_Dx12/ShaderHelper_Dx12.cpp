@@ -3,7 +3,7 @@
 #include <d3dcompiler.h>
 #include <d3dx12.h>
 #include "../../Header/Rendering_Dx12/ShaderHelper_Dx12.h"
-void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const CompileType& type)
+void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& filePath, const CompileType& type)
 {
 	enum ShaderType{
 		vs,ps,gs,undefined
@@ -77,7 +77,7 @@ void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const Compil
 
 }
 
-void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const std::string& source, const char* entryPoint, const char* shaderModel, const CompileType& type)
+void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& filePath, const std::string& source, const char* entryPoint, const char* shaderModel, const CompileType& type)
 {
 
 
@@ -124,7 +124,7 @@ void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const std::s
 	shaderWriter.WriteEnd();
 }
 //
-//void ButiEngine::ShaderHelper::InputLayoutCompileDx11(const std::string& source, const std::string& filePath)
+//void ButiEngine::ButiRendering::ShaderHelper::InputLayoutCompileDx11(const std::string& source, const std::string& filePath)
 //{
 //	std::vector<D3D11_INPUT_ELEMENT_DESC> vec_inputElementDesc;
 //	ShaderHelper::CreateDx11InputElementVector(filePath, source, vec_inputElementDesc);
@@ -157,7 +157,7 @@ void ButiEngine::ShaderHelper::Compile(const std::string& filePath, const std::s
 //
 //}
 
-void ButiEngine::ShaderHelper::InputLayoutCompileDx12(const std::string& source, const std::string& filePath)
+void ButiEngine::ButiRendering::ShaderHelper::InputLayoutCompileDx12(const std::string& source, const std::string& filePath)
 {
 	std::vector<D3D12_INPUT_ELEMENT_DESC> vec_inputElementDesc;
 	ShaderHelper::CreateDx12InputElementVector(filePath, source, vec_inputElementDesc);
@@ -191,7 +191,7 @@ void ButiEngine::ShaderHelper::InputLayoutCompileDx12(const std::string& source,
 
 }
 
-void ButiEngine::ShaderHelper::OutputLayoutCompileDx12(const std::string& source, const std::string& filePath)
+void ButiEngine::ButiRendering::ShaderHelper::OutputLayoutCompileDx12(const std::string& source, const std::string& filePath)
 {
 	std::vector<DXGI_FORMAT> vec_formats;
 	ShaderHelper::CreateDx12PSOutputVector(filePath, source, vec_formats);
@@ -212,7 +212,7 @@ void ButiEngine::ShaderHelper::OutputLayoutCompileDx12(const std::string& source
 }
 
 
-std::vector<ButiEngine::ShaderHelper::InputLayoutElementData> ButiEngine::ShaderHelper::CreateInputLayoutDataVector(const std::string& filePath, const std::string& source)
+std::vector<ButiEngine::ButiRendering::ShaderHelper::InputLayoutElementData> ButiEngine::ButiRendering::ShaderHelper::CreateInputLayoutDataVector(const std::string& filePath, const std::string& source)
 {
 	std::vector<InputLayoutElementData> output;
 
@@ -259,7 +259,7 @@ std::vector<ButiEngine::ShaderHelper::InputLayoutElementData> ButiEngine::Shader
 	return output;
 }
 
-void ButiEngine::ShaderHelper::ShaderFileInclude(const std::string& filePath, std::string& source)
+void ButiEngine::ButiRendering::ShaderHelper::ShaderFileInclude(const std::string& filePath, std::string& source)
 {
 	while (StringHelper::Contains(source, "#include")) {
 		std::string includeFileName = StringHelper::Cut(source, "#include\"", "\"", false);
@@ -271,7 +271,7 @@ void ButiEngine::ShaderHelper::ShaderFileInclude(const std::string& filePath, st
 	}
 }
 //
-//void ButiEngine::ShaderHelper::CreateDx11InputElementVector(const std::string& filePath, const std::string& source, std::vector<D3D11_INPUT_ELEMENT_DESC>& arg_vec_elementDesc)
+//void ButiEngine::ButiRendering::ShaderHelper::CreateDx11InputElementVector(const std::string& filePath, const std::string& source, std::vector<D3D11_INPUT_ELEMENT_DESC>& arg_vec_elementDesc)
 //{
 //
 //	auto inputLayoutDatas = CreateInputLayoutDataVector(filePath, source);
@@ -283,7 +283,7 @@ void ButiEngine::ShaderHelper::ShaderFileInclude(const std::string& filePath, st
 //	}
 //}
 
-void ButiEngine::ShaderHelper::CreateDx12InputElementVector(const std::string& filePath, const std::string& source, std::vector<D3D12_INPUT_ELEMENT_DESC>& arg_vec_elementDesc)
+void ButiEngine::ButiRendering::ShaderHelper::CreateDx12InputElementVector(const std::string& filePath, const std::string& source, std::vector<D3D12_INPUT_ELEMENT_DESC>& arg_vec_elementDesc)
 {
 	auto inputLayoutDatas = CreateInputLayoutDataVector(filePath, source);
 	for (auto itr = inputLayoutDatas.begin(); itr != inputLayoutDatas.end(); itr++) {
@@ -296,7 +296,7 @@ void ButiEngine::ShaderHelper::CreateDx12InputElementVector(const std::string& f
 	}
 }
 
-void ButiEngine::ShaderHelper::CreateDx12PSOutputVector(const std::string& filePath, const std::string& source, std::vector<DXGI_FORMAT>& arg_vec_formats)
+void ButiEngine::ButiRendering::ShaderHelper::CreateDx12PSOutputVector(const std::string& filePath, const std::string& source, std::vector<DXGI_FORMAT>& arg_vec_formats)
 {
 
 	std::string PSOutputStr = source;
@@ -353,7 +353,7 @@ void ButiEngine::ShaderHelper::CreateDx12PSOutputVector(const std::string& fileP
 
 
 
-DXGI_FORMAT ButiEngine::ShaderHelper::GetFormat(const std::string& arg_formatStr, const std::string& arg_semanticName)
+DXGI_FORMAT ButiEngine::ButiRendering::ShaderHelper::GetFormat(const std::string& arg_formatStr, const std::string& arg_semanticName)
 {
 	if (arg_semanticName == "POSITION") {
 		return DXGI_FORMAT_R32G32B32_FLOAT;
