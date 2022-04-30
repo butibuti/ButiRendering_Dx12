@@ -162,8 +162,6 @@ void ButiEngine::ButiRendering::Renderer::Update()
 
 void ButiEngine::ButiRendering::Renderer::RenderingStart()
 {
-	vwp_graphicDevice.lock()->ClearWindow();
-	vwp_graphicDevice.lock()->ResourceUpload();
 	for (auto itr = vec_drawLayers.begin(); itr != vec_drawLayers.end(); itr++) {
 		(*itr)->CommandSet();
 	}
@@ -291,7 +289,7 @@ void ButiEngine::ButiRendering::Renderer::ShowUI()
 
 void ButiEngine::ButiRendering::Renderer::UnRegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_afterDraw,  const std::uint32_t arg_layer, const bool isShadow )
 {
-	if (arg_layer > vec_drawLayers.size()) {
+	if (arg_layer >= vec_drawLayers.size()) {
 		return;
 	}
 	vec_drawLayers.at(arg_layer)->UnRegist(arg_vlp_drawObject, arg_afterDraw,isShadow);

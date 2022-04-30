@@ -39,11 +39,10 @@ void ButiEngine::ButiRendering::Camera_Dx12::Initialize()
 	if (!cameraViewProp.projectionTexture.size()) {
 		cameraViewProp.currentWidth = cameraViewProp.width / 2;
 		cameraViewProp.currentHeight = cameraViewProp.height / 2;
-		vlp_transform->SetLocalScale(Vector3(2, 2, 1));
-	}
+	}else
 #endif // _EDITORBUILD
 
-	else {
+	{
 		cameraViewProp.currentWidth = cameraViewProp.width;
 		cameraViewProp.currentHeight = cameraViewProp.height;
 	}

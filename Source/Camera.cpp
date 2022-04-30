@@ -38,7 +38,12 @@ void ButiEngine::ButiRendering::Camera::Draw()
 void ButiEngine::ButiRendering::Camera::BefDraw()
 {
 	cameraPos= vlp_transform->GetWorldPosition();
-	viewMatrix = vlp_transform->GetMatrix().GetInverse();
+
+#ifdef _EDITORBUILD
+	viewMatrix = (Matrix4x4::Scale(Vector3{ 2, 2, 1 }) * vlp_transform->GetMatrix()).GetInverse();
+#else
+	viewMatrix = (vlp_transform->GetMatrix()).GetInverse();
+#endif
 }
 
 ButiEngine::ButiRendering::CameraProjProperty& ButiEngine::ButiRendering::Camera::GetCameraProperty()

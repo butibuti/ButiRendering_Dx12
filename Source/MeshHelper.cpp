@@ -525,9 +525,9 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 
 			CenterPos = pointB;
 		}
 
-		float SphereTotalFront = size.x * BM_PI / 2.0f;
+		float SphereTotalFront = size.x * BM_PI*0.5f;
 		float SylinderTotalFront = abs(pointA.y - pointB.y);
-		float SphereRate = SphereTotalFront / (SphereTotalFront + SylinderTotalFront) / 2.0f;
+		float SphereRate = SphereTotalFront / (SphereTotalFront + SylinderTotalFront) *0.5f;
 
 		if (v <= 0.5f) {
 			v *= SphereRate;
