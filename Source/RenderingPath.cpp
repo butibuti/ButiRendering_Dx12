@@ -1,6 +1,6 @@
 #include"stdafx.h"
 
-#include "..\Header\RenderingPath.h"
+#include"Header\RenderingPath.h"
 #include"../Header/Camera.h"
 #include"ButiRendering_Dx12/Header/Renderer.h"
 ButiEngine::ButiRendering::ForwardCameraRenderingPath::ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_ptr<IScene> arg_vlp_scene)

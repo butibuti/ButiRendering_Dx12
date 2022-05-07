@@ -215,8 +215,7 @@ void ButiEngine::ButiRendering::Camera_Dx12::ShowUI()
 		//Transform
 		if(GUI::TreeNode("Transform"))
 		{
-
-			vlp_transform->ShowUI();
+			GUI::Edit(*vlp_transform);
 			std::string target = "BaseTransform:";
 			if (vlp_transform->GetBaseTransform()) {
 				target += "Existence";
@@ -255,7 +254,8 @@ void ButiEngine::ButiRendering::Camera_Dx12::ShowUI()
 			GUI::EndChild();
 			if (vlp_transform->GetBaseTransform()) {
 				GUI::BeginChild("BaseTransform");
-				vlp_transform->GetBaseTransform()->ShowUI();
+
+				GUI::Edit(*vlp_transform->GetBaseTransform());
 				GUI::EndChild();
 			}
 			GUI::TreePop();

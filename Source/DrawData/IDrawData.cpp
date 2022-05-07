@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include"Header/Common/CollisionPrimitive.h"
 #include "../../Header/DrawData/IDrawData.h"
-
+#include"../../Header/Resource_RealTimeMesh.h"
 void ButiEngine::ButiRendering::DrawData::SetBlendMode(const BlendMode& arg_BlendMode)
 {
 }
@@ -21,6 +21,10 @@ ButiEngine::Value_ptr<ButiEngine::Collision::CollisionPrimitive_Box_AABB> ButiEn
 
 ButiEngine::Value_ptr<ButiEngine::Collision::CollisionPrimitive_Box_OBB> ButiEngine::ButiRendering::DrawObject::GetMeshOBB()
 {
+    if (drawData.GetMesh().lock()->IsThis<Resource_RealTimeMesh>())
+    {
+        return ObjectFactory::Create<Collision::CollisionPrimitive_Box_OBB>(Vector3Const::Zero, drawData.vlp_transform);
+    }
     const ButiRendering::BoxEightCorner& box = drawData.GetMesh().lock()->GetBackUpdata(Vertex::VertexFlag::Normal| Vertex::VertexFlag::UV)->GetBoxEightCorner();
     Vector3 length = box.up_right_front - box.down_left_back;
     auto output = ObjectFactory::Create<Collision::CollisionPrimitive_Box_OBB>(length, drawData.vlp_transform);

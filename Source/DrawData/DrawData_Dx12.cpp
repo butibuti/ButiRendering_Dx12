@@ -255,14 +255,15 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::CommandSet()
 	auto spliteCount = drawData.subset.size();
 
 	std::uint32_t offset = 0;
-	if (drawData.GetMaterial().GetSize() == drawData.subset.size())
+	if (drawData.GetMaterial().GetSize() == drawData.subset.size()) {
 		for (std::int32_t i = 0; i < drawData.subset.size(); i++) {
-			drawData.GetMaterial()[i].lock()->Attach(samplerRegion + textureRegion,drawData.vlp_renderer);
+			drawData.GetMaterial()[i].lock()->Attach(samplerRegion + textureRegion, drawData.vlp_renderer);
 			std::uint32_t count = drawData.subset.at(i);
 			vwp_graphicDevice.lock()->GetCommandList().DrawIndexedInstanced(count, 1, offset, 0, 0);
 
 			offset += count;
 		}
+	}
 	else {
 		for (std::int32_t i = 0; i < drawData.subset.size(); i++) {
 			drawData.GetMaterial()[i].lock()->Attach(samplerRegion + textureRegion, drawData.vlp_renderer);

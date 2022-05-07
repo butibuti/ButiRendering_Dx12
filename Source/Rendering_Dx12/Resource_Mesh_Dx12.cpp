@@ -16,7 +16,6 @@ void ButiEngine::ButiRendering::Resource_Mesh_Dx12::Draw(const std::uint32_t arg
 	vwp_graphicDevice.lock()->GetCommandList().IASetVertexBuffers(0, 1, &map_vertexBuffer.at(arg_vertexType).vertexBufferView);
 	vwp_graphicDevice.lock()->GetCommandList().IASetIndexBuffer(&indexBufferView);
 
-
 }
 
 void ButiEngine::ButiRendering::Resource_Mesh_Dx12::Initialize()

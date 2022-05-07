@@ -4,7 +4,7 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/Resource_Material_Dx12.h"
 #include"../../Header/Rendering_Dx12/CBuffer_Dx12.h"
 #include"../../Header/Rendering_Dx12/CArrayBuffer_Dx12.h"
-#include "..\..\Header\Rendering_Dx12\Resource_Material_Dx12.h"
+#include"Header\Rendering_Dx12\Resource_Material_Dx12.h"
 
 ButiEngine::ButiRendering::Resource_Material_Dx12::Resource_Material_Dx12(const MaterialValue & arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice) :Resource_Material(arg_var)
 {
