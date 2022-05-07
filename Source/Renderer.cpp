@@ -99,6 +99,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
+	std::mutex mtx_addObject;
 };
 class DrawLayer_Shadow : public DrawLayer, public IDrawLayer_Shadow {
 public:
@@ -486,6 +487,7 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 
 void ButiEngine::ButiRendering::DrawLayer::Regist(Value_ptr<IDrawObject> arg_vwp_drawObject, const bool arg_isAfterRendering,  Value_ptr<Collision::CollisionPrimitive_Box_OBB> arg_ret_prim, const bool arg_isShadow)
 {
+	std::lock_guard lock(mtx_addObject);
 	if (arg_isShadow ) {
 		if (!vlp_shadowLayer) {
 			vlp_shadowLayer = ObjectFactory::Create<DrawLayer_Shadow>(vwp_renderer);
@@ -524,7 +526,7 @@ void ButiEngine::ButiRendering::DrawLayer::Regist(Value_ptr<IDrawObject> arg_vwp
 
 void ButiEngine::ButiRendering::DrawLayer::UnRegist(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_isAfterRendering, const bool arg_isShadow)
 {
-
+	std::lock_guard lock(mtx_addObject);
 	if (arg_isShadow&&vlp_shadowLayer) {
 		vlp_shadowLayer->UnRegist(arg_vlp_drawObject, arg_isAfterRendering, false);
 		return;
@@ -542,7 +544,7 @@ void ButiEngine::ButiRendering::DrawLayer::UnRegist(Value_ptr< IDrawObject> arg_
 
 void ButiEngine::ButiRendering::DrawLayer::DeleteDrawObj(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_isAfterRendering)
 {
-
+	std::lock_guard lock(mtx_addObject);
 	if (!map_drawObjIndex.count(arg_vlp_drawObject)) {
 		return;
 	}
@@ -595,6 +597,7 @@ void ButiEngine::ButiRendering::DrawLayer::DeleteDrawObj(Value_ptr< IDrawObject>
 
 void ButiEngine::ButiRendering::DrawLayer::CommandSet()
 {
+	std::lock_guard lock(mtx_addObject);
 	if (vlp_shadowLayer) {
 		vlp_shadowLayer->CommandSet();
 	}
@@ -641,6 +644,7 @@ void ButiEngine::ButiRendering::DrawLayer::SetShadowTexture(TextureTag arg_textu
 
 void ButiEngine::ButiRendering::DrawLayer::Rendering()
 {
+	std::lock_guard lock(mtx_addObject);
 	{
 
 		for (auto itr = vec_befDrawObj.begin(), endItr = vec_befDrawObj.end(); itr != endItr; itr++) {
