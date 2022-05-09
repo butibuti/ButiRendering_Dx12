@@ -59,7 +59,11 @@ void ButiEngine::ButiRendering::Camera_Dx12::Initialize()
 	else {
 		projectionMatrix =
 			Matrix4x4::PersepectiveFovLH(
+#ifdef _EDITORBUILD
+				MathHelper::ToRadian(cameraViewProp.angle*0.5f),
+#else
 				MathHelper::ToRadian(cameraViewProp.angle),
+#endif
 				(float)cameraViewProp.currentWidth / (float)cameraViewProp.currentHeight,
 				cameraViewProp.nearClip,
 				cameraViewProp.farClip
