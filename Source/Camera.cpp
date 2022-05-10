@@ -3,6 +3,7 @@
 #include"ButiRendering_Dx12/Header/Camera.h"
 #include"Header/Common/CollisionPrimitive.h"
 #include"../Header/Renderer.h"
+#include "..\Header\Camera.h"
 const std::string& ButiEngine::ButiRendering::Camera::GetName() const
 {
 	return cameraName;
@@ -51,6 +52,11 @@ ButiEngine::ButiRendering::CameraProjProperty& ButiEngine::ButiRendering::Camera
 	return cameraViewProp;
 }
 
+const ButiEngine::ButiRendering::CameraProjProperty& ButiEngine::ButiRendering::Camera::GetCameraProperty() const
+{
+	return cameraViewProp;
+}
+
 ButiEngine::Matrix4x4 ButiEngine::ButiRendering::Camera::GetViewProjectionMatrix()
 {
 	return (projectionMatrix*viewMatrix);
@@ -83,6 +89,34 @@ std::int32_t ButiEngine::ButiRendering::Camera::IsContaineVisibility(Value_ptr<G
 		return objects.size();
 	}
 	return -1;
+}
+
+ButiEngine::Vector3 ButiEngine::ButiRendering::Camera::WorldToScreen(const Vector3& arg_pos) const
+{
+	auto projection =
+
+		Matrix4x4::PersepectiveFovLH(
+
+#ifdef _EDITORBUILD
+			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle )* 2.0f),
+#else
+			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle) * 2.0f),
+#endif
+			static_cast<float>(GetCameraProperty().currentWidth )/ static_cast<float>(GetCameraProperty().currentHeight),
+			static_cast<float>(GetCameraProperty().nearClip),
+			static_cast<float>(GetCameraProperty().farClip)
+		);
+
+#ifdef _EDITORBUILD
+	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6, 6, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
+#else
+	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6.5, 6.5, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
+#endif
+	auto pos = Vector4(arg_pos, 1.0f) * convertedPos.Transpose();
+	auto t = Vector3(pos.x / pos.w, pos.y / pos.w, pos.z/pos.w);
+	t.x *= -1.0f * GetCameraProperty().currentWidth;
+	t.y *= -1.0f * GetCameraProperty().currentHeight;
+	return t;
 }
 
 ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::CameraCreater::CreateCamera(const CameraProjProperty& arg_cameraViewProp, const std::string& cameraName, const bool initActive, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)

@@ -17,11 +17,13 @@ public:
 	void Draw()override;
 	void BefDraw()override;
 	CameraProjProperty& GetCameraProperty()override;
+	const CameraProjProperty& GetCameraProperty()const override;
 	Matrix4x4 GetViewProjectionMatrix()override;
 	Matrix4x4 GetProjectionMatrix()override;
 	Matrix4x4 GetViewMatrix()override;
 	Vector3 GetPosition()override;
 	std::int32_t IsContaineVisibility(Value_ptr<Geometry::Box_AABB>arg_AABB)override;
+	Vector3 WorldToScreen(const Vector3& arg_pos)const override;
 protected:
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 viewMatrix;

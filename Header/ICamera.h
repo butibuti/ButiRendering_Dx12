@@ -113,6 +113,11 @@ public:
 	/// <returns></returns>
 	virtual CameraProjProperty& GetCameraProperty() = 0;
 	/// <summary>
+	/// カメラ設定の取得
+	/// </summary>
+	/// <returns></returns>
+	virtual const CameraProjProperty& GetCameraProperty() const= 0;
+	/// <summary>
 	/// カメラに形状が写っているかの取得
 	/// </summary>
 	/// <param name="arg_AABB">形状</param>
@@ -156,6 +161,7 @@ public:
 	/// </summary>
 	/// <returns>カメラ位置</returns>
 	virtual Vector3 GetPosition() = 0;
+	virtual Vector3 WorldToScreen(const Vector3& arg_pos)const = 0;
 protected:
 };
 }
