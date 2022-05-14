@@ -105,17 +105,13 @@ public:
 
 
 	virtual void Present() = 0;
-
-
 	virtual void Release() = 0;
-
 	virtual void ResourceUpload() = 0;
-
 	virtual void UploadResourceRelease() = 0;
 	virtual void UploadResourceBufferMerge() = 0;
-
 	virtual void DrawStart() {}
 	virtual void SetDefaultRenderTarget() = 0;
+	virtual void Reset()=0;
 	virtual void ClearWindow() = 0;
 	virtual void ClearDepthStancil(const float arg_depth) = 0;
 	Matrix4x4 GetProjectionMatrix();
@@ -124,6 +120,7 @@ public:
 	void SetCameraPos(const Vector3& arg_pos);
 	Matrix4x4 GetRawViewMatrix();
 	Value_weak_ptr<IApplication> GetApplication();
+	virtual void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)=0;
 	void SetProjectionMatrix(const Matrix4x4& arg_projectionMatrix);
 	void SetViewMatrix(const Matrix4x4& arg_viewMatrix);
 	void SetRawViewMatrix(const Matrix4x4& arg_viewMatrix);
@@ -155,8 +152,8 @@ public:
 	}
 protected:
 	TextureTag defaultRenderTarget;
-	Value_weak_ptr<IApplication> vwp_application;
 	Matrix4x4 projectionMatrix;
+	Value_weak_ptr<IApplication> vwp_application;
 
 	Matrix4x4 viewMatrix;
 	Matrix4x4 viewMatrix_billBoard;
@@ -165,10 +162,9 @@ protected:
 	Matrix4x4 viewMatrix_billBoardZ;
 	Matrix4x4 rawViewMatrix;
 
-	Vector4 color = Vector4(0, 1, 0, 1);
+	Vector4 clearColor = Vector4(1, 1, 1, 1);
 	Vector3 cameraPos;
 
-	float clearColor[4] = { color.x, color.y, color.z, color.w };
 
 };
 }

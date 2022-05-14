@@ -72,14 +72,10 @@ void ButiEngine::ButiRendering::GraphicDevice::SetViewMatrix_billBoardZ(const Ma
 
 void ButiEngine::ButiRendering::GraphicDevice::SetClearColor(const Vector4& arg_clearColor)
 {
-	color = arg_clearColor;
-	clearColor[0] = color.x;
-	clearColor[1] = color.y;
-	clearColor[2] = color.z;
-	clearColor[3] = color.w;
+	clearColor = arg_clearColor;
 }
 
 ButiEngine::Vector4 ButiEngine::ButiRendering::GraphicDevice::GetClearColor()
 {
-	return color;
+	return clearColor;
 }

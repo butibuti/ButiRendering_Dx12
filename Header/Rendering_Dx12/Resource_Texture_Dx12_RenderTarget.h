@@ -42,7 +42,6 @@ private:
 	bool isCleared = false, isCopyCommanded = false;
 	bool isFileOutput = false;
 
-#ifdef _EDITORBUILD
 public:
 	void SetEditorViewed(const bool arg_isViewed)override;
 	bool GetEditorViewed()const override { return isEditorViewed; }
@@ -58,10 +57,6 @@ private:
 
 	std::lock_guard<std::mutex>* p_guard_rawData;
 	D3D12_TEXTURE_COPY_LOCATION destLocation[2], srcLocation;
-#else
-
-	D3D12_TEXTURE_COPY_LOCATION destLocation, srcLocation;
-#endif
 };
 }
 }

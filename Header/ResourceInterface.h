@@ -173,11 +173,9 @@ public:
 	virtual const std::string& GetTexturePath() const = 0;
 	virtual const unsigned char* GetRawData() = 0;
 	virtual const std::string& GetTagName()const = 0;
-#ifdef _EDITORBUILD
 	virtual void SetEditorViewed(const bool arg_isViewed) {}
 	virtual bool GetEditorViewed()const { return false; }
 	virtual void Wait() {}
-#endif
 };
 class IResource_Material :public IObject {
 public:

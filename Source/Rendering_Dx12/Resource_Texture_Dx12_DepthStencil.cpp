@@ -177,11 +177,9 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::DisSetDepthS
 	vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
 	vwp_graphicDevice.lock()->DisSetDepthStencil();
 
-#ifdef _EDITORBUILD
 	if (isEditorViewed) {
 		vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::None, "");
 	}
-#endif // _EDITORBUILD
 }
 
 std::int32_t ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::GetFormat() const

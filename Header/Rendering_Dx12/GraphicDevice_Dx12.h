@@ -20,19 +20,15 @@ class GraphicDevice_Dx12 :public GraphicDevice
 		std::string outputName;
 		FileFormat format;
 	};
+	class Impl;
 public:
 
 	GraphicDevice_Dx12(Value_weak_ptr<IApplication> arg_vwp_application);
 	void Initialize()override;
-
-	void PreInitialize()override;
-
 	void Release()override;
-
+	void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)override{}
 	void ClearDepthStancil(const float arg_depth = 1.0f) override;
-
 	ID3D12Device& GetDevice();
-
 	HRESULT CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS HeapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES InitialResourceState,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue, const IID& riidResource, void** ppvResource);
 
@@ -47,12 +43,7 @@ public:
 	ID3D12GraphicsCommandList& GetCommandList();
 
 	ID3D12GraphicsCommandList& GetUploadCommandList();
-#ifdef _WINDOWGENERATE
 	ID3D12GraphicsCommandList& GetClearCommandList();
-#endif
-
-
-
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc);
 
 	void SetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState);
@@ -76,9 +67,7 @@ public:
 	void UnSetCommandList();
 
 	ID3D12Fence& GetFence();
-#ifdef _WINDOWGENERATE
 	IDXGISwapChain& GetSwapChain();
-#endif // !_WINDOWGENERATE
 
 
 
@@ -90,7 +79,9 @@ public:
 	void StartGUICommand();
 	void EndGUICommand();
 
+	void Reset() override;
 	void ClearWindow() override;
+
 
 	void SetCommandList(ID3D12GraphicsCommandList* arg_currentCommandList, const std::int32_t index = 0);
 	void SetDefaultRenderTarget()override;
@@ -119,99 +110,16 @@ public:
 
 	const D3D12_RECT& GetScissorRect()const;
 
-	std::uint32_t GetFrameCount() {
-		return FrameCount;
-	}
+	std::uint32_t GetFrameCount() const;
 
-	std::uint32_t GetFrameIndex() {
-#ifdef _WINDOWGENERATE
-		return frameIndex;
-#else
-		return 0;
-#endif // !_WINDOWGENERATE
-
-	}
+	std::uint32_t GetFrameIndex()const;
 
 	void SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv);
 	D3D12_CPU_DESCRIPTOR_HANDLE* GetDepthStencil();
 	void DisSetDepthStencil();
 	void ResetPipeLine()override;
 private:
-	D3D12_CPU_DESCRIPTOR_HANDLE* currentDSV = nullptr;
-	D3D12_CPU_DESCRIPTOR_HANDLE defaultDSVHandle;
-	static const std::uint32_t FrameCount =
-#ifdef _WINDOWGENERATE
-
-		3;
-#else
-		1;
-#endif // !_WINDOWGENERATE
-
-	Microsoft::WRL::ComPtr<ID3D12Device> device;
-
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
-
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator[FrameCount];
-
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> bundleCommandAllocator;
-
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> presentCommandList;
-#ifdef _WINDOWGENERATE
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> clearCommandList;
-#endif // !_WINDOWGENERATE
-
-
-
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> uploadCommandList;
-
-	std::vector<GPUResource*> vec_uploadResources;
-	std::vector<GPUResource*> vec_uploadResourcesBuffer;
-	std::vector<GPUResource*> vec_befUploadResources;
-
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> drawCommandList;
-
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> guiCommandList;
-
-	Value_ptr<DescriptorHeapManager> vlp_descripterManager;
-
-	Value_ptr<PipelineStateManager> vlp_pipelineStateManager;
-
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vec_renderTargetHandles;
-
-	ID3D12GraphicsCommandList* p_currentCommandList = nullptr;
-	ID3D12PipelineState* currentPipelineState = nullptr;
-
-	std::vector< ID3D12CommandList*> vec_drawCommandLists;
-	Microsoft::WRL::ComPtr<ID3D12Fence>  fence;
-
-	std::map<std::wstring, std::pair<Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC>> map_rootSignature;
-	Microsoft::WRL::ComPtr<ID3D12Resource> renderTargets[FrameCount];
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> resourceUploadHeap;
-	D3D12_RECT scissorRect;
-
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencil;
-	std::uint32_t depthDescriptorSize, renderTargetDescriptorSize;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>  renderTargetDescripterHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> depthStencilDescriptorHeap;
-	D3D12_CPU_DESCRIPTOR_HANDLE ary_rtvHandle[FrameCount];
-
-
-	Microsoft::WRL::ComPtr<ID3D12RootSignature>  clearRootSignature;
-
-#ifdef _WINDOWGENERATE
-	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain3;
-	std::uint32_t frameIndex;
-#else
-
-	const std::uint32_t frameIndex = 0;
-#endif // !_WINDOWGENERATE
-
-	HANDLE  fenceEvent;
-	UINT64  fenceValue;
-
-	std::vector<ImageFileOutputInfo > vec_outputInfo;
-	std::mutex mtx_uploadResource, mtx_createCommitedResourece;
+	std::unique_ptr<Impl> m_uqp_impl;
 };
 }
 }

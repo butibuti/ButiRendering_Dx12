@@ -86,9 +86,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 
 
 	currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-#ifdef _EDITORBUILD
 	textureDataSize = image.vlp_imageData->pixSize * image.vlp_imageData->width * image.vlp_imageData->height;
-#endif // _EDITORBUILD
 }
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetRenderTarget(Vector4& arg_clearColor)
@@ -125,19 +123,13 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::DisSetRender
 	vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &desc);
 	currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-
-#ifdef _EDITORBUILD
-
-	if ((GameDevice::GetInput()->CheckKey(Keys::Enter)||isEditorViewed)&& !isCopyCommanded) {
+	if ((GameDevice::GetInput()->CheckKey(Keys::Enter) || isEditorViewed) && !isCopyCommanded) {
 		isCopyCommanded = true;
 		vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::None, "");
 	}
-#endif // _EDITORBUILD
 }
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::CopyForOutput()
 {
-#ifdef _EDITORBUILD
-
 	if (!resourceUploadHeap[0]) {
 		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture.Get(), 0, 1);
 		D3D12_HEAP_PROPERTIES readbackHeapProperties;
@@ -155,7 +147,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::CopyForOutpu
 			D3D12_RESOURCE_STATE_COPY_DEST,
 			nullptr,
 			IID_PPV_ARGS(&resourceUploadHeap[0])
-		); 
+		);
 		hr = vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(
 			&readbackHeapProperties,
 			D3D12_HEAP_FLAG_NONE,
@@ -194,61 +186,11 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::CopyForOutpu
 
 	vwp_graphicDevice.lock()->GetCommandList().CopyTextureRegion(&destLocation[currentWritingOutputBuffer], 0, 0, 0, &srcLocation, nullptr);
 	currentWritingOutputBuffer = !currentWritingOutputBuffer;
-#else
-
-	if (isCopyCommanded) {
-		return;
-	}
-	isCopyCommanded = true;
-	if (!resourceUploadHeap) {
-
-		const UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture.Get(), 0, 1);
-		D3D12_HEAP_PROPERTIES readbackHeapProperties{ CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK) };
-
-		D3D12_RESOURCE_DESC readbackBufferDesc{ CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize) };
-		auto hr = vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(
-			&readbackHeapProperties,
-			D3D12_HEAP_FLAG_NONE,
-			&readbackBufferDesc,
-			D3D12_RESOURCE_STATE_COPY_DEST,
-			nullptr,
-			IID_PPV_ARGS(&resourceUploadHeap)
-		);
-
-		destLocation.pResource = resourceUploadHeap.Get();
-		destLocation.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-		auto print = D3D12_PLACED_SUBRESOURCE_FOOTPRINT();
-		print.Offset = 0;
-		print.Footprint.Depth = 1;
-		print.Footprint.Width = image.vlp_imageData->width;
-		print.Footprint.Height = image.vlp_imageData->height;
-		print.Footprint.Format = image.format;
-		print.Footprint.RowPitch = image.vlp_imageData->width * image.vlp_imageData->pixSize;
-		destLocation.PlacedFootprint = print;
-
-		srcLocation.pResource = texture.Get();
-		srcLocation.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-		srcLocation.SubresourceIndex = 0;
-	}
-	{
-		auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(), currentState, D3D12_RESOURCE_STATE_COPY_SOURCE);
-		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
-		currentState = D3D12_RESOURCE_STATE_COPY_SOURCE;
-
-		auto uploadTrans = CD3DX12_RESOURCE_BARRIER::Transition(resourceUploadHeap.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_DEST);
-		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
-	}
-
-	vwp_graphicDevice.lock()->GetCommandList().CopyTextureRegion(&destLocation, 0, 0, 0, &srcLocation, nullptr);
-#endif // _EDITORBUILD
 }
 
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::UpdateResourceRelease()
 {
-#ifndef _EDITORBUILD
-	resourceUploadHeap = nullptr;
-#endif
 }
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::ResourceUpdate()
@@ -269,23 +211,13 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Attach(std::
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::ToPNG(const std::string& arg_textureFilePath)
 {
 
-#ifdef _EDITORBUILD
 	if (!resourceUploadHeap[0]) {
 		return;
 	}
-#else
-	if (!image.p_resourceData) {
-		return;
-	}
-#endif
 	outputFileName = arg_textureFilePath;
-#ifdef _EDITORBUILD
 	isFileOutput = true;
 	resourceUploadHeap[0] = nullptr;
 	//vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::PNG, outputFileName);
-#else
-	vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::PNG, outputFileName);
-#endif // _EDITORBUILD
 
 	
 }
@@ -352,7 +284,6 @@ ButiEngine::Vector2 ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarge
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::OutputToMemory()
 {
 
-#ifdef _EDITORBUILD
 	std::lock_guard lock(mtx_rawData);
 	D3D12_RANGE readbackBufferRange{ 0, textureDataSize };
 	auto hr = resourceUploadHeap[currentWritingOutputBuffer]->Map(0, &readbackBufferRange, &p_outputRawData[currentWritingOutputBuffer]);
@@ -364,47 +295,27 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::OutputToMemo
 	}
 	isRawDataChanged = true;
 	cv_rawData[!currentWritingOutputBuffer].notify_one();
-#else
-	const UINT64 uploadBufferSize = GetRequiredIntermediateSize(texture.Get(), 0, 1);
-	D3D12_RANGE readbackBufferRange{ 0, uploadBufferSize };
-	auto hr = resourceUploadHeap->Map(0, &readbackBufferRange, &image.p_resourceData);
-	isCopyCommanded = false;
-	if (isFileOutput) {
-		isFileOutput = false;
-		ImageFileIO::OutputPNG(outputFileName, image.p_resourceData, image.vlp_imageData->width, image.vlp_imageData->height, 0, image.vlp_imageData->pixSize);
-	}
-#endif
 }
 const unsigned char* ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::GetRawData() {
-#ifdef _EDITORBUILD
 	return (const unsigned char*)p_outputRawData[!currentWritingOutputBuffer];
-#endif	
-	return (const unsigned char*)image.p_resourceData;
 }
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::DataLock()
 {
-#ifdef _EDITORBUILD
-
 	if (!p_guard_rawData) {
 		p_guard_rawData = new std::lock_guard(mtx_rawData);
 	}
-#endif // _EDITORBUILD
 
 }
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::DataUnlock()
 {
 
-#ifdef _EDITORBUILD
-
 	if (p_guard_rawData) {
 		delete p_guard_rawData;
 		p_guard_rawData = nullptr;
 	}
-#endif	
 }
-#ifdef _EDITORBUILD
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetEditorViewed(const bool arg_isViewed)
 {
 	std::lock_guard<std::mutex> lock(mtx_rawData);
@@ -422,7 +333,6 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Wait()
 	cv_rawData[currentWritingOutputBuffer].wait(lock, [this] {return isRawDataChanged; });
 	isRawDataChanged = false;
 }
-#endif
 std::int32_t ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::GetFormat() const
 {
 	return image.format;

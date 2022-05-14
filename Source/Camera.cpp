@@ -98,7 +98,7 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::Camera::WorldToScreen(const Vecto
 		Matrix4x4::PersepectiveFovLH(
 
 #ifdef _EDITORBUILD
-			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle )* 2.0f),
+			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle*0.5f )),
 #else
 			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle) * 2.0f),
 #endif
@@ -108,7 +108,7 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::Camera::WorldToScreen(const Vecto
 		);
 
 #ifdef _EDITORBUILD
-	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6, 6, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
+	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 20.0, 20.0, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
 #else
 	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6.5, 6.5, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
 #endif

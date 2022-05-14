@@ -29,13 +29,11 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
 	bool isCleared = false, isCopyCommanded = false;
 
-#ifdef _EDITORBUILD
 public:
 	void SetEditorViewed(const bool arg_isViewed)override { isEditorViewed = arg_isViewed; }
 	bool GetEditorViewed()const override { return isEditorViewed; }
 private:
 	bool isEditorViewed = false;
-#endif
 };
 }
 }
