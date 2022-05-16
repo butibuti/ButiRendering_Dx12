@@ -2,23 +2,17 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/PipelineStateManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
-#include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include"TaskSystem.h"
 #include "..\..\Header\Rendering_Dx12\GraphicDevice_Dx12.h"
+namespace ButiEngine {
+namespace ButiRendering {
 
+constexpr std::uint32_t FrameCount =3;
 
-class ButiEngine::ButiRendering::GraphicDevice_Dx12::Impl {
+class GraphicDevice_Dx12::Impl {
 public:
 	D3D12_CPU_DESCRIPTOR_HANDLE* currentDSV = nullptr;
 	D3D12_CPU_DESCRIPTOR_HANDLE defaultDSVHandle;
-	static const std::uint32_t FrameCount =
-#ifdef _WINDOWGENERATE
-
-		3;
-#else
-		1;
-#endif // !_WINDOWGENERATE
-
 	Microsoft::WRL::ComPtr<ID3D12Device> device;
 
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue;
@@ -28,10 +22,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> bundleCommandAllocator;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> presentCommandList;
-#ifdef _WINDOWGENERATE
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> clearCommandList;
-#endif // !_WINDOWGENERATE
-
 
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> uploadCommandList;
@@ -71,13 +61,8 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12RootSignature>  clearRootSignature;
 
-#ifdef _WINDOWGENERATE
-	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain3;
-	std::uint32_t frameIndex;
-#else
-
-	const std::uint32_t frameIndex = 0;
-#endif // !_WINDOWGENERATE
+	Microsoft::WRL::ComPtr<IDXGIFactory4> factory4;
+	std::uint32_t frameIndex = 0;
 
 	HANDLE  fenceEvent;
 	UINT64  fenceValue;
@@ -85,6 +70,153 @@ public:
 	std::vector<ImageFileOutputInfo > vec_outputInfo;
 	std::mutex mtx_uploadResource, mtx_createCommitedResourece;
 };
+
+class GraphicDevice_Dx12_WithWindow :public GraphicDevice_Dx12{
+public:
+	GraphicDevice_Dx12_WithWindow(Value_weak_ptr<IApplication> arg_vwp_application):GraphicDevice_Dx12(arg_vwp_application){}
+
+	std::uint32_t GetFrameIndex()const override {
+		return m_uqp_impl->frameIndex;
+	}
+	void Present()override;
+	void WaitGPU()override;
+	ID3D12GraphicsCommandList& GetClearCommandList()override;
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> clearCommandList;
+	Microsoft::WRL::ComPtr<IDXGISwapChain3> swapChain3;
+	IDXGISwapChain& GetSwapChain()override;
+	void ClearWindow()override;
+	void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)override;
+	std::uint32_t GetFrameCount()const override;
+};
+
+void GraphicDevice_Dx12_WithWindow::Present()
+{
+
+	m_uqp_impl->currentPipelineState = nullptr;
+	auto hr = m_uqp_impl->presentCommandList->Reset(m_uqp_impl->commandAllocator[GetFrameIndex()].Get(), nullptr);
+	//プレゼント用のバリアを張る
+	auto desc = ResourceBarrierHelper::GetResourceBarrierTransition(m_uqp_impl->renderTargets[GetFrameIndex()].Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_uqp_impl->presentCommandList->ResourceBarrier(1,
+		&desc);
+	SetCommandList(m_uqp_impl->presentCommandList.Get());
+	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
+		itr->p_outputResource->CopyForOutput();
+	}
+	hr = m_uqp_impl->presentCommandList->Close();
+	InsertCommandList();
+
+	if (m_uqp_impl->vec_drawCommandLists.size()) {
+		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+	}
+
+	hr = swapChain3->Present(0, 0);
+	WaitGPU();
+	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
+		auto res = itr->p_outputResource;
+		res->OutputToMemory();
+	}
+	m_uqp_impl->vec_outputInfo.clear();
+	m_uqp_impl->vec_drawCommandLists.clear();
+}
+void GraphicDevice_Dx12_WithWindow::WaitGPU()
+{
+	GraphicDevice_Dx12::WaitGPU();
+
+	m_uqp_impl->frameIndex = swapChain3->GetCurrentBackBufferIndex();
+}
+ID3D12GraphicsCommandList& GraphicDevice_Dx12_WithWindow::GetClearCommandList()
+{
+	return *clearCommandList.Get();
+}
+IDXGISwapChain& ButiRendering::GraphicDevice_Dx12_WithWindow::GetSwapChain()
+{
+	return *swapChain3.Get();
+}
+void ButiRendering::GraphicDevice_Dx12_WithWindow::ClearWindow()
+{
+	clearCommandList->Reset(m_uqp_impl->commandAllocator[GetFrameIndex()].Get(), nullptr);
+
+	clearCommandList->SetGraphicsRootSignature(m_uqp_impl->clearRootSignature.Get());
+
+
+	D3D12_RESOURCE_BARRIER desc = ResourceBarrierHelper::GetResourceBarrierTransition(m_uqp_impl->renderTargets[GetFrameIndex()].Get(),
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	clearCommandList->ResourceBarrier(1,
+		&desc);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_uqp_impl->renderTargetDescripterHeap->GetCPUDescriptorHandleForHeapStart();
+	rtvHandle.ptr += GetFrameIndex() * m_uqp_impl->renderTargetDescriptorSize;
+
+	clearCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &m_uqp_impl->defaultDSVHandle);
+
+
+	clearCommandList->ClearRenderTargetView(rtvHandle, &clearColor.x, 0, nullptr);
+	clearCommandList->ClearDepthStencilView(m_uqp_impl->defaultDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	clearCommandList->Close();
+	SetCommandList(clearCommandList.Get());
+	InsertCommandList();
+}
+void ButiRendering::GraphicDevice_Dx12_WithWindow::SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)
+{
+	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+	desc.NumDescriptors = GetFrameCount();
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	DXGI_SWAP_CHAIN_DESC swapChaindesc = {};
+	swapChaindesc.BufferCount = GetFrameCount();
+	swapChaindesc.BufferDesc.Width = arg_width;
+	swapChaindesc.BufferDesc.Height = arg_height;
+	swapChaindesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChaindesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChaindesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChaindesc.OutputWindow = *reinterpret_cast<HWND*>(&arg_handle);
+	swapChaindesc.Windowed = true;
+	swapChaindesc.SampleDesc.Count = 1;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+	//Create SwapChain.
+	auto hr = m_uqp_impl->factory4->CreateSwapChain(m_uqp_impl->commandQueue.Get(), &swapChaindesc, swapChain.GetAddressOf());
+	assert(hr == S_OK);
+
+	// To IDXGISwapChain3.
+	hr = swapChain->QueryInterface(IID_PPV_ARGS(swapChain3.GetAddressOf()));
+	assert(hr == S_OK);
+
+	//Get FrameBufferIndex.
+	m_uqp_impl->frameIndex = swapChain3->GetCurrentBackBufferIndex();
+
+	hr = m_uqp_impl->device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_uqp_impl->renderTargetDescripterHeap.GetAddressOf()));
+	assert(hr == S_OK);
+	//for clear
+	clearCommandList = CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	CommandListHelper::Close(clearCommandList);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE handle;
+	handle = m_uqp_impl->renderTargetDescripterHeap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_RENDER_TARGET_VIEW_DESC renderTargetViewdesc = {};
+	renderTargetViewdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	renderTargetViewdesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewdesc.Texture2D.MipSlice = 0;
+	renderTargetViewdesc.Texture2D.PlaneSlice = 0;
+
+	for (std::uint32_t i = 0; i < GetFrameCount(); i++)
+	{
+		// Get BackBuffer
+		hr = swapChain3->GetBuffer(i, IID_PPV_ARGS(m_uqp_impl->renderTargets[i].GetAddressOf()));
+		assert(hr == S_OK);
+		// Create RTV
+		m_uqp_impl->device->CreateRenderTargetView(m_uqp_impl->renderTargets[i].Get(), &renderTargetViewdesc, handle);
+		handle.ptr += m_uqp_impl->renderTargetDescriptorSize;
+
+	}
+}
+std::uint32_t GraphicDevice_Dx12_WithWindow::GetFrameCount() const
+{
+	return FrameCount;
+}
+}
+}
 ButiEngine::ButiRendering::GraphicDevice_Dx12::GraphicDevice_Dx12(Value_weak_ptr<IApplication> arg_vwp_application)
 {
 	vwp_application = arg_vwp_application;
@@ -93,18 +225,14 @@ ButiEngine::ButiRendering::GraphicDevice_Dx12::GraphicDevice_Dx12(Value_weak_ptr
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 {
 	HRESULT hr;
-
-
-	Microsoft::WRL::ComPtr<IDXGIFactory4> factory4;
-	hr = CreateDXGIFactory1(IID_PPV_ARGS(factory4.GetAddressOf()));
-
+	hr = CreateDXGIFactory1(IID_PPV_ARGS(m_uqp_impl-> factory4.GetAddressOf()));
 
 	IDXGIAdapter1* p_adapter = nullptr;
 	{
 
 		std::vector<IDXGIAdapter1*> vec_p_adapters;
 
-		for (std::int32_t i = 0; factory4->EnumAdapters1(i, &p_adapter) != DXGI_ERROR_NOT_FOUND; i++) {
+		for (std::int32_t i = 0; m_uqp_impl->factory4->EnumAdapters1(i, &p_adapter) != DXGI_ERROR_NOT_FOUND; i++) {
 			vec_p_adapters.push_back(p_adapter);
 		}
 
@@ -150,38 +278,11 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 	hr = m_uqp_impl->device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(m_uqp_impl->commandQueue.GetAddressOf()));
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-	desc.NumDescriptors = m_uqp_impl->FrameCount;
+	desc.NumDescriptors = GetFrameCount();
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-#ifdef _WINDOWGENERATE
 
-	DXGI_SWAP_CHAIN_DESC swapChaindesc = {};
-	swapChaindesc.BufferCount = m_uqp_impl->FrameCount;
-	swapChaindesc.BufferDesc.Width = vwp_application.lock()->GetWindow()->GetSize().x;
-	swapChaindesc.BufferDesc.Height = vwp_application.lock()->GetWindow()->GetSize().y;
-	swapChaindesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChaindesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChaindesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChaindesc.OutputWindow = vwp_application.lock()->GetWindow()->GetHandle();
-	swapChaindesc.Windowed = TRUE;
-	swapChaindesc.SampleDesc.Count = 1;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
-	//Create SwapChain.
-	hr = factory4->CreateSwapChain(m_uqp_impl->commandQueue.Get(), &swapChaindesc, swapChain.GetAddressOf());
-	assert(hr== S_OK);
-	
-	// To IDXGISwapChain3.
-	hr = swapChain->QueryInterface(IID_PPV_ARGS(m_uqp_impl->swapChain3.GetAddressOf()));
-	assert(hr == S_OK);
-
-	//Get FrameBufferIndex.
-	m_uqp_impl->frameIndex = m_uqp_impl->swapChain3->GetCurrentBackBufferIndex();
-
-	hr = m_uqp_impl->device->CreateDescriptorHeap(&desc, IID_PPV_ARGS(m_uqp_impl->renderTargetDescripterHeap.GetAddressOf()));
-	assert(hr == S_OK);
-
-#endif // !_EDITORBUILD
 
 
 
@@ -240,31 +341,9 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 		m_uqp_impl->device->CreateDepthStencilView(m_uqp_impl->depthStencil.Get(), &dsvDesc, m_uqp_impl->depthStencilDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 	}
 
-#ifdef _WINDOWGENERATE
-	D3D12_CPU_DESCRIPTOR_HANDLE handle;
-	handle = m_uqp_impl->renderTargetDescripterHeap->GetCPUDescriptorHandleForHeapStart();
-
-#endif
-	D3D12_RENDER_TARGET_VIEW_DESC renderTargetViewdesc = {};
-	renderTargetViewdesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	renderTargetViewdesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	renderTargetViewdesc.Texture2D.MipSlice = 0;
-	renderTargetViewdesc.Texture2D.PlaneSlice = 0;
-
-	for (std::uint32_t i = 0; i < m_uqp_impl->FrameCount; i++)
+	for (std::uint32_t i = 0; i < GetFrameCount(); i++)
 	{
 		HRESULT hr;
-#ifdef _WINDOWGENERATE
-
-		// Get BackBuffer
-		hr = m_uqp_impl->swapChain3->GetBuffer(i, IID_PPV_ARGS(m_uqp_impl->renderTargets[i].GetAddressOf()));
-		assert(hr == S_OK);
-		// Create RTV
-		m_uqp_impl->device->CreateRenderTargetView(m_uqp_impl->renderTargets[i].Get(), &renderTargetViewdesc, handle);
-		handle.ptr += m_uqp_impl->renderTargetDescriptorSize;
-#else
-
-#endif // !_EDITORBUILD
 
 		hr = m_uqp_impl->device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_uqp_impl->commandAllocator[i].GetAddressOf()));
 		assert(hr == S_OK);
@@ -285,26 +364,20 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 
 	D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
 	m_uqp_impl->device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_uqp_impl->clearRootSignature));
-#ifdef _WINDOWGENERATE
-	//for clear
-	m_uqp_impl->clearCommandList = CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
-	CommandListHelper::Close(m_uqp_impl->clearCommandList);
 
-
-#endif // !_EDITORBUILD
 
 	//for presentBarrier
-	m_uqp_impl->presentCommandList = CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	m_uqp_impl->presentCommandList = CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 	CommandListHelper::Close(m_uqp_impl->presentCommandList);
 	//for upload 
-	m_uqp_impl->uploadCommandList=CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	m_uqp_impl->uploadCommandList=CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 	CommandListHelper::Close(m_uqp_impl->uploadCommandList);
 	//for draw
-	m_uqp_impl->drawCommandList= CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	m_uqp_impl->drawCommandList= CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 	CommandListHelper::Close(m_uqp_impl->drawCommandList);
 
 	//for gui
-	m_uqp_impl->guiCommandList=CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	m_uqp_impl->guiCommandList=CommandListHelper::CreateSimple(*m_uqp_impl->device.Get(), *m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 	CommandListHelper::Close(m_uqp_impl->guiCommandList);
 
 	// シザー矩形を設定
@@ -343,6 +416,11 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Release()
 	m_uqp_impl->vlp_descripterManager = nullptr;
 }
 
+void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)
+{
+	
+}
+
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::ClearDepthStancil(const float arg_depth)
 {
 	m_uqp_impl->p_currentCommandList->ClearDepthStencilView(m_uqp_impl->defaultDSVHandle, D3D12_CLEAR_FLAG_DEPTH, arg_depth, 0, 0, nullptr);
@@ -367,13 +445,7 @@ ID3D12CommandQueue& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetCommandQue
 
 ID3D12CommandAllocator& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetCommandAllocator()
 {
-#ifdef _WINDOWGENERATE
-	return *m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get();
-#else
-	return *m_uqp_impl->commandAllocator[0].Get();
-#endif // !_EDITORBUILD
-
-	
+	return *m_uqp_impl->commandAllocator[GetFrameIndex()].Get();	
 }
 
 ID3D12CommandAllocator& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetCommandAllocator(const std::uint32_t arg_index)
@@ -396,12 +468,11 @@ ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetUpl
 	return *m_uqp_impl->uploadCommandList.Get();
 }
 
-#ifdef _WINDOWGENERATE
 ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetClearCommandList()
 {
-	return *m_uqp_impl->clearCommandList.Get();
+	throw new ButiException(L"ClearCommandは存在しません");
+	return *m_uqp_impl->uploadCommandList.Get();
 }
-#endif // !_EDITORBUILD
 
 
 Microsoft::WRL::ComPtr<ID3D12RootSignature> ButiEngine::ButiRendering::GraphicDevice_Dx12::CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc)
@@ -499,12 +570,12 @@ ID3D12Fence& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFence()
 	return *m_uqp_impl->fence.Get();
 }
 
-#ifdef _WINDOWGENERATE
 IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 {
-	return *m_uqp_impl->swapChain3.Get();
+	throw new ButiException(L"SwapChainは存在しません");
+	IDXGISwapChain* p_d=nullptr;
+	return *p_d;
 }
-#endif
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 {
@@ -528,9 +599,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 			std::int32_t i = 0;
 		}
 	}
-#ifdef _WINDOWGENERATE
-m_uqp_impl->frameIndex = m_uqp_impl->swapChain3->GetCurrentBackBufferIndex();
-#endif // !_EDITORBUILD
 
 	
 
@@ -541,16 +609,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 {
 
 	m_uqp_impl->currentPipelineState = nullptr;
-	auto hr = m_uqp_impl->presentCommandList->Reset(m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get(), nullptr);
-#ifdef _WINDOWGENERATE
-
-	//プレゼント用のバリアを張る
-	auto desc = ResourceBarrierHelper::GetResourceBarrierTransition(m_uqp_impl->renderTargets[m_uqp_impl->frameIndex].Get(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-	m_uqp_impl->presentCommandList->ResourceBarrier(1,
-		&desc);
-
-#endif
+	auto hr = m_uqp_impl->presentCommandList->Reset(m_uqp_impl->commandAllocator[GetFrameIndex()].Get(), nullptr);
 	SetCommandList(m_uqp_impl->presentCommandList.Get());
 	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
 		itr->p_outputResource->CopyForOutput();
@@ -561,12 +620,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 	if (m_uqp_impl->vec_drawCommandLists.size()) {
 		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
 	}
-	
-#ifdef _WINDOWGENERATE
-	hr = m_uqp_impl->swapChain3->Present(0, 0);
-#endif // !_EDITORBUILD
-
-	
 	WaitGPU();
 	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
 		auto res = itr->p_outputResource;
@@ -599,7 +652,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawEnd()
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::StartGUICommand()
 {
-	CommandListHelper::Reset(m_uqp_impl->guiCommandList,*m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	CommandListHelper::Reset(m_uqp_impl->guiCommandList,*m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 	SetCommandList(m_uqp_impl->guiCommandList.Get());
 }
 
@@ -612,32 +665,12 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::EndGUICommand()
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::Reset()
 {
-	m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex]->Reset();
+	m_uqp_impl->commandAllocator[GetFrameIndex()]->Reset();
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::ClearWindow()
 {
-	m_uqp_impl->clearCommandList->Reset(m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get(), nullptr);
-
-	m_uqp_impl->clearCommandList->SetGraphicsRootSignature(m_uqp_impl->clearRootSignature.Get());
-
-
-	D3D12_RESOURCE_BARRIER desc = ResourceBarrierHelper::GetResourceBarrierTransition(m_uqp_impl->renderTargets[m_uqp_impl->frameIndex].Get(),
-		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	m_uqp_impl->clearCommandList->ResourceBarrier(1,
-		&desc);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle = m_uqp_impl->renderTargetDescripterHeap->GetCPUDescriptorHandleForHeapStart();
-	rtvHandle.ptr += m_uqp_impl->frameIndex * m_uqp_impl->renderTargetDescriptorSize;
-
-	m_uqp_impl->clearCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &m_uqp_impl->defaultDSVHandle);
-
-
-	m_uqp_impl->clearCommandList->ClearRenderTargetView(rtvHandle, &clearColor.x, 0, nullptr);
-	m_uqp_impl->clearCommandList->ClearDepthStencilView(m_uqp_impl->defaultDSVHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-	m_uqp_impl->clearCommandList->Close();
-	SetCommandList(m_uqp_impl->clearCommandList.Get());
-	InsertCommandList();
+	
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList(ID3D12GraphicsCommandList* arg_currentCommandList, const std::int32_t index)
@@ -696,7 +729,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResourceUpload()
 	if (!m_uqp_impl->vec_uploadResources.size()) {
 		return;
 	}
-	CommandListHelper::Reset(m_uqp_impl->uploadCommandList,*m_uqp_impl->commandAllocator[m_uqp_impl->frameIndex].Get());
+	CommandListHelper::Reset(m_uqp_impl->uploadCommandList,*m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 
 	SetCommandList(m_uqp_impl->uploadCommandList.Get());
 
@@ -749,21 +782,13 @@ const D3D12_RECT& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetScissorRect(
 
 std::uint32_t ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFrameCount() const
 {
-	{
-		return m_uqp_impl-> FrameCount;
-	}
+	return 1;
+	
 }
 
 std::uint32_t ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFrameIndex() const
 {
-	{
-#ifdef _WINDOWGENERATE
-		return m_uqp_impl->frameIndex;
-#else
-		return 0;
-#endif // !_WINDOWGENERATE
-
-	}
+	return 0;
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv)
@@ -787,4 +812,13 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::DisSetDepthStencil()
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResetPipeLine()
 {
 	m_uqp_impl->currentPipelineState = nullptr;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::GraphicDevice_Dx12> ButiEngine::ButiRendering::CreateGraphicDeviceDx12(Value_weak_ptr<IApplication> arg_vwp_application, const bool arg_isWindowApp)
+{
+	if(arg_isWindowApp)
+		return ObjectFactory::Create<GraphicDevice_Dx12_WithWindow>(arg_vwp_application);
+	else {
+		return ObjectFactory::Create<GraphicDevice_Dx12>(arg_vwp_application);
+	}
 }
