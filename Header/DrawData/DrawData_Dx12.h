@@ -63,6 +63,7 @@ public:
 
 	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
+		drawData.vlp_transform = arg_transform;
 	}
 
 	inline float GetZ(const Matrix4x4& arg_vpMatrix)override {
@@ -90,6 +91,7 @@ public:
 
 	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
+		drawData.vlp_transform = arg_transform;
 	}
 	Value_ptr<IBoneObject>& GetModelBone() override {
 		return vlp_bone;
