@@ -309,24 +309,24 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_default()
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoard()
 {
-	drawData.GetCBuffer()->Get().World = drawData.transform * vwp_graphicDevice.lock()->GetViewMatrixBillBoard();
+	drawData.GetCBuffer()->Get().World = vwp_graphicDevice.lock()->GetViewMatrixBillBoard()* drawData.transform;
 
 }
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoardX()
 {
-	drawData.GetCBuffer()->Get().World = drawData.transform * vwp_graphicDevice.lock()->GetViewMatrixBillBoardX();
+	drawData.GetCBuffer()->Get().World = vwp_graphicDevice.lock()->GetViewMatrixBillBoardX()* drawData.transform;
 
 }
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoardY()
 {
-	drawData.GetCBuffer()->Get().World = drawData.transform * vwp_graphicDevice.lock()->GetViewMatrixBillBoardY();
+	drawData.GetCBuffer()->Get().World = vwp_graphicDevice.lock()->GetViewMatrixBillBoardY()* drawData.transform;
 }
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoardZ()
 {
-	drawData.GetCBuffer()->Get().World = drawData.transform * vwp_graphicDevice.lock()->GetViewMatrixBillBoardZ();
+	drawData.GetCBuffer()->Get().World = vwp_graphicDevice.lock()->GetViewMatrixBillBoardZ()* drawData.transform;
 }
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_RemoveDecimalPart()
