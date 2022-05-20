@@ -309,7 +309,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_default()
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoard()
 {
-	drawData.GetCBuffer()->Get().World = vwp_graphicDevice.lock()->GetViewMatrixBillBoard()* drawData.transform;
+	drawData.GetCBuffer()->Get().World = drawData.transform* vwp_graphicDevice.lock()->GetViewMatrixBillBoard();
 
 }
 

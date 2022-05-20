@@ -100,38 +100,24 @@ struct ObjectInformation {
 		return output;
 	}
 };
+constexpr std::int32_t gausOffsetLength=0x10;
 struct GausVariable {
 
 	GausVariable() {
 	}
 
-	Vector4 gausOffset[16];
+	Vector4 gausOffset[gausOffsetLength];
 	float GaussianDistribution(const Vector2& pos, float rho);
 
 	void CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation);
 	bool ShowUI() {
-		static float deviation = 0.0f;
-		static Vector2 dir = Vector2(1, 0);
-		static Vector2 scale = Vector2(480, 270);
-		bool output = false;
-		GUI::Text("Deviation");
-		if (GUI::DragFloat("##deviation", deviation, 0.1f, 0.0f, 1000.0f)) {
-			output = true;
-		}
-		GUI::Text("Direction");
-		if (GUI::DragFloat2("##dir", dir, 0.1f, 0.0f, 1000.0f)) {
-			output = true;
-		}
-		GUI::Text("Scale");
-		if (GUI::DragFloat2("##scale", scale, 0.1f, 0.0f, 1000.0f)) {
-			output = true;
+		bool isChanged = false;
+
+		for (std::int32_t i = 0; i < gausOffsetLength; i++) {
+			isChanged |= GUI::DragFloat4("GausOffset[" + std::to_string(i) + "]", gausOffset[i], 0.01f, -100.0f, 100.0f);
 		}
 
-		if (output) {
-			CalcGaus(scale.x, scale.y, dir, deviation);
-		}
-
-		return output;
+		return isChanged;
 	}
 	template<class Archive>
 	void serialize(Archive& archive)
