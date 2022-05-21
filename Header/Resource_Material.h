@@ -19,6 +19,7 @@ struct Resource_Material :public IResource_Material
 	Value_weak_ptr<IResource_Texture>GetTexture(const std::int32_t index = 0)const;
 	Value_weak_ptr<IResource_Texture>GetSphereTexture()const;
 	void SetTexture(const std::uint32_t arg_index, Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
+	void SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures)override;
 	void SetSphereTexture(Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
 	const List<Value_weak_ptr<IResource_Texture>>& GetTextures()const override {
 		return list_vwp_texture;

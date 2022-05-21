@@ -194,6 +194,7 @@ public:
 	virtual std::uint32_t GetTextureCount()const = 0;
 	virtual void SetMaterialIndex(const std::int32_t arg_index) = 0;
 	virtual void SetTexture(const std::uint32_t arg_index, Value_weak_ptr<IResource_Texture>  arg_vwp_texture) = 0;
+	virtual void SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures) = 0;
 	virtual void SetSphereTexture(Value_weak_ptr<IResource_Texture>  arg_vwp_texture) = 0;
 	virtual void SetMaterialVariable(const MaterialValue& arg_var) = 0;
 	virtual MaterialValue_Deferred GetMaterialDeferredValue()const = 0;

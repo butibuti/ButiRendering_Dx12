@@ -20,9 +20,9 @@ void ButiEngine::ButiRendering::MeshHelper::ReverseWinding(std::vector<Vertex::V
 }
 
 
-ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleTangent(std::int32_t i, std::int32_t tessellation)
+ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleTangent(std::int32_t i, std::int32_t arg_tessellation)
 {
-	float angle = (i * BM_2PI / tessellation) + BM_PIDIV2;
+	float angle = (i * BM_2PI / arg_tessellation) + BM_PIDIV2;
 	float dx, dz;
 
 	MathHelper::SinCos(dx, dz, angle);
@@ -31,9 +31,9 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleTangent(std:
 	return v;
 }
 
-ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleVector(std::int32_t size, std::int32_t tessellation)
+ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleVector(std::int32_t arg_size, std::int32_t arg_tessellation)
 {
-	float angle = size * BM_2PI / tessellation;
+	float angle = arg_size * BM_2PI / arg_tessellation;
 	float dx, dz;
 
 	MathHelper::SinCos(dx, dz, angle);
@@ -45,7 +45,7 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleVector(std::
 
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(Vector3 point1, Vector3 point2, Vector3 point3, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(const Vector3& arg_point1, const Vector3& arg_point2, const Vector3& arg_point3, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices{
 
@@ -56,11 +56,11 @@ void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(Vector3 point1, Vecto
 		0,1,2
 	};
 	VertexAttachColor(arg_colors, vertices);
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 size, const std::vector<Color>& arg_colors,bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
 	enum class ColorAttachType {
 		SingleColor, AllColor, FourColor, SixColor
@@ -68,19 +68,19 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 size, 
 	ColorAttachType colorType = ColorAttachType::SingleColor;
 	if (arg_colors.size() == 4)colorType = ColorAttachType::FourColor;
 	else if (arg_colors.size() == 6)colorType = ColorAttachType::SixColor;
-	size.x *= 0.5f;
-	size.y *= 0.5f;
-	size.z *= 0.5f;
+	arg_size.x *= 0.5f;
+	arg_size.y *= 0.5f;
+	arg_size.z *= 0.5f;
 
 	std::vector<Vector3> PosVec = {
-			{ Vector3(-size.x, size.y, -size.z) },
-			{ Vector3(size.x,size.y, -size.z) },
-			{ Vector3(-size.x, -size.y, -size.z) },
-			{ Vector3(size.x, -size.y, -size.z) },
-			{ Vector3(size.x,size.y, size.z) },
-			{ Vector3(-size.x,size.y, size.z) },
-			{ Vector3(size.x, -size.y, size.z) },
-			{ Vector3(-size.x, -size.y, size.z) },
+			{ Vector3(-arg_size.x, arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x,arg_size.y, -arg_size.z) },
+			{ Vector3(-arg_size.x, -arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x, -arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x,arg_size.y, arg_size.z) },
+			{ Vector3(-arg_size.x,arg_size.y, arg_size.z) },
+			{ Vector3(arg_size.x, -arg_size.y, arg_size.z) },
+			{ Vector3(-arg_size.x, -arg_size.y, arg_size.z) },
 	};
 	std::vector<std::uint32_t> PosIndeces = {
 		0, 1, 2, 3,
@@ -114,7 +114,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 size, 
 			Vertex::Vertex_UV_Normal_Tangent_Color Data;
 			Data.position = PosVec[PosIndeces[BasePosCount + j]];
 			Data.uv = vec_uv.at(j);
-			if (flat) {
+			if (arg_flat) {
 				//フラット表示の場合は法線は頂点方向にする
 				Data.normal = Data.position;
 				Data.normal.Normalize();
@@ -146,11 +146,11 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 size, 
 	if(colorType==ColorAttachType::SingleColor)
 	VertexAttachColor(arg_colors, vertices);
 
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData, bool flat)
+void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, const bool arg_flat)
 {
 	enum class ColorAttachType {
 	SingleColor,AllColor,FourColor,SixColor
@@ -158,17 +158,17 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 size, const std::
 	ColorAttachType colorType=ColorAttachType::SingleColor;
 	if (arg_colors.size() == 4)colorType = ColorAttachType::FourColor;
 	else if (arg_colors.size() == 6)colorType = ColorAttachType::SixColor;
-	size*= 0.5f;
+	arg_size*= 0.5f;
 
 	std::vector<Vector3> PosVec = {
-			{ Vector3(-size.x, size.y, -size.z) },
-			{ Vector3(size.x,size.y, -size.z) },
-			{ Vector3(-size.x, -size.y, -size.z) },
-			{ Vector3(size.x, -size.y, -size.z) },
-			{ Vector3(size.x,size.y, size.z) },
-			{ Vector3(-size.x,size.y, size.z) },
-			{ Vector3(size.x, -size.y, size.z) },
-			{ Vector3(-size.x, -size.y, size.z) },
+			{ Vector3(-arg_size.x, arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x,arg_size.y, -arg_size.z) },
+			{ Vector3(-arg_size.x, -arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x, -arg_size.y, -arg_size.z) },
+			{ Vector3(arg_size.x,arg_size.y, arg_size.z) },
+			{ Vector3(-arg_size.x,arg_size.y, arg_size.z) },
+			{ Vector3(arg_size.x, -arg_size.y, arg_size.z) },
+			{ Vector3(-arg_size.x, -arg_size.y, arg_size.z) },
 	};
 	std::vector<std::uint32_t> PosIndeces = {
 		0, 1, 2, 3,
@@ -210,7 +210,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 size, const std::
 			Vertex::Vertex_UV_Normal_Tangent_Color Data;
 			Data.position = PosVec[PosIndeces[BasePosCount + j]];
 			Data.uv = vec_uv.at(j);
-			if (flat) {
+			if (arg_flat) {
 				//フラット表示の場合は法線は頂点方向にする
 				Data.normal = Data.position;
 				Data.normal.Normalize();
@@ -234,45 +234,45 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 size, const std::
 
 	}
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x, size.y, -size.z);
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, size.z);
-	outputMeshData.eightCorner.up_right_back = Vector3(size.x, size.y, -size.z);
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	outputMeshData.eightCorner.down_left_back = Vector3(-size.x, -size.y, -size.z);
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x, -size.y, size.z);
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, -size.z);
-	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
 	if (colorType == ColorAttachType::SingleColor)
 		VertexAttachColor(arg_colors, vertices);
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	if (tessellation < 3) {
-		CreateCube(size, arg_colors, outputMeshData, true);
+	if (arg_tessellation < 3) {
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData, true);
 		return;
 	}
-	size = size * 0.5f;
+	arg_size = arg_size * 0.5f;
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x,  size.y, -size.z);
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, size.z);
-	outputMeshData.eightCorner.up_right_back = Vector3( size.x, size.y, -size.z);
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x,  arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3( arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	outputMeshData.eightCorner.down_left_back =  Vector3(-size.x,-size.y, -size.z);
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x,-size.y, size.z);
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, -size.z);
-	outputMeshData.eightCorner.down_right_front =Vector3(size.x, -size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_back =  Vector3(-arg_size.x,-arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x,-arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_front =Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
-	size_t verticalSegments = tessellation;
-	size_t horizontalSegments = tessellation * 2;
+	size_t verticalSegments = arg_tessellation;
+	size_t horizontalSegments = arg_tessellation * 2;
 	for (size_t i = 0; i <= verticalSegments; i++)
 	{
 
@@ -301,7 +301,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 size, std::int3
 			dz *= dxz;
 
 			Vector3 normal = Vector3(dx, dy, dz).GetNormalize();
-			Vector3 pos = Vector3(dx * size.x, dy * size.y, dz * size.z);
+			Vector3 pos = Vector3(dx * arg_size.x, dy * arg_size.y, dz * arg_size.z);
 			Vector3 tangent= normal != Vector3Const::YAxis?  normal.GetCross(Vector3Const::YAxis): Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v), normal,tangent));
 		}
@@ -327,32 +327,32 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 size, std::int3
 
 
 
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	if (tessellation < 3) {
-		CreateCube(size, arg_colors, outputMeshData, true);
+	if (arg_tessellation < 3) {
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData, true);
 		return;
 	}
-	size = size * 0.5f;
+	arg_size = arg_size * 0.5f;
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x, size.y, -size.z);
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, size.z);
-	outputMeshData.eightCorner.up_right_back = Vector3(size.x, size.y, -size.z);
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	outputMeshData.eightCorner.down_left_back = Vector3(-size.x, -size.y, -size.z);
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x, -size.y, size.z);
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, -size.z);
-	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
-	size_t verticalSegments = tessellation;
-	size_t horizontalSegments = tessellation * 2;
+	size_t verticalSegments = arg_tessellation;
+	size_t horizontalSegments = arg_tessellation * 2;
 	for (size_t i = 0; i <= verticalSegments; i++)
 	{
 
@@ -367,7 +367,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 size
 		Vector3 CenterPos;
 
 		if (i == 0||i== verticalSegments) {
-			auto pos = Vector3(0, dy * size.y, 0);
+			auto pos = Vector3(0, dy * arg_size.y, 0);
 			Vector3 normal = pos.GetNormalize();
 			Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) : Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(0, v), normal,tangent));
@@ -386,7 +386,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 size
 			dx *= dxz;
 			dz *= dxz;
 
-			auto pos = Vector3(dx * size.x, dy * size.y, dz * size.z);
+			auto pos = Vector3(dx * arg_size.x, dy * arg_size.y, dz * arg_size.z);
 			Vector3 normal = pos.GetNormalize();
 			Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) :Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v), normal,tangent));
@@ -398,19 +398,19 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 size
 	}
 
 
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 size, std::int32_t tessellation, bool isTop)
+void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 arg_size, const std::int32_t arg_tessellation, const bool arg_isTop)
 {
 	// indices.
-	for (size_t i = 0; i < tessellation - 2; i++)
+	for (size_t i = 0; i < arg_tessellation - 2; i++)
 	{
-		size_t i1 = (i + 1) % tessellation;
-		size_t i2 = (i + 2) % tessellation;
+		size_t i1 = (i + 1) % arg_tessellation;
+		size_t i2 = (i + 2) % arg_tessellation;
 
-		if (isTop)
+		if (arg_isTop)
 		{
 			std::swap(i1, i2);
 		}
@@ -425,17 +425,17 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<
 	Vector2 textureScale =Vector2 (-0.5f,-0.5f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? normal.GetCross(Vector3Const::YAxis) :Vector3Const::XAxis;
 
-	if (!isTop)
+	if (!arg_isTop)
 	{
 		normal = -normal;
 		textureScale.x *= -1;
 	}
 	// vertices.
-	for (size_t i = 0; i < tessellation; i++)
+	for (size_t i = 0; i < arg_tessellation; i++)
 	{
-		Vector3 circleVector = GetCircleVector(i, tessellation);
+		Vector3 circleVector = GetCircleVector(i, arg_tessellation);
 
-		Vector3 position = (circleVector * size.x/2) + (normal * size.y);
+		Vector3 position = (circleVector * arg_size.x/2) + (normal * arg_size.y);
 
 		Vector2 textureCoordinate = Vector2(circleVector.x,circleVector.z) *(textureScale+Vector2(0.5,0.5)); 
 
@@ -443,72 +443,72 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<
 	}
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 size, std::int32_t tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	size.y /= 2;
+	arg_size.y /= 2;
 	std::vector<std::uint32_t> vec_index;
-	Vector3 topOffset = Vector3(0,size.y,0) ;
+	Vector3 topOffset = Vector3(0,arg_size.y,0) ;
 
-	float radius = size.x / 2;
-	size_t stride = tessellation + 1;
+	float arg_radius = arg_size.x / 2;
+	size_t stride = arg_tessellation + 1;
 
-	for (size_t i = 0; i <= tessellation; i++)
+	for (size_t i = 0; i <= arg_tessellation; i++)
 	{
-		Vector3 circlevec = GetCircleVector(i, tessellation);
+		Vector3 circlevec = GetCircleVector(i, arg_tessellation);
 
-		Vector3 sideOffset = circlevec * radius;
+		Vector3 sideOffset = circlevec * arg_radius;
 
-		float u = (float)i / tessellation;
+		float u = (float)i / arg_tessellation;
 
 		Vector2 textureCoordinate =Vector2(u,u);
 		textureCoordinate.y += 1.0f;
 		Vector3 pt = sideOffset - topOffset;
 
-		Vector3 normal = GetCircleTangent(i, tessellation).GetCross( topOffset - pt);
+		Vector3 normal = GetCircleTangent(i, arg_tessellation).GetCross( topOffset - pt);
 		normal.Normalize();
 		Vector3 tangent = normal != Vector3Const::YAxis ?  normal.GetCross(Vector3Const::YAxis) :  Vector3Const::XAxis;
-		outputMeshData.vertices .push_back(Vertex::Vertex_UV_Normal_Tangent_Color(topOffset, Vector2(0,0), normal,tangent));
-		outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pt, textureCoordinate, normal,tangent ));
+		arg_ref_outputMeshData.vertices .push_back(Vertex::Vertex_UV_Normal_Tangent_Color(topOffset, Vector2(0,0), normal,tangent));
+		arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pt, textureCoordinate, normal,tangent ));
 		
 		vec_index.push_back((std::uint32_t)(i * 2));
 		vec_index.push_back((std::uint32_t)((i * 2 + 3) % (stride * 2)));
 		vec_index.push_back((std::uint32_t)((i * 2 + 1) % (stride * 2)));
 	}
 
-	CreateCylinderCap(arg_colors, outputMeshData.vertices, vec_index, size, tessellation, false);
+	CreateCylinderCap(arg_colors, arg_ref_outputMeshData.vertices, vec_index, arg_size, arg_tessellation, false);
 	//RHからLHに変更
-	ReverseWinding(outputMeshData.vertices, vec_index);
+	ReverseWinding(arg_ref_outputMeshData.vertices, vec_index);
 
-	VertexFlatConverter(outputMeshData.vertices);
-	VertexAttachColor(arg_colors,outputMeshData.vertices);
-	outputMeshData.SetIndex(vec_index);
+	VertexFlatConverter(arg_ref_outputMeshData.vertices);
+	VertexAttachColor(arg_colors,arg_ref_outputMeshData.vertices);
+	arg_ref_outputMeshData.SetIndex(vec_index);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 pointA, Vector3 pointB, std::int32_t tessellation, bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, const Vector3& arg_pointA, const Vector3& arg_pointB, const std::int32_t arg_tessellation, const bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	if (tessellation < 3) {
-		CreateCube(size, arg_colors, outputMeshData,true);
+	if (arg_tessellation < 3) {
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData,true);
 		return;
 	}
-	size = size * 0.5f;
+	arg_size = arg_size * 0.5f;
 
 
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x, size.y, -size.z)+pointA;
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, size.z) + pointA;
-	outputMeshData.eightCorner.up_right_back = Vector3(size.x, size.y, -size.z) + pointA;
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, size.z) + pointA;
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z)+arg_pointA;
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z) + arg_pointA;
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
 
-	outputMeshData.eightCorner.down_left_back = Vector3(-size.x, -size.y, -size.z) + pointB;
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x, -size.y, size.z) + pointB;
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, -size.z) + pointB;
-	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, size.z) + pointB;
+	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
 
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
 
-	size_t verticalSegments = tessellation;
-	size_t horizontalSegments = tessellation * 2;
+	size_t verticalSegments = arg_tessellation;
+	size_t horizontalSegments = arg_tessellation * 2;
 	for (size_t i = 0; i <= verticalSegments; i++)
 	{
 
@@ -520,13 +520,13 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 
 
 		MathHelper::SinCos(dy, dxz, latitude);
 
-		Vector3 CenterPos = pointA;
+		Vector3 CenterPos = arg_pointA;
 		if (i >= (verticalSegments / 2)) {
-			CenterPos = pointB;
+			CenterPos = arg_pointB;
 		}
 
-		float SphereTotalFront = size.x * BM_PI*0.5f;
-		float SylinderTotalFront = abs(pointA.y - pointB.y);
+		float SphereTotalFront = arg_size.x * BM_PI*0.5f;
+		float SylinderTotalFront = abs(arg_pointA.y - arg_pointB.y);
 		float SphereRate = SphereTotalFront / (SphereTotalFront + SylinderTotalFront) *0.5f;
 
 		if (v <= 0.5f) {
@@ -550,7 +550,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 
 			dz *= dxz;
 
 			auto normal = Vector3(dx, dy, dz);
-			auto pos = Vector3(dx * size.x + CenterPos.x, dy * size.x + CenterPos.y, dz * size.x + CenterPos.z);
+			auto pos = Vector3(dx * arg_size.x + CenterPos.x, dy * arg_size.x + CenterPos.y, dz * arg_size.x + CenterPos.z);
 			Vector3 tangent = normal != Vector3Const::YAxis ?  normal.GetCross(Vector3Const::YAxis) :  Vector3Const::XAxis;
 			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(pos, Vector2(u, v),normal,tangent));
 		}
@@ -587,43 +587,43 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 size, Vector3 
 
 
 
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 size,const Vector3 offset,const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate,  const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 arg_size, const const Vector3& offset, const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
 	ButiRendering::BoxSurface surface;
-	surface.up = size.y * 0.5f+tilt;
-	surface.down = -size.y * 0.5f;
-	surface.right = size.x * 0.5f;
-	surface.right = -size.x * 0.5f;
+	surface.up = arg_size.y * 0.5f+tilt;
+	surface.down = -arg_size.y * 0.5f;
+	surface.right = arg_size.x * 0.5f;
+	surface.right = -arg_size.x * 0.5f;
 	surface.front = 0;
 	surface.back = 0;
 
 
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
-	float horizontalUnit = size.y / (arg_horizontalSeparate);
-	float verticalUnit = size.x / (arg_verticalSeparate);
+	float horizontalUnit = arg_size.y / (arg_horizontalSeparate);
+	float verticalUnit = arg_size.x / (arg_verticalSeparate);
 
 
 
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x, size.y, 0)*0.5f;
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.up_right_back = Vector3(size.x, size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0)*0.5f;
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
 
-	outputMeshData.eightCorner.down_left_back = Vector3(-size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0, 0, -1.0f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	for (std::uint32_t i = 0; i < arg_horizontalSeparate + 1; i++) {
 		for (std::int32_t j = 0; j < arg_verticalSeparate + 1; j++) {
-			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - size.x / 2 +tilt*j , horizontalUnit * j - size.y / 2, 0)+offset, Vector2((verticalUnit * i / size.x), (1 - horizontalUnit * j / size.y)) * UVMax, normal,tangent));
+			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - arg_size.x / 2 + tilt * j, horizontalUnit * j - arg_size.y / 2, 0) + offset, Vector2((verticalUnit * i / arg_size.x), (1 - horizontalUnit * j / arg_size.y)) * UVMax, normal, tangent));
 		}
 	}
 
@@ -641,48 +641,48 @@ void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 size,const
 		}
 	}
 
-	if (flat)
+	if (arg_flat)
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 size, const Vector3 offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 arg_size, const const Vector3& offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
 	ButiRendering::BoxSurface surface;
-	surface.up = size.y * 0.5f + tilt;
-	surface.down = -size.y * 0.5f;
-	surface.right = size.x * 0.5f;
-	surface.right = -size.x * 0.5f;
+	surface.up = arg_size.y * 0.5f + tilt;
+	surface.down = -arg_size.y * 0.5f;
+	surface.right = arg_size.x * 0.5f;
+	surface.right = -arg_size.x * 0.5f;
 	surface.front = 0;
 	surface.back = 0;
 
 
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
-	float horizontalUnit = size.y / (arg_horizontalSeparate);
-	float verticalUnit = size.x / (arg_verticalSeparate);
+	float horizontalUnit = arg_size.y / (arg_horizontalSeparate);
+	float verticalUnit = arg_size.x / (arg_verticalSeparate);
 
 
 
 
-	outputMeshData.eightCorner.up_left_back = Vector3(-size.x, size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.up_left_front = Vector3(-size.x, size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.up_right_back = Vector3(size.x, size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.up_right_front = Vector3(size.x, size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
 
-	outputMeshData.eightCorner.down_left_back = Vector3(-size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_left_front = Vector3(-size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_right_back = Vector3(size.x, -size.y, 0) * 0.5f;
-	outputMeshData.eightCorner.down_right_front = Vector3(size.x, -size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0,0,-1.0f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	for (std::uint32_t i = 0; i < arg_horizontalSeparate + 1; i++) {
 		for (std::int32_t j = 0; j < arg_verticalSeparate + 1; j++) {
-			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - size.x / 2 + tilt * j, horizontalUnit * j - size.y / 2, 0) + offset, Vector2((verticalUnit * i / size.x), (1 - horizontalUnit * j / size.y)) * UVMax, normal,tangent));
+			vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(verticalUnit * i - arg_size.x / 2 + tilt * j, horizontalUnit * j - arg_size.y / 2, 0) + offset, Vector2((verticalUnit * i / arg_size.x), (1 - horizontalUnit * j / arg_size.y)) * UVMax, normal,tangent));
 		}
 	}
 
@@ -707,27 +707,27 @@ void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 
 		}
 	}
 
-	if (flat)
+	if (arg_flat)
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 size, const std::vector<Color>& arg_colors, bool flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	size.x *= 0.5f;
-	size.y *= 0.5f;
+	arg_size.x *= 0.5f;
+	arg_size.y *= 0.5f;
 	Vector3 normal = Vector3(0, 0, -1.0f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices
 	{
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(0, size.y, 0.0f),Vector2(0.0f,0.0f),normal,tangent),//0
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(size.x, size.y*0.5f, 0.0f),Vector2(1.0f,0.0f),normal,tangent),//1
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(-size.x, size.y*0.5f, 0.0f),Vector2(0.0f,1.0f),normal,tangent),//2
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(size.x, -size.y*0.5f, 0.0f),Vector2(1.0f,1.0f),normal,tangent),//3
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(-size.x, -size.y*0.5f, 0.0f),Vector2(0.0f,1.0f),normal,tangent),//4
-		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(0, -size.y, 0.0f),Vector2(1.0f,1.0f),normal,tangent),//5
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(0, arg_size.y, 0.0f),Vector2(0.0f,0.0f),normal,tangent),//0
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(arg_size.x, arg_size.y*0.5f, 0.0f),Vector2(1.0f,0.0f),normal,tangent),//1
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(-arg_size.x, arg_size.y*0.5f, 0.0f),Vector2(0.0f,1.0f),normal,tangent),//2
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(arg_size.x, -arg_size.y*0.5f, 0.0f),Vector2(1.0f,1.0f),normal,tangent),//3
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(-arg_size.x, -arg_size.y*0.5f, 0.0f),Vector2(0.0f,1.0f),normal,tangent),//4
+		Vertex::Vertex_UV_Normal_Tangent_Color(Vector3(0, -arg_size.y, 0.0f),Vector2(1.0f,1.0f),normal,tangent),//5
 	};
 	std::vector<std::uint32_t>indices{
 		0,1,2,
@@ -735,11 +735,11 @@ void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 size, const s
 		2,3,4,
 		5,4,3
 	};
-	if(flat)
+	if(arg_flat)
 		VertexFlatConverter(vertices);
 	VertexAttachColor(arg_colors, vertices);
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
 
@@ -767,11 +767,11 @@ void ButiEngine::ButiRendering::MeshHelper::VertexAttachColor(const std::vector<
 	return;
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float radius, const std::uint32_t tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float arg_radius, const std::uint32_t	arg_tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	outputMeshData.Clear();
-	if (tessellation < 3) {
-		CreateCube(Vector3(radius, radius, radius), std::vector<Vector4>{}, outputMeshData, true);
+	arg_ref_outputMeshData.Clear();
+	if (arg_tessellation < 3) {
+		CreateCube(Vector3(arg_radius, arg_radius, arg_radius), std::vector<Vector4>{}, arg_ref_outputMeshData, true);
 		return;
 	}
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
@@ -780,18 +780,18 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float radi
 	std::vector<std::uint32_t> buffer;
 	Vector3 normal = Vector3(0, 0, 1.0f);
 
-	vertices.reserve(tessellation);
-	indices.reserve((size_t)(tessellation - 2) * 3);
-	remainVertexIndex.reserve(tessellation);
-	buffer.reserve(tessellation);
+	vertices.reserve(arg_tessellation);
+	indices.reserve((size_t)(arg_tessellation - 2) * 3);
+	remainVertexIndex.reserve(arg_tessellation);
+	buffer.reserve(arg_tessellation);
 
-	for (std::uint32_t i = 0; i < tessellation; i++) {
+	for (std::uint32_t i = 0; i < arg_tessellation; i++) {
 		float x = 0, y = 0;
 
-		MathHelper::SinCos(x, y, BM_2PI / tessellation * i);
+		MathHelper::SinCos(x, y, BM_2PI / arg_tessellation * i);
 		auto  vertex= Vertex::Vertex_UV_Normal_Tangent_Color();
 
-		vertex.position = Vector3(radius*x,radius*y,0);
+		vertex.position = Vector3(arg_radius*x,arg_radius*y,0);
 		vertex.uv = Vector2((1+x)/2,1- (1+y)/2);
 		vertex.normal = normal;
 
@@ -826,43 +826,43 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float radi
 	} while (remainVertexIndex.size()>=3);
 
 	ButiRendering::BoxSurface surface;
-	surface.up = radius;
-	surface.down = -radius;
-	surface.right = radius;
-	surface.left = -radius;
+	surface.up = arg_radius;
+	surface.down = -arg_radius;
+	surface.right = arg_radius;
+	surface.left = -arg_radius;
 	surface.front = 0;
 	surface.back = 0;
 
-	outputMeshData.vertices = vertices;
-	outputMeshData.SetIndex(indices);
+	arg_ref_outputMeshData.vertices = vertices;
+	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float angle, const float width, const float height, const float nearclip, const float farclip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float arg_angle, const float arg_width, const float arg_height, const float arg_nearClip, const float arg_farClip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	outputMeshData.Clear();
+	arg_ref_outputMeshData.Clear();
 	std::vector<std::uint32_t> vec_index;
 	Matrix4x4 projInv=Matrix4x4::PersepectiveFovLH(
-		MathHelper::ToRadian(angle),
-		width / height,
-		nearclip,
-		farclip
+		MathHelper::ToRadian(arg_angle),
+		arg_width / arg_height,
+		arg_nearClip,
+		arg_farClip
 	);
 
 	projInv.Inverse();
 
 
 	Vector3 top;//0
-	Vector3 leftup =( projInv*Vector4(-1, 1, 1,1)).GetVec3()*farclip;//1
-	Vector3 leftbottom =( projInv * Vector4(-1, -1, 1, 1)).GetVec3() * farclip;//2
-	Vector3 rightup = (projInv * Vector4(1, 1, 1, 1)).GetVec3() * farclip;//3
-	Vector3 rightbottom =( projInv * Vector4(1, -1, 1, 1)).GetVec3() * farclip;//4
+	Vector3 leftup =( projInv*Vector4(-1, 1, 1,1)).GetVec3()*arg_farClip;//1
+	Vector3 leftbottom =( projInv * Vector4(-1, -1, 1, 1)).GetVec3() * arg_farClip;//2
+	Vector3 rightup = (projInv * Vector4(1, 1, 1, 1)).GetVec3() * arg_farClip;//3
+	Vector3 rightbottom =( projInv * Vector4(1, -1, 1, 1)).GetVec3() * arg_farClip;//4
 
 	Vector3 normal = Vector3(0, 0, -1.0f);
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(top, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
-	outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(top, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(leftbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightup, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
+	arg_ref_outputMeshData.vertices.push_back(Vertex::Vertex_UV_Normal_Tangent_Color(rightbottom, Vector2(), Vector3(0, 0, -1), Vector3Const::XAxis));
 
 	vec_index.push_back(0);
 	vec_index.push_back(1);
@@ -887,31 +887,31 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float angl
 	vec_index.push_back(2);
 	vec_index.push_back(4);
 	vec_index.push_back(3);
-	outputMeshData.SetIndex(vec_index);
-	outputMeshData.eightCorner.up_left_front = Vector3(leftup);
-	outputMeshData.eightCorner.up_right_front = Vector3(rightup);
-	outputMeshData.eightCorner.down_left_front = Vector3(leftbottom);
-	outputMeshData.eightCorner.down_right_front = Vector3(rightbottom);
-	outputMeshData.eightCorner.up_left_back  =	Vector3();
-	outputMeshData.eightCorner.up_right_back =	Vector3();
-	outputMeshData.eightCorner.down_left_back =Vector3();
-	outputMeshData.eightCorner.down_right_back=Vector3();
+	arg_ref_outputMeshData.SetIndex(vec_index);
+	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(leftup);
+	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(rightup);
+	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(leftbottom);
+	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(rightbottom);
+	arg_ref_outputMeshData.eightCorner.up_left_back  =	Vector3();
+	arg_ref_outputMeshData.eightCorner.up_right_back =	Vector3();
+	arg_ref_outputMeshData.eightCorner.down_left_back =Vector3();
+	arg_ref_outputMeshData.eightCorner.down_right_back=Vector3();
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
 {
-	outputMeshData.Clear();
-	outputMeshData.vertices.reserve(arg_particleCount);
+	arg_ref_outputMeshData.Clear();
+	arg_ref_outputMeshData.vertices.reserve(arg_particleCount);
 	std::vector<std::uint32_t> vec_index;
 	vec_index.reserve(arg_particleCount);
 	auto vertex = Vertex::Vertex_UV_Normal_Tangent_Color();
 	//vertex.position = Vector3(10000000000000000, 10000000000000000, 1000000000000000);
 	//vertex.uv.x = 1.0;
 	for (std::uint32_t i = 0; i < arg_particleCount; i++) {
-		outputMeshData.vertices.push_back(vertex);
+		arg_ref_outputMeshData.vertices.push_back(vertex);
 		vec_index.push_back(i);
 	}
-	outputMeshData.SetIndex(vec_index);
+	arg_ref_outputMeshData.SetIndex(vec_index);
 }
 
 

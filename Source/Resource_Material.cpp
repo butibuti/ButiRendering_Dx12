@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include"ButiRendering_Dx12/Header/Resource_Material.h"
+#include "..\Header\Resource_Material.h"
 
 
 
@@ -62,6 +63,11 @@ void ButiEngine::ButiRendering::Resource_Material::SetTexture(const std::uint32_
 		}
 	}
 	list_vwp_texture[arg_index] = arg_vwp_texture;
+}
+
+void ButiEngine::ButiRendering::Resource_Material::SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures)
+{
+	list_vwp_texture = arg_list_vwp_textures;
 }
 
 void ButiEngine::ButiRendering::Resource_Material::SetSphereTexture(Value_weak_ptr<IResource_Texture> arg_vwp_texture)
