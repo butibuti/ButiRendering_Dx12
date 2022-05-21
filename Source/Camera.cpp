@@ -41,7 +41,12 @@ void ButiEngine::ButiRendering::Camera::BefDraw()
 	cameraPos= vlp_transform->GetWorldPosition();
 
 #ifdef _EDITORBUILD
-	viewMatrix = (Matrix4x4::Scale(Vector3{ 2, 2, 1 }) * vlp_transform->GetMatrix()).GetInverse();
+	if (!cameraViewProp.isPararell|| !cameraViewProp.projectionTexture.size()) {
+		viewMatrix = (Matrix4x4::Scale(Vector3{ 2, 2, 1 }) * vlp_transform->GetMatrix()).GetInverse();
+	}
+	else {
+		viewMatrix = vlp_transform->GetMatrix().GetInverse();
+	}
 #else
 	viewMatrix = (vlp_transform->GetMatrix()).GetInverse();
 #endif
@@ -108,7 +113,7 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::Camera::WorldToScreen(const Vecto
 		);
 
 #ifdef _EDITORBUILD
-	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 20.0, 20.0, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
+	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 40.0, 40.0, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
 #else
 	auto convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6.5, 6.5, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
 #endif

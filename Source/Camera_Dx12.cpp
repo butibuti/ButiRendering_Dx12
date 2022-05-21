@@ -141,8 +141,7 @@ void ButiEngine::ButiRendering::Camera_Dx12::Start()
 		}
 	}
 	else {
-		auto size = vwp_graphicDevice.lock()->GetApplication().lock()->GetWindow()->GetSize();
-		vlp_renderer->GetRendererCBuffer()->Get().pixelScale = Vector2(1.0 / size.x, 1.0 / size.y);
+		vlp_renderer->GetRendererCBuffer()->Get().pixelScale = Vector2(1.0 / cameraViewProp.currentWidth , 1.0 / cameraViewProp.currentHeight);
 		vwp_graphicDevice.lock()->SetDefaultRenderTarget();
 	}
 	vwp_graphicDevice.lock()->CommandList_SetRenderTargetView();

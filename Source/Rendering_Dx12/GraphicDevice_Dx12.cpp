@@ -382,9 +382,9 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 
 	// シザー矩形を設定
 	m_uqp_impl->scissorRect.left = 0;
-	m_uqp_impl->scissorRect.right = vwp_application.lock()->GetWindow()->GetSize().x;
+	m_uqp_impl->scissorRect.right = vwp_application.lock()->GetAppInitData()->windowWidth;
 	m_uqp_impl->scissorRect.top = 0;
-	m_uqp_impl->scissorRect.bottom = vwp_application.lock()->GetWindow()->GetSize().y;
+	m_uqp_impl->scissorRect.bottom = vwp_application.lock()->GetAppInitData()->windowHeight;
 
 
 	// フェンスを生成
