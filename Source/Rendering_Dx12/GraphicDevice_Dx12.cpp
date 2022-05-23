@@ -234,7 +234,13 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 
 		for (std::int32_t i = 0; m_uqp_impl->factory4->EnumAdapters1(i, &p_adapter) != DXGI_ERROR_NOT_FOUND; i++) {
 			vec_p_adapters.push_back(p_adapter);
+			DXGI_ADAPTER_DESC1 adapterDesc;
+			p_adapter->GetDesc1(&adapterDesc);
+			auto name =std::wstring( adapterDesc.Description);
+			std::wcout << name << std::endl;
 		}
+
+		
 
 		for (std::int32_t i = vec_p_adapters.size() - 1; i >= 0; i--) {
 			DXGI_ADAPTER_DESC1 adapterDesc;

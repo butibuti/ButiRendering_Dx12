@@ -124,8 +124,8 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::DisSetRender
 	currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	if ((GameDevice::GetInput()->CheckKey(Keys::Enter) || isEditorViewed) && !isCopyCommanded) {
-		isCopyCommanded = true;
-		vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::None, "");
+		//isCopyCommanded = true;
+		//vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::None, "");
 	}
 }
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::CopyForOutput()
