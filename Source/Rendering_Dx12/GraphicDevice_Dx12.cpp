@@ -592,7 +592,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 		auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
 		throw new ButiException(L"WaitGPU“à‚Å‚Ì—áŠO");
 	}
-	m_uqp_impl->fenceValue++;
 
 	if (m_uqp_impl->fence->GetCompletedValue() < fenceV)
 	{
@@ -634,6 +633,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 	m_uqp_impl->vec_outputInfo.clear();
 	m_uqp_impl->vec_drawCommandLists.clear();
 
+	m_uqp_impl->fenceValue++;
 }
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawStart()
 {
