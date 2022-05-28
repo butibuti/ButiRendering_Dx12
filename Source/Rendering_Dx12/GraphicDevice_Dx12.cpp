@@ -236,8 +236,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 			vec_p_adapters.push_back(p_adapter);
 			DXGI_ADAPTER_DESC1 adapterDesc;
 			p_adapter->GetDesc1(&adapterDesc);
-			auto name =std::wstring( adapterDesc.Description);
-			std::wcout << name << std::endl;
 		}
 
 		
@@ -246,9 +244,10 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 			DXGI_ADAPTER_DESC1 adapterDesc;
 			vec_p_adapters.at(i)->GetDesc1(&adapterDesc);
 
-			auto name = adapterDesc.Description;
+			auto name = std::wstring(adapterDesc.Description);
 			if (!StringHelper::Contains(name, L"Microsoft") && !StringHelper::Contains(name, L"Intel")) {
 				p_adapter = vec_p_adapters.at(i);
+				std::wcout << name << std::endl;
 				break;
 			}
 		}
@@ -591,7 +590,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 
 	if (hr != S_OK) {
 		auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
-		std::int32_t i = 0;
+		throw new ButiException(L"WaitGPU“à‚Å‚Ì—áŠO");
 	}
 	m_uqp_impl->fenceValue++;
 
@@ -602,6 +601,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 
 		if (hr != S_OK) {
 			auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
+			throw new ButiException(L"WaitGPU“à‚Å‚Ì—áŠO");
 			std::int32_t i = 0;
 		}
 	}

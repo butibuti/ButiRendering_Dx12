@@ -123,7 +123,6 @@ void ButiEngine::ButiRendering::Camera_Dx12::Start()
 	vwp_graphicDevice.lock()->DrawStart();
 
 	if (vlp_depthStencil) {
-
 		vwp_graphicDevice.lock()->GetCommandList().RSSetScissorRects(1, &scissorRect);
 		vlp_depthStencil->SetDepthStencilView();
 	}
