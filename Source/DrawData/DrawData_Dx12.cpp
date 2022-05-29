@@ -252,7 +252,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::CommandSet()
 	drawData.GetMesh().lock()->Draw(vertexType);
 
 	vwp_graphicDevice.lock()->GetCommandList().IASetPrimitiveTopology((D3D_PRIMITIVE_TOPOLOGY)drawData.vlp_drawInfo->drawSettings.topologyType);
-	auto spliteCount = drawData.subset.size();
+	auto splitCount = drawData.subset.size();
 
 	std::uint32_t offset = 0;
 	if (drawData.GetMaterial().GetSize() == drawData.subset.size()) {

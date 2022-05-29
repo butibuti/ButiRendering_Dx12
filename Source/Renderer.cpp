@@ -163,6 +163,7 @@ void ButiEngine::ButiRendering::Renderer::Update()
 
 void ButiEngine::ButiRendering::Renderer::RenderingStart()
 {
+	GetRendererCBuffer()->Get().Time +=GameDevice::WorldSpeed* 0.01f;
 	for (auto itr = vec_drawLayers.begin(); itr != vec_drawLayers.end(); itr++) {
 		(*itr)->CommandSet();
 	}

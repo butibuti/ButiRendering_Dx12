@@ -108,10 +108,19 @@ void GraphicDevice_Dx12_WithWindow::Present()
 
 	if (m_uqp_impl->vec_drawCommandLists.size()) {
 		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+
+		const UINT64 fenceV = m_uqp_impl->fenceValue;
+		auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
+
+		if (hr != S_OK) {
+			auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
+			assert(0);
+		}
 	}
 
 	hr = swapChain3->Present(0, 0);
 	WaitGPU();
+	m_uqp_impl->fenceValue++;
 	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
 		auto res = itr->p_outputResource;
 		res->OutputToMemory();
@@ -401,7 +410,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 
 	// フェンスイベントを生成
 	m_uqp_impl->fenceValue = 1;
-	m_uqp_impl->fenceEvent = CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS);
+	m_uqp_impl->fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	if (m_uqp_impl->fenceEvent == nullptr)
 	{
 		throw ButiException(L"フェンスイベントの生成失敗");
@@ -585,17 +594,10 @@ IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 {
 
-	const UINT64 fenceV = m_uqp_impl->fenceValue;
-	auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
 
-	if (hr != S_OK) {
-		auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
-		throw new ButiException(L"WaitGPU内での例外");
-	}
-
-	if (m_uqp_impl->fence->GetCompletedValue() < fenceV)
+	if (m_uqp_impl->fence->GetCompletedValue() < m_uqp_impl->fenceValue)
 	{
-		hr = m_uqp_impl->fence->SetEventOnCompletion(fenceV, m_uqp_impl->fenceEvent);
+		auto hr = m_uqp_impl->fence->SetEventOnCompletion(m_uqp_impl->fenceValue, m_uqp_impl->fenceEvent);
 		WaitForSingleObject(m_uqp_impl->fenceEvent, INFINITE);
 
 		if (hr != S_OK) {
@@ -624,8 +626,18 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 
 	if (m_uqp_impl->vec_drawCommandLists.size()) {
 		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+
+		const UINT64 fenceV = m_uqp_impl->fenceValue;
+		auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
+
+		if (hr != S_OK) {
+			auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
+			assert(0);
+		}
+
 	}
 	WaitGPU();
+	m_uqp_impl->fenceValue++;
 	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
 		auto res = itr->p_outputResource;
 		res->OutputToMemory();
@@ -633,7 +645,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 	m_uqp_impl->vec_outputInfo.clear();
 	m_uqp_impl->vec_drawCommandLists.clear();
 
-	m_uqp_impl->fenceValue++;
 }
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawStart()
 {
@@ -650,7 +661,16 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawEnd()
 
 	m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
 
+	const UINT64 fenceV = m_uqp_impl->fenceValue;
+	auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
+
+	if (hr != S_OK) {
+		auto reason = m_uqp_impl->device->GetDeviceRemovedReason();
+		assert(0);
+	}
 	WaitGPU();
+
+	m_uqp_impl->fenceValue++;
 	m_uqp_impl->vec_drawCommandLists.clear();
 	m_uqp_impl->vec_renderTargetHandles.clear();
 	m_uqp_impl->currentDSV = nullptr;
