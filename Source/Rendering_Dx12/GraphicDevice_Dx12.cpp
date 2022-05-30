@@ -69,6 +69,7 @@ public:
 
 	std::vector<ImageFileOutputInfo > vec_outputInfo;
 	std::mutex mtx_uploadResource, mtx_createCommitedResourece;
+	D3D_FEATURE_LEVEL level;
 };
 
 class GraphicDevice_Dx12_WithWindow :public GraphicDevice_Dx12{
@@ -245,9 +246,19 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 			vec_p_adapters.push_back(p_adapter);
 			DXGI_ADAPTER_DESC1 adapterDesc;
 			p_adapter->GetDesc1(&adapterDesc);
+			auto name = std::wstring(adapterDesc.Description);
+			std::wcout <<name<<"|" << L"DedicatedSystemMemory:" << adapterDesc.DedicatedSystemMemory 
+				<< L" DedicatedVideoMemory:" << adapterDesc.DedicatedVideoMemory
+				<< L" SharedMemory:" << adapterDesc.SharedSystemMemory 
+			<< L" AdapterType:" << adapterDesc.Flags << std::endl;
 		}
 
-		
+		std::sort(vec_p_adapters.begin(), vec_p_adapters.end(), [](IDXGIAdapter1* x, IDXGIAdapter1* y)->bool {
+			DXGI_ADAPTER_DESC1 adapterDesc_x, adapterDesc_y;
+			x->GetDesc1(&adapterDesc_x);
+			y->GetDesc1(&adapterDesc_y);
+			return adapterDesc_x.DedicatedVideoMemory < adapterDesc_y.DedicatedVideoMemory;
+			});
 
 		for (std::int32_t i = vec_p_adapters.size() - 1; i >= 0; i--) {
 			DXGI_ADAPTER_DESC1 adapterDesc;
@@ -256,7 +267,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 			auto name = std::wstring(adapterDesc.Description);
 			if (!StringHelper::Contains(name, L"Microsoft") && !StringHelper::Contains(name, L"Intel")) {
 				p_adapter = vec_p_adapters.at(i);
-				std::wcout << name << std::endl;
+				std::wcout<<L"Use:" << name << std::endl;
 				break;
 			}
 		}
@@ -266,7 +277,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 		}
 	}
 
-	D3D_FEATURE_LEVEL level;
+	
 	{
 
 		D3D_FEATURE_LEVEL levels[] = {
@@ -279,7 +290,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 
 			hr = D3D12CreateDevice(nullptr, levels[i], IID_PPV_ARGS(m_uqp_impl->device.GetAddressOf()));
 			if (hr == S_OK) {
-				level = levels[i];
+				m_uqp_impl-> level = levels[i];
 				break;
 			}
 		}
