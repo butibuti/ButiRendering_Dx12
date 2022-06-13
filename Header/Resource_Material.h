@@ -6,21 +6,21 @@ namespace ButiEngine {
 namespace ButiRendering {
 struct Resource_Material :public IResource_Material
 {
-	Resource_Material(const MaterialValue& arg_var);
+	BUTIRENDERING_API Resource_Material(const MaterialValue& arg_var);
 	void Initialize()override {};
 	void PreInitialize()override {};
-	const std::string& GetMaterialName();
-	const std::string& GetMaterialNameEng();
-	const std::string& GetMaterialComment();
-	void SetMaterialName(const std::string& arg_name);
-	void SetMaterialNameEng(const std::string& arg_name);
-	void SetComment(const std::string& arg_comment);
-	const std::string& GetTagName()const override;
-	Value_weak_ptr<IResource_Texture>GetTexture(const std::int32_t index = 0)const;
-	Value_weak_ptr<IResource_Texture>GetSphereTexture()const;
-	void SetTexture(const std::uint32_t arg_index, Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
-	void SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures)override;
-	void SetSphereTexture(Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
+	BUTIRENDERING_API const std::string& GetMaterialName();
+	BUTIRENDERING_API const std::string& GetMaterialNameEng();
+	BUTIRENDERING_API const std::string& GetMaterialComment();
+	BUTIRENDERING_API void SetMaterialName(const std::string& arg_name);
+	BUTIRENDERING_API void SetMaterialNameEng(const std::string& arg_name);
+	BUTIRENDERING_API void SetComment(const std::string& arg_comment);
+	BUTIRENDERING_API const std::string& GetTagName()const override;
+	BUTIRENDERING_API Value_weak_ptr<IResource_Texture>GetTexture(const std::int32_t index = 0)const;
+	BUTIRENDERING_API Value_weak_ptr<IResource_Texture>GetSphereTexture()const;
+	BUTIRENDERING_API void SetTexture(const std::uint32_t arg_index, Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
+	BUTIRENDERING_API void SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures)override;
+	BUTIRENDERING_API void SetSphereTexture(Value_weak_ptr<IResource_Texture>  arg_vwp_texture)override;
 	const List<Value_weak_ptr<IResource_Texture>>& GetTextures()const override {
 		return list_vwp_texture;
 	}

@@ -1,5 +1,5 @@
 #pragma once
-#include"../ButiMath/ButiMath.h"
+#include"ButiMath/ButiMath.h"
 #include<string>
 namespace ButiEngine {
 namespace ButiRendering {

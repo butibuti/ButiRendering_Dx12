@@ -2,6 +2,7 @@
 #include<string>
 #include "ButiUtil/ButiUtil/ObjectFactory.h"
 #include"GraphicDevice.h"
+#include<functional>
 namespace ButiEngine {
 namespace ButiRendering {
 struct BlankSpace {
@@ -28,11 +29,7 @@ public:
 	virtual void CreateBuffer(const bool arg_mapKeep = true) = 0;
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
 
-	void ShowUI();
-
-
-	virtual bool OnShowUI() { return false; }
-
+	virtual bool OnControl() = 0;
 	virtual Value_ptr<ICBuffer> Clone() = 0;
 
 	std::uint32_t slot = 0;
@@ -46,7 +43,11 @@ class CBuffer :public ICBuffer
 public:
 	CBuffer() {}
 	~CBuffer() {}
-	virtual T& Get() const = 0;
+	virtual T& Get() = 0;
+	void SetValueControlFunction(std::function<bool(T&)> arg_func_control) { m_func_control = arg_func_control; }
+	bool OnControl() override{return m_func_control(Get()); }
+private:
+	std::function<bool(T&)> m_func_control;
 };
 }
 }

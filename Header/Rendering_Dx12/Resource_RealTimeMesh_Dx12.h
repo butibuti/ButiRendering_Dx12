@@ -11,34 +11,33 @@ class GraphicDevice_Dx12;
 class Resource_RealTimeMesh_Dx12 :public Resource_RealTimeMesh
 {
 public:
-	Resource_RealTimeMesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
-	void Draw(const std::uint32_t arg_vertexType)override;
+	BUTIRENDERING_API Resource_RealTimeMesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API void Draw(const std::uint32_t arg_vertexType)override;
 
-	void Initialize()override;
+	BUTIRENDERING_API void Initialize()override;
 
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
 
-	void SetVertexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBuffer);
-	void SetIndexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indeexBuffer);
-	void SetVertexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferUploadHeap);
-	void SetIndexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indexBufferUploadHeap);
+	BUTIRENDERING_API void SetVertexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBuffer);
+	BUTIRENDERING_API void SetIndexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indeexBuffer);
+	BUTIRENDERING_API void SetVertexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferUploadHeap);
+	BUTIRENDERING_API void SetIndexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indexBufferUploadHeap);
 
-	void SetVertexBufferView(D3D12_VERTEX_BUFFER_VIEW arg_vertexBufferview);
-	void SetIndexBufferView(D3D12_INDEX_BUFFER_VIEW arg_indexBufferView);
+	BUTIRENDERING_API void SetVertexBufferView(D3D12_VERTEX_BUFFER_VIEW arg_vertexBufferview);
+	BUTIRENDERING_API void SetIndexBufferView(D3D12_INDEX_BUFFER_VIEW arg_indexBufferView);
 
-	void SetVertexCount(const std::uint32_t arg_vertexCount);
+	BUTIRENDERING_API void SetVertexCount(const std::uint32_t arg_vertexCount);
+	BUTIRENDERING_API void SetIndexCount(const std::uint32_t arg_indexCount);
 
-	void SetIndexCount(const std::uint32_t arg_indexCount);
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetVertexBuffer();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetVertexBuffer();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBuffer();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBuffer();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetVertexBufferUploadHeap();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetVertexBufferUploadHeap();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBufferUploadHeap();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBufferUploadHeap();
-
-	void Update()override;
+	BUTIRENDERING_API void Update()override;
 
 private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
@@ -52,9 +51,8 @@ private:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 
 
-	void ResourceUpdate() override;
-
-	void UpdateResourceRelease()override;
+	BUTIRENDERING_API void ResourceUpdate() override;
+	BUTIRENDERING_API void UpdateResourceRelease()override;
 
 };
 

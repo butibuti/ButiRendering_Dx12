@@ -6,39 +6,20 @@
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiUtil/ButiUtil/ObjectFactory.h"
-#include"ButiUtil/ButiUtil/ID.h"
 #include"ShaderVariable.h"
 namespace ButiEngine {
 
+namespace ImageFileIO {
+struct TextureResourceData;
+}
 namespace Vertex {
 enum class VertexType :std::uint8_t;
 }
 
 namespace ButiRendering {
-class IResource_Mesh;
-class IResource_Motion;
-class IResource_VertexShader;
-class IResource_PixelShader;
-class IResource_GeometryShader;
-class IResource_Shader;
-class IResource_Texture;
-class IResource_Model;
-class IResource_Material;
-}
-
-using MeshTag = ID<ButiRendering::IResource_Mesh>;
-using MotionTag = ID<ButiRendering::IResource_Motion>;
-using VertexShaderTag = ID < ButiRendering::IResource_VertexShader > ;
-using PixelShaderTag = ID<ButiRendering::IResource_PixelShader>;
-using GeometryShaderTag = ID<ButiRendering::IResource_GeometryShader>;
-using ShaderTag = ID<ButiRendering::IResource_Shader>;
-using TextureTag = ID<ButiRendering::IResource_Texture>;
-using ModelTag = ID<ButiRendering::IResource_Model>;
-using MaterialTag = ID<ButiRendering::IResource_Material>;
-namespace ButiRendering {
 
 
-class RenderingPathInfo;
+class RenderingPathData;
 /// <summary>
 /// 描画パスのインターフェース
 /// </summary>
@@ -63,10 +44,6 @@ public:
 	/// </summary>
 	virtual void Release() = 0;
 	/// <summary>
-	/// GUI呼び出し
-	/// </summary>
-	virtual void OnShowGUI() = 0;
-	/// <summary>
 	/// ゲームシーン実行中に有効な描画パスなら起動、違ったら停止
 	/// </summary>
 	virtual void SetPlayActive() = 0;
@@ -84,11 +61,8 @@ public:
 	/// </summary>
 	/// <returns>名前</returns>
 	virtual const std::string& GetName()const = 0;
-	/// <summary>
-	/// 描画パスの保存データの取得
-	/// </summary>
-	/// <returns>描画パスの保存データ</returns>
-	virtual Value_ptr<RenderingPathInfo> GetRenderingPathInfo() = 0;
+	virtual void SetOrder(const std::int32_t arg_order) = 0;
+	virtual std::int32_t GetOrder()const = 0;
 };
 
 
@@ -109,6 +83,7 @@ public:
 	virtual void DisSetRenderTarget() = 0;
 	virtual void SetIsCleared(bool arg_isClear) = 0;
 	virtual Vector2 GetSize() = 0;
+	virtual std::string GetName()const = 0;
 };
 class IDepthStencil {
 public:
@@ -116,8 +91,15 @@ public:
 	virtual void DisSetDepthStencil() = 0;
 	virtual void SetIsCleared(bool arg_isClear) = 0;
 	virtual Vector2 GetSize() = 0;
+	virtual std::string GetName()const = 0;
 };
-
+/// <summary>
+/// DescriptorHeapの延長時にリアクションを行うオブジェクトのインターフェース
+/// </summary>
+class IDescriptorHeapUpdateListner {
+public:
+	virtual void OnDescriptorHeapUpdate() = 0;
+};
 class IResource_Motion :public IObject {
 public:
 	virtual Value_ptr<ModelAnimation> GetAnimation() = 0;
@@ -169,7 +151,6 @@ public:
 	virtual void SetFilePath(const std::string& arg_textureFilePath) = 0;
 	virtual void ToPNG(const std::string& arg_textureFilePath) {}
 	virtual void* GetResourcePtr() { return nullptr; }
-	virtual GUIWindowReaction ShowTextureWindow(const std::string& arg_windowName = "", const std::int32_t winFrag = 0) { return GUIWindowReaction(); }
 	virtual const std::string& GetTexturePath() const = 0;
 	virtual const unsigned char* GetRawData() = 0;
 	virtual const std::string& GetTagName()const = 0;
@@ -200,6 +181,7 @@ public:
 	virtual MaterialValue_Deferred GetMaterialDeferredValue()const = 0;
 	virtual const List<Value_weak_ptr<IResource_Texture>>& GetTextures()const = 0;
 	virtual const std::string& GetTagName()const = 0;
+	virtual void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material){}
 };
 class IResource_Mesh :public IObject {
 public:

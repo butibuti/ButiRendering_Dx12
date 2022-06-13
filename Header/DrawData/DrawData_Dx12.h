@@ -11,17 +11,16 @@ using MatrixUpdateFunc = void (DrawObject_Dx12::*)();
 
 class DrawObject_Dx12 :public DrawObject {
 public:
-	void Initialize(const std::uint32_t srvCount);
+	BUTIRENDERING_API void Initialize(const std::uint32_t srvCount);
 
-	void CreatePipeLineState(const std::uint32_t arg_exCBuffer, const std::uint32_t srvCount);
-	void CommandExecute();
-	void BufferUpdate()override;
-	void SetInfo();
-	void SetInfo_WithoutCommand();
-	void CommandSet();
-	Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer)override;
-
-	bool IsCreated()override;
+	BUTIRENDERING_API void CreatePipeLineState(const std::uint32_t arg_exCBuffer, const std::uint32_t srvCount);
+	BUTIRENDERING_API void CommandExecute();
+	BUTIRENDERING_API void BufferUpdate()override;
+	BUTIRENDERING_API void SetInfo();
+	BUTIRENDERING_API void SetInfo_WithoutCommand();
+	BUTIRENDERING_API void CommandSet();
+	BUTIRENDERING_API Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer)override;
+	BUTIRENDERING_API bool IsCreated()override;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature;
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
@@ -53,13 +52,13 @@ private:
 
 class MeshDrawObject_Dx12 :public DrawObject_Dx12 {
 public:
-	MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-	MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-	MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-	MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+	BUTIRENDERING_API MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+	BUTIRENDERING_API MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+	BUTIRENDERING_API MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+	BUTIRENDERING_API MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
 
-	void DrawBefore()override;
-	void Draw()override;
+	BUTIRENDERING_API void DrawBefore()override;
+	BUTIRENDERING_API void Draw()override;
 
 	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
@@ -69,25 +68,23 @@ public:
 	inline float GetZ(const Matrix4x4& arg_vpMatrix)override {
 		return  drawData.GetMaxZ(arg_vpMatrix);
 	}
-	void ShowZ() override {
+	void ShowZ() override {}
 
-	}
-
-	void Initialize()override;
+	BUTIRENDERING_API void Initialize()override;
 };
 
 class ModelDrawObject_Dx12 :public DrawObject_Dx12, public IModelObject {
 public:
-	ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
-	ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+	BUTIRENDERING_API ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+	BUTIRENDERING_API ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
 
 	inline float GetZ(const Matrix4x4& arg_vpMatrix)override {
 		return  drawData.GetMaxZ(arg_vpMatrix);
 	}
-	void Initialize()override;
+	BUTIRENDERING_API void Initialize()override;
 
 
-	void DrawBefore()override;
+	BUTIRENDERING_API void DrawBefore()override;
 
 	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
@@ -100,9 +97,9 @@ public:
 		return cbuffer_bone;
 	}
 
-	void Draw()override;
+	BUTIRENDERING_API void Draw()override;
 
-	void  ModelUpdate();
+	BUTIRENDERING_API void  ModelUpdate();
 
 	Value_ptr<IBoneObject> vlp_bone;
 	Value_ptr< CArrayBuffer<Matrix4x4>> cbuffer_bone;

@@ -11,9 +11,9 @@ public:
 	void PreInitialize()override {}
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
 	virtual void Attach(std::int32_t slot) = 0;
-	void SetFilePath(const std::string& arg_textureFilePath);
-	const std::string& GetTexturePath() const override;
-	const std::string& GetTagName()const override;
+	BUTIRENDERING_API void SetFilePath(const std::string& arg_textureFilePath);
+	BUTIRENDERING_API const std::string& GetTexturePath() const override;
+	BUTIRENDERING_API const std::string& GetTagName()const override;
 protected:
 	std::string textureFilePath;
 };

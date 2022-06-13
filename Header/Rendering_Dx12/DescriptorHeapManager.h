@@ -7,6 +7,7 @@
 #include <commctrl.h> 
 #include <d3d12.h>
 #include<wrl.h>
+#include"../ResourceInterface.h"
 namespace ButiEngine {
 namespace ButiRendering {
 class GraphicDevice_Dx12;
@@ -26,29 +27,30 @@ class DescriptorHeapManager
 {
 	const std::uint32_t DescriptorHeapSize = 8192;
 public:
-	DescriptorHeapManager(Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, const std::uint32_t arg_max = 512);
-	~DescriptorHeapManager();
-	void Initialize(ID3D12Device& device);
+	BUTIRENDERING_API DescriptorHeapManager(Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, const std::uint32_t arg_max = 512);
+	BUTIRENDERING_API ~DescriptorHeapManager();
+	BUTIRENDERING_API void Initialize(ID3D12Device& device);
 
-	HandleInformation GetSamplerHandle(const std::uint32_t key);
+	BUTIRENDERING_API HandleInformation GetSamplerHandle(const std::uint32_t key);
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap();
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSamplerHeap();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetSamplerHeap();
+	
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetConstantBuffer();
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetConstantBuffer();
-
-	void AddHeapRange();
-	HandleInformation CreateConstantBufferView(void* arg_p_value, const bool arg_isKeep, const std::int32_t arg_size = 0x100);
-	void ConstantBufferUpdate(void* arg_p_value, const std::uint32_t arg_index, const std::int32_t arg_size = 0x100);
+	BUTIRENDERING_API void AddHeapRange();
+	BUTIRENDERING_API HandleInformation CreateConstantBufferView(void* arg_p_value, const bool arg_isKeep, const std::int32_t arg_size = 0x100);
+	BUTIRENDERING_API void ConstantBufferUpdate(void* arg_p_value, const std::uint32_t arg_index, const std::int32_t arg_size = 0x100);
 	//HandleInformation CreateShaderResourceView(Microsoft::WRL::ComPtr<ID3D12Resource> resource ,const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc,const std::int32_t size );
-	HandleInformation GetCurrentHandle(const std::int32_t arg_size = 0x100);
-	HandleInformation GetCurrentHandle(std::uint32_t& arg_ref_top, const std::int32_t arg_size = 0x100);
-	std::uint32_t GetDescriptorHandleIncrementSize();
-	std::uint32_t GetIndex();
-	void Release(const BlankSpace& arg_releaseSpace);
-	void Release();
+	BUTIRENDERING_API HandleInformation GetCurrentHandle(const std::int32_t arg_size = 0x100);
+	BUTIRENDERING_API HandleInformation GetCurrentHandle(std::uint32_t& arg_ref_top, const std::int32_t arg_size = 0x100);
+	BUTIRENDERING_API std::uint32_t GetDescriptorHandleIncrementSize();
+	BUTIRENDERING_API std::uint32_t GetIndex();
+	BUTIRENDERING_API void Release(const BlankSpace& arg_releaseSpace);
+	BUTIRENDERING_API void Release();
+	BUTIRENDERING_API void RegistUpdateListner(Value_ptr<IDescriptorHeapUpdateListner> arg_listner);
 private:
-	void ReCreateConstantBuffer();
+	BUTIRENDERING_API void ReCreateConstantBuffer();
 	std::uint32_t cbvSrvDescriptorHandleIncrementSize = 0;
 	std::uint32_t samplerDescriptorHandleIncrementSize = 0;
 	std::uint32_t index = 0;
@@ -65,6 +67,7 @@ private:
 	buffer* mappedConstantBuffer = nullptr;
 	std::vector<BackUpConstantBufferData*> vec_cbBackUpData;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
+	List<Value_ptr<IDescriptorHeapUpdateListner>> m_list_descriptorHeapUpdateListner;
 };
 
 }

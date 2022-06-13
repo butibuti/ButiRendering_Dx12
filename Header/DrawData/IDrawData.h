@@ -1,3 +1,5 @@
+#ifndef IDrawData_H
+#define IDrawData_H
 #pragma once
 #include"stdafx.h"
 #include"ButiRendering_Dx12/Header/MeshPrimitive.h"
@@ -70,8 +72,8 @@ struct DrawInformation :public IObject {
 };
 class DrawData {
 public:
-	void SetBlendMode(const BlendMode& arg_BlendMode);
-	void MatrixUpdate();
+	BUTIRENDERING_API void SetBlendMode(const BlendMode& arg_BlendMode);
+	BUTIRENDERING_API void MatrixUpdate();
 	Matrix4x4 transform;
 	Value_ptr<Transform> vlp_transform;
 
@@ -117,8 +119,6 @@ public:
 
 		return nullptr;
 	}
-	Value_ptr<Collision::CollisionPrimitive>& GetPrimitive() { return vlp_primitive; }
-	void SetPrimitive(const Value_ptr<Collision::CollisionPrimitive>& arg_vlp_prim) { vlp_primitive = arg_vlp_prim; }
 	Value_ptr < CBuffer<ShaderVariable>>& GetCBuffer() { return cbuffer; }
 	void SetCbuffer(const Value_ptr < CBuffer<ShaderVariable>>& arg_cBuffer) { cbuffer = arg_cBuffer; }
 	std::uint32_t* GetCollisionIndex() { return p_collisionRegistIndex; }
@@ -138,7 +138,6 @@ public:
 private:
 	std::uint32_t cBufferCount = 0;
 	Value_ptr < CBuffer<ShaderVariable>> cbuffer;
-	Value_ptr<Collision::CollisionPrimitive>vlp_primitive;
 	std::uint32_t* p_collisionRegistIndex;
 	Value_weak_ptr<IResource_Model> vwp_model;
 	Value_weak_ptr<IResource_Mesh> vwp_mesh;
@@ -150,13 +149,8 @@ class DrawObject :public IDrawObject {
 public:
 	virtual void SetTransform(const Value_ptr<Transform>& arg_transform) = 0;
 	virtual bool IsCreated() = 0;
-	Value_ptr<Collision::CollisionPrimitive_Box_AABB> GetMeshAABB()override;
-	Value_ptr<Collision::CollisionPrimitive_Box_OBB> GetMeshOBB()override;
-
-	void SetPrimitive(Value_ptr<Collision::CollisionPrimitive>arg_prim) override;
-	void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
-	Value_ptr<Collision::CollisionPrimitive> GetPrimitive() override;
-	std::uint32_t* GetOctRegistPtr() override;
+	BUTIRENDERING_API void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
+	BUTIRENDERING_API std::uint32_t* GetOctRegistPtr() override;
 	DrawData& GetDrawData() { return drawData; }
 	const DrawData& GetDrawData()const { return drawData; }
 	virtual Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer) {
@@ -170,26 +164,22 @@ protected:
 };
 class DualDrawObject :public DrawObject {
 public:
-	void Initialize()override;
-	void PreInitialize() override;
-	void Draw()override;
-	void DrawBefore() override;
-	float GetZ(const Matrix4x4& arg_vpMatrix)override;
-	void SetInfo() override;
-	void SetInfo_WithoutCommand() override;
-	void BufferUpdate() override;
-	void CommandSet() override;
-	void CommandExecute() override;
-	void SetTransform(const Value_ptr<Transform>& arg_transform)override;
-	Value_ptr<Collision::CollisionPrimitive_Box_AABB> GetMeshAABB() override;
-	Value_ptr<Collision::CollisionPrimitive_Box_OBB> GetMeshOBB() override;
-	void SetPrimitive(Value_ptr<Collision::CollisionPrimitive>arg_prim) override;
-	void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
-	Value_ptr<Collision::CollisionPrimitive> GetPrimitive() override;
+	BUTIRENDERING_API void Initialize()override;
+	BUTIRENDERING_API void PreInitialize() override;
+	BUTIRENDERING_API void Draw()override;
+	BUTIRENDERING_API void DrawBefore() override;
+	BUTIRENDERING_API float GetZ(const Matrix4x4& arg_vpMatrix)override;
+	BUTIRENDERING_API void SetInfo() override;
+	BUTIRENDERING_API void SetInfo_WithoutCommand() override;
+	BUTIRENDERING_API void BufferUpdate() override;
+	BUTIRENDERING_API void CommandSet() override;
+	BUTIRENDERING_API void CommandExecute() override;
+	BUTIRENDERING_API void SetTransform(const Value_ptr<Transform>& arg_transform)override;
+	BUTIRENDERING_API void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
 	bool IsCreated()override {
 		return vlp_afterDrawObj->IsCreated() && vlp_befDrawObj->IsCreated();
 	}
-	std::uint32_t* GetOctRegistPtr() override;
+	BUTIRENDERING_API std::uint32_t* GetOctRegistPtr() override;
 	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)override {
 		auto end = vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer.end();
 		for (auto itr = vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer.begin(); itr != end; itr++) {
@@ -210,3 +200,5 @@ public:
 };
 }
 }
+
+#endif // !IDrawData_H

@@ -1,3 +1,5 @@
+#ifndef BONE_H
+#define BONE_H
 #pragma once
 #include"ButiMath/Transform.h"
 #include<string>
@@ -31,7 +33,7 @@ struct IKLink {
 	}
 };
 struct IKData {
-	~IKData();
+	BUTIRENDERING_API ~IKData();
 	std::int32_t targetBoneIndex;
 	std::int32_t extremityBoneIndex;
 	Value_ptr<Bone> vlp_targetBone;
@@ -69,7 +71,7 @@ struct Bone
 	Matrix4x4 bindPose;
 	Matrix4x4 bindPoseInverse;
 
-	Matrix4x4 GetPoseMatrix();
+	BUTIRENDERING_API Matrix4x4 GetPoseMatrix();
 
 	Value_ptr<BoneTransform> transform;
 
@@ -99,13 +101,14 @@ struct Bone
 
 	bool addLocal = false;
 
-	void SetOtherBoneLinks(const std::vector<Value_ptr< Bone>>& arg_vec_bones);
+	BUTIRENDERING_API void SetOtherBoneLinks(const std::vector<Value_ptr< Bone>>& arg_vec_bones);
 
-	void AddBonePower();
+	BUTIRENDERING_API void AddBonePower();
 
-	void InverseKinematic();
-	void CCDInverseKinematic();
+	BUTIRENDERING_API void InverseKinematic();
+	BUTIRENDERING_API void CCDInverseKinematic();
 
 };
 }
 }
+#endif // !BONE_H

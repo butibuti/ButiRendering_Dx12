@@ -3,7 +3,7 @@
 #include"DrawData/IDrawObject.h"
 namespace ButiEngine {
 namespace ButiRendering {
-
+class IDrawLayer;
 /// <summary>
 /// シーンが所持する描画用クラス
 /// </summary>
@@ -29,6 +29,8 @@ public:
 	/// </summary>
 	/// <returns>レイヤー数</returns>
 	virtual std::uint32_t GetLayerCount() = 0;
+	virtual Value_ptr<IDrawLayer> GetDrawLayer(const std::int32_t arg_index)const=0;
+	virtual void RemoveDrawLayer(const std::int32_t arg_index)=0;
 	/// <summary>
 	/// 描画レイヤーのレンダリング
 	/// </summary>
@@ -47,20 +49,18 @@ public:
 	/// 描画オブジェクトの解放
 	/// </summary>
 	virtual void ClearDrawObjects() = 0;
-	//所属しているシーンの取得
-	virtual Value_ptr<IScene> GetScene() = 0;
 	/// <summary>
 	/// 描画レイヤーに対するシャドウ用テクスチャの設定
 	/// </summary>
 	/// <param name="arg_layerIndex">設定するレイヤーの番号</param>
 	/// <param name="arg_shadowTex">設定するシャドウ用テクスチャ</param>
-	virtual void SetShadowTexture(const std::uint32_t arg_layerIndex, TextureTag arg_shadowTex) = 0;
+	virtual void SetShadowTexture(const std::uint32_t arg_layerIndex, Value_weak_ptr<IResource_Texture> arg_shadowTex) = 0;
 	/// <summary>
 	/// 描画レイヤーが使用するシャドウ用テクスチャの取得
 	/// </summary>
 	/// <param name="arg_layerIndex">レイヤーの番号</param>
 	/// <returns>使用しているシャドウ用テクスチャ</returns>
-	virtual TextureTag GetShadowTexture(const std::uint32_t arg_layerIndex) = 0;
+	virtual Value_ptr<IResource_Texture> GetShadowTexture(const std::uint32_t arg_layerIndex) = 0;
 	/// <summary>
 	/// 描画オブジェクトの登録
 	/// </summary>
@@ -77,10 +77,6 @@ public:
 	/// <param name="arg_layerIndex">登録する描画レイヤーの番号</param>
 	/// <param name="isShadow">影を落とすか</param>
 	virtual void UnRegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_afterDraw, const std::uint32_t arg_layerIndex = 0, const bool isShadow = false) = 0;
-	/// <summary>
-	/// GUIの呼び出し
-	/// </summary>
-	virtual void ShowUI() = 0;
 	/// <summary>
 	/// 解放処理
 	/// </summary>
@@ -111,18 +107,7 @@ public:
 	/// <param name="arg_layer">取得するレイヤーの番号</param>
 	/// <returns>シャドウ用カメラ</returns>
 	virtual Value_ptr<ICamera> GetShadowCamera(const std::uint32_t arg_layer) = 0;
-	/// <summary>
-	/// 描画オブジェクトとの衝突判定（現在使用不可）
-	/// </summary>
-	/// <param name="arg_prim">衝突判定に使う形状</param>
-	/// <param name="arg_layer">判定するレイヤーの番号</param>
-	/// <returns>衝突している描画オブジェクトのvector</returns>
-	virtual std::vector< Value_ptr<IDrawObject>> GetHitDrawObjects(Value_ptr<Collision::CollisionPrimitive> arg_prim, const std::int32_t arg_layer) = 0;
-	/// <summary>
-	/// 使用しているResourceContainerの取得
-	/// </summary>
-	/// <returns>使用しているResourceContainer</returns>
-	virtual Value_ptr<IResourceContainer> GetResourceContainer() = 0;
+	virtual Value_ptr<GraphicDevice> GetGraphicDevice() const= 0;
 };
 
 /// <summary>
@@ -149,7 +134,7 @@ public:
 	/// <param name="arg_isAfterRendering">遅らせて描画するか(半透明オブジェクト等)</param>
 	/// <param name="arg_ret_pim">描画オブジェクトの形状</param>
 	/// <param name="arg_isShadow">影を生成するオブジェクトか</param>
-	virtual void Regist(Value_ptr< IDrawObject> arg_vwp_drawObject, const bool arg_isAfterRendering, Value_ptr<Collision::CollisionPrimitive_Box_OBB> arg_ret_pim = nullptr, const bool arg_isShadow = false) = 0;
+	virtual void Regist(Value_ptr< IDrawObject> arg_vwp_drawObject, const bool arg_isAfterRendering, const bool arg_isShadow = false) = 0;
 	/// <summary>
 	/// 描画オブジェクトの登録解除
 	/// </summary>
@@ -165,8 +150,8 @@ public:
 	/// <summary>
 	/// シャドウ読み込みテクスチャの登録
 	/// </summary>
-	/// <param name="arg_textureTag"></param>
-	virtual void SetShadowTexture(TextureTag arg_textureTag) = 0;
+	/// <param name="arg_texture"></param>
+	virtual void SetShadowTexture(Value_weak_ptr<IResource_Texture> arg_texture) = 0;
 	/// <summary>
 	/// レンダリングの実行
 	/// </summary>
@@ -180,11 +165,6 @@ public:
 	/// </summary>
 	virtual void ShadowRendering() = 0;
 	/// <summary>
-	/// 衝突レイヤーの取得(現在使用不可)
-	/// </summary>
-	/// <returns></returns>
-	virtual Value_ptr<Collision::CollisionLayer<IDrawObject>> GetCollisionLayer() = 0;
-	/// <summary>
 	/// シャドウ用カメラの取得
 	/// </summary>
 	/// <returns></returns>
@@ -193,7 +173,7 @@ public:
 	/// シャドウ用テクスチャの取得
 	/// </summary>
 	/// <returns></returns>
-	virtual TextureTag GetShadowTexture() = 0;
+	virtual Value_ptr<IResource_Texture> GetShadowTexture() = 0;
 };
 /// <summary>
 /// 影用の描画レイヤー
@@ -207,6 +187,6 @@ public:
 	virtual bool IsShadowDrawed() = 0;
 };
 
-Value_ptr<IRenderer> CreateRenderer(Value_weak_ptr<IScene> arg_vwp_iscene);
+BUTIRENDERING_API Value_ptr<IRenderer> CreateRenderer(Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 }
 }

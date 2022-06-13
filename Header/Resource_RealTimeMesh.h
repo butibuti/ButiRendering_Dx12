@@ -12,16 +12,16 @@ public:
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
 	void Initialize()override {}
 	void PreInitialize()override {}
-	void SetBackupData(Value_ptr<ButiRendering::MeshPrimitiveBase> arg_vlp_meshPrimitive)override;
-	std::uint32_t GetVertexCount();
-	std::uint32_t GetIndexCount();
-	virtual void Update() = 0;
-	const ButiRendering::MeshPrimitiveBase* GetBackUpdata(std::uint32_t arg_vertexType)const override;
-	Value_ptr<ButiRendering::MeshPrimitiveBase> GetBackupData_Row();
+	BUTIRENDERING_API void SetBackupData(Value_ptr<ButiRendering::MeshPrimitiveBase> arg_vlp_meshPrimitive)override;
+	BUTIRENDERING_API std::uint32_t GetVertexCount()override;
+	BUTIRENDERING_API std::uint32_t GetIndexCount()override;
+	BUTIRENDERING_API virtual void Update() = 0;
+	BUTIRENDERING_API const ButiRendering::MeshPrimitiveBase* GetBackUpdata(std::uint32_t arg_vertexType)const override;
+	BUTIRENDERING_API Value_ptr<ButiRendering::MeshPrimitiveBase> GetBackupData_Row();
 
-	bool GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line);
-	const std::string& GetTagName()const override;
-	void SetTagName(const std::string& arg_tagName);
+	BUTIRENDERING_API bool GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line);
+	BUTIRENDERING_API const std::string& GetTagName()const override;
+	BUTIRENDERING_API void SetTagName(const std::string& arg_tagName);
 protected:
 	std::uint32_t verticesCount;
 	std::uint32_t indexCount;

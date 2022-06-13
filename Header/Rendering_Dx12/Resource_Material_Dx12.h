@@ -7,20 +7,21 @@ namespace ButiEngine {
 
 namespace ButiRendering {
 class GraphicDevice_Dx12;
-class Resource_Material_Dx12 :public Resource_Material
+class Resource_Material_Dx12 :public Resource_Material,public IDescriptorHeapUpdateListner
 {
 public:
-	Resource_Material_Dx12(const MaterialValue& arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
-	Resource_Material_Dx12(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
-	void Initialize()override;
-	void Attach(const std::uint32_t slotOffset, Value_ptr<IRenderer> arg_vlp_renderer)override;
-	void Update()override;
-	std::uint32_t GetTextureCount()const override;
-	void SetMaterialVariable(const MaterialValue& arg_var);
-	MaterialValue& GetMaterialVariable()override;
-	const MaterialValue& GetMaterialVariable()const override;
-	MaterialValue_Deferred GetMaterialDeferredValue()const override;
-	void SetMaterialIndex(const std::int32_t arg_index)override;
+	BUTIRENDERING_API Resource_Material_Dx12(const MaterialValue& arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
+	BUTIRENDERING_API Resource_Material_Dx12(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
+	BUTIRENDERING_API void Initialize()override;
+	BUTIRENDERING_API void Attach(const std::uint32_t slotOffset, Value_ptr<IRenderer> arg_vlp_renderer)override;
+	BUTIRENDERING_API void Update()override;
+	BUTIRENDERING_API std::uint32_t GetTextureCount()const override;
+	BUTIRENDERING_API void SetMaterialVariable(const MaterialValue& arg_var);
+	BUTIRENDERING_API MaterialValue& GetMaterialVariable()override;
+	BUTIRENDERING_API const MaterialValue& GetMaterialVariable()const override;
+	BUTIRENDERING_API MaterialValue_Deferred GetMaterialDeferredValue()const override;
+	BUTIRENDERING_API void SetMaterialIndex(const std::int32_t arg_index)override;
+	BUTIRENDERING_API void OnDescriptorHeapUpdate()override;
 private:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 	Value_ptr< CBuffer_Dx12<MaterialValue>> materialBuffer;
@@ -28,20 +29,21 @@ private:
 
 class Resource_MaterialList_Dx12 :public Resource_Material {
 public:
-	Resource_MaterialList_Dx12(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_ptr<IResourceContainer> arg_resourceContainer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
-	void Initialize()override;
-	void Attach(const std::uint32_t slotOffset, Value_ptr<IRenderer> arg_vlp_renderer)override;
-	void Update()override;
-	std::uint32_t GetTextureCount()const override;
-	void SetMaterialVariable(const MaterialValue& arg_var);
-	MaterialValue& GetMaterialVariable()override;
-	const MaterialValue& GetMaterialVariable()const override;
-	MaterialValue_Deferred GetMaterialDeferredValue()const override;
-	void SetMaterialIndex(const std::int32_t arg_index)override;
+	BUTIRENDERING_API Resource_MaterialList_Dx12(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, const List<Value_ptr<IResource_Material>>& arg_list_material, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
+	BUTIRENDERING_API void Initialize()override;
+	BUTIRENDERING_API void Attach(const std::uint32_t slotOffset, Value_ptr<IRenderer> arg_vlp_renderer)override;
+	BUTIRENDERING_API void Update()override;
+	BUTIRENDERING_API std::uint32_t GetTextureCount()const override;
+	BUTIRENDERING_API void SetMaterialVariable(const MaterialValue& arg_var);
+	BUTIRENDERING_API MaterialValue& GetMaterialVariable()override;
+	BUTIRENDERING_API const MaterialValue& GetMaterialVariable()const override;
+	BUTIRENDERING_API MaterialValue_Deferred GetMaterialDeferredValue()const override;
+	BUTIRENDERING_API void SetMaterialIndex(const std::int32_t arg_index)override;
+	BUTIRENDERING_API void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material)override;
 private:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 	Value_ptr< CArrayBuffer_Dx12<MaterialValue_Deferred>> materialBuffer;
-	Value_weak_ptr<IResourceContainer> vwp_resourceContainer;
+	List<Value_ptr<IResource_Material>> m_list_material;
 };
 }
 }

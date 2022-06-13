@@ -22,107 +22,91 @@ class GraphicDevice_Dx12 :public GraphicDevice
 	};
 public:
 
-	GraphicDevice_Dx12(Value_weak_ptr<IApplication> arg_vwp_application);
+	GraphicDevice_Dx12();
 	void Initialize()override;
 	void Release()override;
 	void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)override;
 	void ClearDepthStancil(const float arg_depth = 1.0f) override;
-	ID3D12Device& GetDevice();
-	HRESULT CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS HeapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES InitialResourceState,
+	BUTIRENDERING_API ID3D12Device& GetDevice();
+	BUTIRENDERING_API HRESULT CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS HeapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES InitialResourceState,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue, const IID& riidResource, void** ppvResource);
 
-	ID3D12CommandQueue& GetCommandQueue();
+	BUTIRENDERING_API ID3D12CommandQueue& GetCommandQueue();
+	BUTIRENDERING_API ID3D12CommandAllocator& GetCommandAllocator();
+	BUTIRENDERING_API ID3D12CommandAllocator& GetCommandAllocator(const std::uint32_t arg_index);
+	BUTIRENDERING_API ID3D12CommandAllocator& GetBundleCommandAllocator();
+	BUTIRENDERING_API ID3D12GraphicsCommandList& GetCommandList();
+	BUTIRENDERING_API ID3D12GraphicsCommandList& GetUploadCommandList();
+	BUTIRENDERING_API virtual ID3D12GraphicsCommandList& GetClearCommandList();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc);
 
-	ID3D12CommandAllocator& GetCommandAllocator();
+	BUTIRENDERING_API void SetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState);
 
-	ID3D12CommandAllocator& GetCommandAllocator(const std::uint32_t arg_index);
+	BUTIRENDERING_API std::pair< Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC> GetRootSignature(const std::wstring& Key);
 
-	ID3D12CommandAllocator& GetBundleCommandAllocator();
+	BUTIRENDERING_API Value_weak_ptr<DescriptorHeapManager> GetDescriptorHeapManager();
 
-	ID3D12GraphicsCommandList& GetCommandList();
+	BUTIRENDERING_API PipelineStateManager& GetPipelineStateManager();
 
-	ID3D12GraphicsCommandList& GetUploadCommandList();
-	virtual ID3D12GraphicsCommandList& GetClearCommandList();
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc);
+	BUTIRENDERING_API void SetRootSignature(const std::wstring& Key, const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootsig, const D3D12_ROOT_SIGNATURE_DESC& arg_desc);
 
-	void SetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState);
+	BUTIRENDERING_API void AddUploadResource(GPUResource* rarg_resource);
 
-	std::pair< Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC> GetRootSignature(const std::wstring& Key);
-
-	Value_weak_ptr<DescriptorHeapManager> GetDescriptorHeapManager();
-
-	PipelineStateManager& GetPipelineStateManager();
-
-	void SetRootSignature(const std::wstring& Key, const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootsig, const D3D12_ROOT_SIGNATURE_DESC& arg_desc);
-
-	void AddUploadResource(GPUResource* rarg_resource);
-
-	void AddOutputResource(GPUResource* rarg_resource, const FileFormat arg_format, const std::string& arg_fileName);
+	BUTIRENDERING_API void AddOutputResource(GPUResource* rarg_resource, const FileFormat arg_format, const std::string& arg_fileName);
 
 
-	void UploadResourceRelease()override;
-	void UploadResourceBufferMerge()override;
+	BUTIRENDERING_API void UploadResourceRelease()override;
+	BUTIRENDERING_API void UploadResourceBufferMerge()override;
+	BUTIRENDERING_API void UnSetCommandList();
 
-	void UnSetCommandList();
-
-	ID3D12Fence& GetFence();
-	virtual IDXGISwapChain& GetSwapChain();
+	BUTIRENDERING_API ID3D12Fence& GetFence();
+	BUTIRENDERING_API virtual IDXGISwapChain& GetSwapChain();
 
 
 
-	virtual void WaitGPU();
+	BUTIRENDERING_API virtual void WaitGPU();
 
-	void Present() override;
+	BUTIRENDERING_API void Present() override;
 
-	void DrawEnd();
-	void StartGUICommand();
-	void EndGUICommand();
+	BUTIRENDERING_API void DrawEnd();
+	BUTIRENDERING_API void StartGUICommand();
+	BUTIRENDERING_API void EndGUICommand();
 
-	void Reset() override;
-	void ClearWindow() override;
+	BUTIRENDERING_API void Reset() override;
+	BUTIRENDERING_API void ClearWindow() override;
 
 
-	void SetCommandList(ID3D12GraphicsCommandList* arg_currentCommandList, const std::int32_t index = 0);
-	void SetDefaultRenderTarget()override;
-	void SetDefaultDepthStencil();
-	void CommandList_SetScissorRect();
+	BUTIRENDERING_API void SetCommandList(ID3D12GraphicsCommandList* arg_currentCommandList, const std::int32_t index = 0);
+	BUTIRENDERING_API void SetDefaultRenderTarget()override;
+	BUTIRENDERING_API void SetDefaultDepthStencil();
+	BUTIRENDERING_API void CommandList_SetScissorRect();
 
-	void CommandList_SetRenderTargetView();
+	BUTIRENDERING_API void CommandList_SetRenderTargetView();
+	BUTIRENDERING_API void PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle);
+	BUTIRENDERING_API void InsertCommandList();
+	BUTIRENDERING_API void ResourceUpload()override;
 
-	void PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle);
+	BUTIRENDERING_API void DrawStart()override;
+	BUTIRENDERING_API void PipelineClear()override;
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetRtvHeap() const;
 
-	void InsertCommandList();
+	BUTIRENDERING_API ID3D12Resource& GetTextureUploadHeap();
 
-	void ResourceUpload()override;
-
-	void DrawStart()override;
-	void PipelineClear()override;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetRtvHeap() const;
-
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDsvHeap() const;
-
-	ID3D12Resource& GetTextureUploadHeap();
-
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRtvHandle() const;
-
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDsvHandle() const;
-
-	const D3D12_RECT& GetScissorRect()const;
-
-	virtual std::uint32_t GetFrameCount() const;
-
-	virtual std::uint32_t GetFrameIndex()const;
-
-	void SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv);
-	D3D12_CPU_DESCRIPTOR_HANDLE* GetDepthStencil();
-	void DisSetDepthStencil();
-	void ResetPipeLine()override;
+	BUTIRENDERING_API D3D12_CPU_DESCRIPTOR_HANDLE GetRtvHandle() const;
+	BUTIRENDERING_API D3D12_CPU_DESCRIPTOR_HANDLE GetDsvHandle() const;
+	BUTIRENDERING_API const D3D12_RECT& GetScissorRect()const;
+	BUTIRENDERING_API virtual std::uint32_t GetFrameCount() const;
+	BUTIRENDERING_API virtual std::uint32_t GetFrameIndex()const;
+	BUTIRENDERING_API void SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv);
+	BUTIRENDERING_API D3D12_CPU_DESCRIPTOR_HANDLE* GetDepthStencil();
+	BUTIRENDERING_API void DisSetDepthStencil();
+	BUTIRENDERING_API void ResetPipeLine()override;
 protected:
 	class Impl;
 	std::unique_ptr<Impl> m_uqp_impl;
 };
 
-Value_ptr< GraphicDevice_Dx12> CreateGraphicDeviceDx12(Value_weak_ptr<IApplication> arg_vwp_application,const bool arg_isWindowApp);
+BUTIRENDERING_API Value_ptr< GraphicDevice_Dx12> CreateGraphicDeviceDx12(const bool arg_isWindowApp);
 
 }
 }

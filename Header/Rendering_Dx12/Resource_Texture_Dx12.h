@@ -74,33 +74,30 @@ public:
 		void* p_resourceData = nullptr;
 		DXGI_FORMAT format;
 	};
-	Resource_Texture_Dx12(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API Resource_Texture_Dx12(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_graphicDevice);
 	~Resource_Texture_Dx12() {
 	}
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
-	void Attach(std::int32_t slot)override;
-	void CreateTexture(Image* srcImages, size_t nimages, const TexMetadata& metadata);
-	void ToPNG(const std::string& arg_textureFilePath);
-	GUIWindowReaction ShowTextureWindow(const std::string& arg_windowName, const std::int32_t winFrag)override;
-	void ShowGUI()override;
-	void* GetResourcePtr()override;
-	virtual void CreateTextureUploadHeap();
-	void Initialize()override;
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetTexture();
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetTextureUploadHeap();
-	D3D12_RESOURCE_DESC GetTextureDesc();
-	const unsigned char* GetRawData()override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API void Attach(std::int32_t slot)override;
+	BUTIRENDERING_API void CreateTexture(Image* srcImages, size_t nimages, const TexMetadata& metadata);
+	BUTIRENDERING_API void ToPNG(const std::string& arg_textureFilePath);
+	BUTIRENDERING_API void* GetResourcePtr()override;
+	BUTIRENDERING_API virtual void CreateTextureUploadHeap();
+	BUTIRENDERING_API void Initialize()override;
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetTexture();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetTextureUploadHeap();
+	BUTIRENDERING_API D3D12_RESOURCE_DESC GetTextureDesc();
+	BUTIRENDERING_API const unsigned char* GetRawData()override;
 	UInt2 GetSize() const override {
 		return UInt2(image.vlp_imageData->width, image.vlp_imageData->height);
 	}
-	std::int32_t GetFormat()const override;
-	std::int32_t GetStride()const override;
-	std::int32_t GetDataSize()const override;
+	BUTIRENDERING_API std::int32_t GetFormat()const override;
+	BUTIRENDERING_API std::int32_t GetStride()const override;
+	BUTIRENDERING_API std::int32_t GetDataSize()const override;
 protected:
-	Resource_Texture_Dx12() {
-	}
-	void UpdateResourceRelease()override;
-	void ResourceUpdate() override;
+	BUTIRENDERING_API Resource_Texture_Dx12() {}
+	BUTIRENDERING_API void UpdateResourceRelease()override;
+	BUTIRENDERING_API void ResourceUpdate() override;
 	D3D12_GPU_DESCRIPTOR_HANDLE handle;
 	Image image;
 	//テクスチャ用のデスクプリタ

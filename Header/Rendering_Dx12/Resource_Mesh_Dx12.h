@@ -17,29 +17,29 @@ public:
 		Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferUploadHeap;
 		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
 	};
-	Resource_Mesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
-	void Draw(const std::uint32_t arg_vertexType)override;
+	BUTIRENDERING_API Resource_Mesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API void Draw(const std::uint32_t arg_vertexType)override;
 
-	void Initialize()override;
+	BUTIRENDERING_API void Initialize()override;
 
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
 
-	void SetVertexBuffer(const std::uint32_t arg_vertexType, Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferResource, Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferUploadHeap, D3D12_VERTEX_BUFFER_VIEW arg_vertexBufferview);
-	void SetIndexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indeexBuffer);
-	void SetIndexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indexBufferUploadHeap);
-	void SetIndexBufferView(D3D12_INDEX_BUFFER_VIEW arg_indexBufferView);
+	BUTIRENDERING_API void SetVertexBuffer(const std::uint32_t arg_vertexType, Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferResource, Microsoft::WRL::ComPtr<ID3D12Resource> arg_vertexBufferUploadHeap, D3D12_VERTEX_BUFFER_VIEW arg_vertexBufferview);
+	BUTIRENDERING_API void SetIndexBuffer(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indeexBuffer);
+	BUTIRENDERING_API void SetIndexBufferUploadHeap(Microsoft::WRL::ComPtr<ID3D12Resource> arg_indexBufferUploadHeap);
+	BUTIRENDERING_API void SetIndexBufferView(D3D12_INDEX_BUFFER_VIEW arg_indexBufferView);
 
-	void SetVertexCount(const std::uint32_t arg_vertexCount);
+	BUTIRENDERING_API void SetVertexCount(const std::uint32_t arg_vertexCount);
 
-	void SetIndexCount(const std::uint32_t arg_indexCount);
+	BUTIRENDERING_API void SetIndexCount(const std::uint32_t arg_indexCount);
 
 
 	const VertexBuffer& GetVertexBuffer(std::uint32_t arg_vertexType) { return map_vertexBuffer.at(arg_vertexType); }
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBuffer();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBuffer();
 
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBufferUploadHeap();
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12Resource> GetIndexBufferUploadHeap();
 
 private:
 	std::map<std::uint32_t, VertexBuffer> map_vertexBuffer;
@@ -51,9 +51,8 @@ private:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 
 
-	void ResourceUpdate() override;
-
-	void UpdateResourceRelease()override;
+	BUTIRENDERING_API void ResourceUpdate() override;
+	BUTIRENDERING_API void UpdateResourceRelease()override;
 
 };
 }

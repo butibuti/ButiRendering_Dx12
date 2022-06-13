@@ -22,7 +22,7 @@ public:
 			this->instance = nullptr;
 		}
 	}
-	T& Get() const override
+	T& Get() override
 	{
 		return *instance.get();
 	}
@@ -65,9 +65,6 @@ public:
 		archive(mapKeep);
 		archive(this->exName);
 		archive(instance);
-	}
-	bool OnShowUI()override {
-		return instance->ShowUI();
 	}
 	Value_ptr<ICBuffer> Clone()override {
 		auto output = ObjectFactory::Create<CBuffer_Dx12<T>>(this->slot);

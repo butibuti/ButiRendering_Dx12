@@ -17,14 +17,14 @@ static void ReadCompiledPSOutput(const std::string& fileName, std::vector<std::i
 class Resource_PixelShader_Dx12 :public Resource_PixelShader
 {
 public:
-	Resource_PixelShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
-	~Resource_PixelShader_Dx12();
-	void Attach()const override;
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
-	std::vector<std::int32_t>& GetFormats()override;
-	Microsoft::WRL::ComPtr<ID3DBlob>& GetPixelShaderBlob();
-	std::string GetName()const override;
-	std::vector< std::uint32_t> GetOutputPixelFormat()const override;
+	BUTIRENDERING_API Resource_PixelShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API ~Resource_PixelShader_Dx12();
+	BUTIRENDERING_API void Attach()const override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API std::vector<std::int32_t>& GetFormats()override;
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3DBlob>& GetPixelShaderBlob();
+	BUTIRENDERING_API std::string GetName()const override;
+	BUTIRENDERING_API std::vector< std::uint32_t> GetOutputPixelFormat()const override;
 private:
 	Microsoft::WRL::ComPtr<ID3DBlob> pixelShaderBlob = nullptr;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
@@ -35,15 +35,15 @@ private:
 class Resource_VertexShader_Dx12 :public Resource_VertexShader
 {
 public:
-	Resource_VertexShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
-	~Resource_VertexShader_Dx12();
-	void Attach()const override;
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API Resource_VertexShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API ~Resource_VertexShader_Dx12();
+	BUTIRENDERING_API void Attach()const override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
 
-	Microsoft::WRL::ComPtr<ID3DBlob>& GetVertexShaderBlob();
-	std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayoutVector();
-	std::string GetName()const override;
-	std::uint32_t GetInputVertexType()const override;
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3DBlob>& GetVertexShaderBlob();
+	BUTIRENDERING_API std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayoutVector();
+	BUTIRENDERING_API std::string GetName()const override;
+	BUTIRENDERING_API std::uint32_t GetInputVertexType()const override;
 private:
 	Microsoft::WRL::ComPtr<ID3DBlob> vertexShaderBlob = nullptr;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> vec_inputElementDesc;
@@ -53,13 +53,13 @@ private:
 };
 class Resource_GeometryShader_Dx12 :public Resource_GeometryShader {
 public:
-	Resource_GeometryShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
-	~Resource_GeometryShader_Dx12();
-	void Attach()const override;
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
+	BUTIRENDERING_API Resource_GeometryShader_Dx12(const std::string& fileName, Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API ~Resource_GeometryShader_Dx12();
+	BUTIRENDERING_API void Attach()const override;
+	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
 
-	Microsoft::WRL::ComPtr<ID3DBlob>& GetGeometryShaderBlob();
-	std::string GetName()const override;
+	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3DBlob>& GetGeometryShaderBlob();
+	BUTIRENDERING_API std::string GetName()const override;
 private:
 	Microsoft::WRL::ComPtr<ID3DBlob> geometryShaderBlob = nullptr;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;

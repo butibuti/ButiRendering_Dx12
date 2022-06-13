@@ -1,18 +1,10 @@
 
-#include"stdafx.h"
-#include"../Bone.h"
 
 #ifndef IDRAWOBJ_H
 #define IDRAWOBJ_H
-
+#include"stdafx.h"
+#include"../Bone.h"
 namespace ButiEngine {
-
-
-namespace Collision {
-class CollisionPrimitive;
-class CollisionPrimitive_Box_AABB;
-class CollisionPrimitive_Box_OBB;
-}
 namespace ButiRendering {
 class IDrawObject :public IObject {
 public:
@@ -27,11 +19,7 @@ public:
 	virtual void ShowZ() {}
 	virtual List<Value_ptr<IDrawObject>>& GetChilds() { static List<Value_ptr<IDrawObject>> empty; return empty; }
 
-	virtual Value_ptr<Collision::CollisionPrimitive_Box_AABB> GetMeshAABB() = 0;
-	virtual Value_ptr<Collision::CollisionPrimitive_Box_OBB> GetMeshOBB() = 0;
-	virtual void SetPrimitive(Value_ptr<Collision::CollisionPrimitive>arg_prim) = 0;
 	virtual void SetOctRegistPtr(std::uint32_t* arg_ptr) = 0;
-	virtual Value_ptr<Collision::CollisionPrimitive> GetPrimitive() = 0;
 	virtual std::uint32_t* GetOctRegistPtr() = 0;
 };
 class IBoneObject :public  IObject {

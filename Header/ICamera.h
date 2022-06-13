@@ -3,7 +3,6 @@
 #include"ButiMath/ButiMath.h"
 #include"ButiMath/Transform.h"
 #include <vector>
-#include"ButiUtil/ButiUtil/ID.h"
 #include"ResourceInterface.h"
 #include"RenderingStatus.h"
 namespace ButiEngine {
@@ -11,26 +10,25 @@ namespace Geometry {
 class Box_AABB;
 }
 namespace ButiRendering {
+class IRenderer;
+class GraphicDevice;
+struct CameraProperty {
+	CameraProperty() {};
+	BUTIRENDERING_API CameraProperty(const std::uint32_t arg_widthScale, const std::uint32_t arg_heightScale, const std::uint32_t arg_x, const std::uint32_t arg_y, const bool arg_isPararell = false, std::uint32_t arg_layer = 0);
 
-
-struct CameraProjProperty {
-	CameraProjProperty() {};
-	CameraProjProperty(const std::uint32_t arg_widthScale, const std::uint32_t arg_heightScale, const std::uint32_t arg_x, const std::uint32_t arg_y, const bool arg_isPararell = false, std::uint32_t arg_layer = 0);
-
-	std::int32_t currentWidth = 0, currentHeight = 0, width, height, left = 0, top = 0;
+	std::int32_t currentWidth = 0, currentHeight = 0, width=0, height=0, left = 0, top = 0;
 	float front = 0.0f, angle = 60.0f, farClip = 50.0f, nearClip = 0.1f;
 	bool isPararell = false;
 	std::uint32_t layer = 0;
 	std::int32_t renderingInfo = 0;
-	std::vector< TextureTag >projectionTexture;
-	TextureTag depthStencilTexture;
 	std::string cameraName;
 	Vector4 clearColor;
 	bool isInitActive = true, isEditActive = false, isShadow = false;
-	std::vector< TextureTag >vec_shadowTextures;
-	std::vector< TextureTag >vec_staticShadowTextures;
 
-
+	List<Value_weak_ptr<IRenderTarget>> m_list_vlp_renderTarget;
+	Value_weak_ptr<IDepthStencil> m_depthStencilTexture;
+	List<Value_weak_ptr<IResource_Texture>> m_list_vlp_shadowTexture;
+	List<Value_weak_ptr<IResource_Texture>> m_list_vlp_staticShadowTexture;
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
@@ -46,15 +44,11 @@ struct CameraProjProperty {
 		archive(layer);
 		archive(front);
 		archive(renderingInfo);
-		archive(projectionTexture);
-		archive(depthStencilTexture);
 		archive(cameraName);
 		archive(clearColor);
 		archive(isInitActive);
 		archive(isEditActive);
 		archive(isShadow);
-		archive(vec_shadowTextures);
-		archive(vec_staticShadowTextures);
 	}
 
 };
@@ -104,19 +98,15 @@ public:
 	/// </summary>
 	virtual void Draw() = 0;
 	/// <summary>
-	/// GUI呼び出し
+	/// カメラ設定の取得
 	/// </summary>
-	virtual void ShowUI() = 0;
+	/// <returns></returns>
+	virtual CameraProperty& GetCameraProperty() = 0;
 	/// <summary>
 	/// カメラ設定の取得
 	/// </summary>
 	/// <returns></returns>
-	virtual CameraProjProperty& GetCameraProperty() = 0;
-	/// <summary>
-	/// カメラ設定の取得
-	/// </summary>
-	/// <returns></returns>
-	virtual const CameraProjProperty& GetCameraProperty() const= 0;
+	virtual const CameraProperty& GetCameraProperty() const= 0;
 	/// <summary>
 	/// カメラに形状が写っているかの取得
 	/// </summary>
@@ -130,13 +120,13 @@ public:
 	/// <summary>
 	/// 描画結果を出力するレンダーターゲットテクスチャの設定
 	/// </summary>
-	/// <param name="arg_tag">描画結果を出力するレンダーターゲットテクスチャ</param>
-	virtual void SetProjectionTexture(const TextureTag& arg_tag) = 0;
+	/// <param name="arg_renderTarget">描画結果を出力するレンダーターゲットテクスチャ</param>
+	virtual void SetRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) = 0;
 	/// <summary>
 	/// 参照、出力する深度テクスチャの設定
 	/// </summary>
-	/// <param name="arg_tag">参照、出力する深度テクスチャ</param>
-	virtual void SetDepthStencilView(const TextureTag& arg_tag) = 0;
+	/// <param name="arg_depthStencil">参照、出力する深度テクスチャ</param>
+	virtual void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) = 0;
 	/// <summary>
 	/// 描画前処理
 	/// </summary>
@@ -162,6 +152,8 @@ public:
 	/// <returns>カメラ位置</returns>
 	virtual Vector3 GetPosition() = 0;
 	virtual Vector3 WorldToScreen(const Vector3& arg_pos)const = 0;
+	virtual Value_weak_ptr<IRenderer> GetRenderer()const = 0;
+	virtual Value_ptr<GraphicDevice> GetGraphicDevice()const = 0;
 protected:
 };
 }

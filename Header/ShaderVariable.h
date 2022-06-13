@@ -1,5 +1,5 @@
 #pragma once
-#include"../ButiMath/ButiMath.h"
+#include"ButiMath/ButiMath.h"
 namespace ButiEngine {
 
 namespace ButiRendering {
@@ -19,7 +19,6 @@ struct ShaderVariable
 		archive(Projection);
 		archive(MVP);
 	}
-	bool ShowUI() { return false; }
 };
 
 
@@ -37,7 +36,6 @@ struct RenderingSceneInfo {
 	RenderingSceneInfo() {
 	}
 
-	bool ShowUI() { return false; }
 
 	template<class Archive>
 	void serialize(Archive& archive)
@@ -74,31 +72,6 @@ struct ObjectInformation {
 		archive(OffSet);
 		archive(ExInfo);
 	}
-
-	bool ShowUI() {
-		bool output = false;
-		if (GUI::DragFloat4("LightDirection", lightDir, 0.01f, -500.0f, 500.0f)) {
-			Vector3 buff = lightDir;
-			buff.Normalize();
-			lightDir.x = buff.x;
-			lightDir.y = buff.y;
-			lightDir.z = buff.z;
-			output = true;
-		}
-		if (GUI::DragFloat4("Color", color, 0.01f, -500.0f, 500.0f)) {
-			output = true;
-		}
-		if (GUI::DragFloat2("Tiling", Tiling, 0.01f, -500.0f, 500.0f)) {
-			output = true;
-		}
-		if (GUI::DragFloat2("Offset", OffSet, 0.01f, -500.0f, 500.0f)) {
-			output = true;
-		}
-		if (GUI::DragFloat4("ExInfo", ExInfo, 0.01f, -500.0f, 500.0f)) {
-			output = true;
-		}
-		return output;
-	}
 };
 constexpr std::int32_t gausOffsetLength=0x10;
 struct GausVariable {
@@ -107,18 +80,9 @@ struct GausVariable {
 	}
 
 	Vector4 gausOffset[gausOffsetLength];
-	float GaussianDistribution(const Vector2& pos, float rho);
+	BUTIRENDERING_API float GaussianDistribution(const Vector2& pos, float rho);
 
-	void CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation);
-	bool ShowUI() {
-		bool isChanged = false;
-
-		for (std::int32_t i = 0; i < gausOffsetLength; i++) {
-			isChanged |= GUI::DragFloat4("GausOffset[" + std::to_string(i) + "]", gausOffset[i], 0.01f, -100.0f, 100.0f);
-		}
-
-		return isChanged;
-	}
+	BUTIRENDERING_API void CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation);
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
@@ -144,26 +108,6 @@ struct MaterialValue {
 		archive(ambient);
 		archive(specular);
 	}
-	bool ShowUI() {
-
-		bool ret = false;
-		if (GUI::DragFloat3("Emissive", &emissive.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Diffuse", &diffuse.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Specular", &specular.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Ambient", &ambient.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat("roughness", emissive.w, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		return ret;
-	}
 };
 
 struct MaterialValue_Deferred {
@@ -175,6 +119,7 @@ struct MaterialValue_Deferred {
 	MaterialValue_Deferred() {
 
 	};
+	MaterialValue_Deferred(const MaterialValue& arg_v) :emissive(arg_v.emissive),diffuse(arg_v.diffuse),ambient(arg_v.ambient),specular(arg_v.specular){};
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
@@ -183,52 +128,8 @@ struct MaterialValue_Deferred {
 		archive(ambient);
 		archive(specular);
 	}
-	bool ShowUI() {
-
-		bool ret = false;
-		if (GUI::DragFloat3("Emissive", &emissive.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Diffuse", &diffuse.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Specular", &specular.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-		if (GUI::DragFloat4("Ambient", &ambient.x, 0.01f, 0.0f, 1.0f)) {
-			ret = true;
-		}
-
-		return ret;
-	}
 };
 
-struct TestGSVariable {
-	Vector4 pushPower;
-	float bottom = 0;
-	TestGSVariable() {
-	}
-	template<class Archive>
-	void serialize(Archive& archive)
-	{
-		archive(bottom);
-		archive(pushPower);
-	}
-
-	bool ShowUI() {
-
-		bool ret = false;
-		if (GUI::DragFloat("Time", &pushPower.w, 0.02f, 0.0f, 10.0f)) {
-
-			ret = true;
-		}
-		if (GUI::DragFloat("FloorHight", &bottom, 0.02f, -100.0f, 100.0f)) {
-
-			ret = true;
-		}
-		return ret;
-	}
-};
 struct ParticleParameter {
 	Vector4 startColor = Vector4(0, 0, 0, 1);
 	Vector4 endColor = Vector4(1, 1, 1, 1);
@@ -259,7 +160,6 @@ struct ParticleParameter {
 		archive(rotationPase);
 	}
 
-	bool ShowUI();
 };
 }
 }

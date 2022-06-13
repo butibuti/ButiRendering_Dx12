@@ -1,6 +1,5 @@
 #pragma once
 #include"ButiMath/ButiMath.h"
-#include"ButiUtil/ButiUtil/ID.h"
 #include"ButiUtil/ButiUtil/ObjectFactory.h"
 #include"ButiUtil/ButiUtil/Util.h"
 #include<vector>
@@ -11,10 +10,10 @@ namespace ButiEngine {
 
 namespace ButiRendering {
 class IResource_Texture;
+class IDepthStencil;
+class IRenderTarget;
 }
-using TextureTag = ID<ButiRendering::IResource_Texture>;
 namespace ButiRendering {
-using TextureTag = ID<IResource_Texture>;
 struct GPUResource {
 	virtual void  ResourceUpdate() {}
 	virtual void  UpdateResourceRelease() {}
@@ -114,20 +113,19 @@ public:
 	virtual void Reset()=0;
 	virtual void ClearWindow() = 0;
 	virtual void ClearDepthStancil(const float arg_depth) = 0;
-	Matrix4x4 GetProjectionMatrix();
-	Matrix4x4 GetCameraViewMatrix();
-	const Vector3& GetCameraPos();
-	void SetCameraPos(const Vector3& arg_pos);
-	Matrix4x4 GetRawViewMatrix();
-	Value_weak_ptr<IApplication> GetApplication();
+	BUTIRENDERING_API Matrix4x4 GetProjectionMatrix();
+	BUTIRENDERING_API Matrix4x4 GetCameraViewMatrix();
+	BUTIRENDERING_API const Vector3& GetCameraPos();
+	BUTIRENDERING_API void SetCameraPos(const Vector3& arg_pos);
+	BUTIRENDERING_API Matrix4x4 GetRawViewMatrix();
 	virtual void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)=0;
-	void SetProjectionMatrix(const Matrix4x4& arg_projectionMatrix);
-	void SetViewMatrix(const Matrix4x4& arg_viewMatrix);
-	void SetRawViewMatrix(const Matrix4x4& arg_viewMatrix);
-	void SetViewMatrix_billBoard(const Matrix4x4& arg_viewMatrix);
-	void SetViewMatrix_billBoardX(const Matrix4x4& arg_viewMatrix);
-	void SetViewMatrix_billBoardY(const Matrix4x4& arg_viewMatrix);
-	void SetViewMatrix_billBoardZ(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetProjectionMatrix(const Matrix4x4& arg_projectionMatrix);
+	BUTIRENDERING_API void SetViewMatrix(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetRawViewMatrix(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetViewMatrix_billBoard(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetViewMatrix_billBoardX(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetViewMatrix_billBoardY(const Matrix4x4& arg_viewMatrix);
+	BUTIRENDERING_API void SetViewMatrix_billBoardZ(const Matrix4x4& arg_viewMatrix);
 	virtual void ResetPipeLine() = 0;
 	virtual void PipelineClear() = 0;
 
@@ -144,16 +142,20 @@ public:
 		return viewMatrix_billBoardZ;
 	}
 
-	void SetClearColor(const Vector4& arg_clearColor);
-	Vector4 GetClearColor();
-	TextureTag GetDefaultRenderTarget() { return defaultRenderTarget; }
-	void SetDefaultRenderTarget(TextureTag arg_renderTargetTexture) {
-		defaultRenderTarget = arg_renderTargetTexture;
+	BUTIRENDERING_API void SetClearColor(const Vector4& arg_clearColor);
+	BUTIRENDERING_API Vector4 GetClearColor();
+	Value_ptr<IRenderTarget> GetDefaultRenderTarget() { return m_defaultRenderTarget; }
+	void SetDefaultRenderTarget(Value_ptr<IRenderTarget> arg_renderTargetTexture) {
+		m_defaultRenderTarget = arg_renderTargetTexture;
+	}
+	Value_ptr<IDepthStencil> GetDefaultDepthStencil() { return m_defaultDepthStencil; }
+	void SetDefaultDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) {
+		m_defaultDepthStencil=arg_depthStencil;
 	}
 protected:
-	TextureTag defaultRenderTarget;
+	Value_ptr<IRenderTarget> m_defaultRenderTarget;
+	Value_ptr<IDepthStencil> m_defaultDepthStencil;
 	Matrix4x4 projectionMatrix;
-	Value_weak_ptr<IApplication> vwp_application;
 
 	Matrix4x4 viewMatrix;
 	Matrix4x4 viewMatrix_billBoard;

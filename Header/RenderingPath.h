@@ -1,4 +1,4 @@
-#ifndef define RENDERINGPATH_H
+#ifndef RENDERINGPATH_H
 #define RENDERINGPATH_H
 #include"ResourceInterface.h"
 #include"ICamera.h"
@@ -6,90 +6,51 @@
 namespace ButiEngine {
 namespace ButiRendering {
 
-struct RenderingPathInfo :public IObject {
-	void Initialize() {}
-	void PreInitialize() {}
-	virtual Value_ptr<IRenderingPath> CreateRenderingPath(Value_ptr<IRenderer> arg_vlp_renderer, Value_ptr<GraphicDevice> arg_vlp_graphicDevice) = 0;
-	std::int32_t order;
-	template<class Archive>
-	void serialize(Archive& archive)
-	{
-		archive(order);
-	}
-};
-struct ForwardCameraRenderingPathInfo :public RenderingPathInfo {
-	Value_ptr<Transform> vlp_cameraTrnasform;
-	Value_ptr<CameraProjProperty> vlp_cameraProp;
-	Value_ptr<IRenderingPath> CreateRenderingPath(Value_ptr<IRenderer> arg_vlp_renderer, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)override;
-	template<class Archive>
-	void serialize(Archive& archive)
-	{
-		archive(vlp_cameraTrnasform);
-		archive(vlp_cameraProp);
-		archive(order);
-	}
-};
-struct DeferredCameraRenderingPathInfo :public RenderingPathInfo {
-	Value_ptr<Transform> vlp_cameraTrnasform;
-	Value_ptr<CameraProjProperty> vlp_cameraProp;
-	std::string forwardCameraPathName;
-	Value_ptr<IRenderingPath> CreateRenderingPath(Value_ptr<IRenderer> arg_vlp_renderer, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)override;
-	template<class Archive>
-	void serialize(Archive& archive)
-	{
-		archive(vlp_cameraTrnasform);
-		archive(vlp_cameraProp);
-		archive(forwardCameraPathName);
-		archive(order);
-	}
-};
 
 class CameraRenderingPath :public IRenderingPath {
 public:
-	Value_ptr<ICamera> GetCamera();
-	void SetName(const std::string& arg_name);
-	const std::string& GetName()const;
-	void SetPlayActive()override;
-	void SetEditActive()override;
+	BUTIRENDERING_API Value_ptr<ICamera> GetCamera();
+	BUTIRENDERING_API void SetName(const std::string& arg_name);
+	BUTIRENDERING_API const std::string& GetName()const;
+	BUTIRENDERING_API void SetPlayActive()override;
+	BUTIRENDERING_API void SetEditActive()override;
+	void SetOrder(const std::int32_t arg_order)override { m_order = arg_order; }
+	std::int32_t GetOrder()const override { return m_order; }
 protected:
 	Value_ptr<ICamera> vlp_camera;
-	Value_ptr<IScene> vlp_scene;
+	std::int32_t m_order=0;
 };
 
 class ForwardCameraRenderingPath :public CameraRenderingPath {
 public:
-	ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_ptr<IScene> arg_vlp_scene);
-	Value_ptr<RenderingPathInfo> GetRenderingPathInfo()override;
-	void BefExecute()override;
-	void Execute() override;
-	void End() override;
-	void Release() override;
-	void OnShowGUI() override;
+	BUTIRENDERING_API ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera,Value_weak_ptr<IRenderer> arg_vwp_renderer);
+	BUTIRENDERING_API void BefExecute()override;
+	BUTIRENDERING_API void Execute() override;
+	BUTIRENDERING_API void End() override;
+	BUTIRENDERING_API void Release() override;
 private:
-	Value_ptr<IRenderer> vlp_renderer;
+	Value_weak_ptr<IRenderer> vwp_renderer;
 };
 
 class DeferredCameraRenderingPath :public CameraRenderingPath {
 public:
-	DeferredCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_ptr<IScene> arg_vlp_scene, std::string arg_forwardCamName);
-	Value_ptr<RenderingPathInfo> GetRenderingPathInfo()override;
-	void BefExecute()override;
-	void Execute() override;
-	void End() override;
-	void Release() override;
-	void OnShowGUI() override;
+	BUTIRENDERING_API DeferredCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath);
+	BUTIRENDERING_API void BefExecute()override;
+	BUTIRENDERING_API void Execute() override;
+	BUTIRENDERING_API void End() override;
+	BUTIRENDERING_API void Release() override;
+	void SetForwardPath(Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath) {
+		vwp_forwardPath = arg_vwp_forwardPath;
+	}
+	Value_weak_ptr<ForwardCameraRenderingPath> GetForwardPath() { return vwp_forwardPath; }
 private:
 	Value_ptr<ICamera> vlp_forwardCamera;
-	Value_ptr<IRenderer> vlp_renderer;
-	std::string forwardCamName;
+	Value_weak_ptr<IRenderer> vwp_renderer;
+	Value_weak_ptr<ForwardCameraRenderingPath> vwp_forwardPath;
 };
+
 }
 }
 
-CEREAL_REGISTER_TYPE(ButiEngine::ButiRendering::RenderingPathInfo);
-CEREAL_REGISTER_TYPE(ButiEngine::ButiRendering::ForwardCameraRenderingPathInfo);
-CEREAL_REGISTER_TYPE(ButiEngine::ButiRendering::DeferredCameraRenderingPathInfo);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(ButiEngine::ButiRendering::RenderingPathInfo, ButiEngine::ButiRendering::ForwardCameraRenderingPathInfo);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(ButiEngine::ButiRendering::RenderingPathInfo, ButiEngine::ButiRendering::DeferredCameraRenderingPathInfo);
 #endif // !define RENDERINGPATH_H
 
