@@ -1,5 +1,6 @@
 ﻿#ifndef STDAFX_H
 #define STDAFX_H
+#define WIN32_LEAN_AND_MEAN
 #include<Windows.h>
 #pragma comment( lib, "d3d12.lib" )
 #pragma comment( lib, "DXGI.lib" )
