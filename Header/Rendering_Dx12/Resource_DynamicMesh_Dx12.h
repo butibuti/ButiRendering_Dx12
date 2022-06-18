@@ -1,6 +1,6 @@
 #pragma once
 #include"stdafx.h"
-#include"../Resource_RealTimeMesh.h"
+#include"../Resource_DynamicMesh.h"
 
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 #include"GraphicDevice_Dx12.h"
@@ -8,10 +8,10 @@ namespace ButiEngine {
 
 namespace ButiRendering {
 class GraphicDevice_Dx12;
-class Resource_RealTimeMesh_Dx12 :public Resource_RealTimeMesh
+class Resource_DynamicMesh_Dx12 :public Resource_DynamicMesh
 {
 public:
-	BUTIRENDERING_API Resource_RealTimeMesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API Resource_DynamicMesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
 	BUTIRENDERING_API void Draw(const std::uint32_t arg_vertexType)override;
 
 	BUTIRENDERING_API void Initialize()override;

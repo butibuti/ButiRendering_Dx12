@@ -1,7 +1,11 @@
+#ifndef CBUFFER_DX12_H
+#define CBUFFER_DX12_H
+
 #pragma once
 
 #include"DescriptorHeapManager.h"
 #include"GraphicDevice_Dx12.h"
+#include"../CBuffer.h"
 namespace ButiEngine {
 namespace ButiRendering {
 template <class T>
@@ -88,3 +92,5 @@ private:
 };
 }
 }
+
+#endif // !CBUFFER_DX12_H

@@ -30,7 +30,6 @@ public:
 	BUTIRENDERING_API ID3D12Device& GetDevice();
 	BUTIRENDERING_API HRESULT CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS HeapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES InitialResourceState,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue, const IID& riidResource, void** ppvResource);
-
 	BUTIRENDERING_API ID3D12CommandQueue& GetCommandQueue();
 	BUTIRENDERING_API ID3D12CommandAllocator& GetCommandAllocator();
 	BUTIRENDERING_API ID3D12CommandAllocator& GetCommandAllocator(const std::uint32_t arg_index);

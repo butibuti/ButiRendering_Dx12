@@ -244,7 +244,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::CommandSet()
 	if (drawData.vlp_drawInfo->drawSettings.isShadowMap&&textureRegion) {
 		drawData.vlp_renderer->GetShadowTexture(drawData.vlp_drawInfo->layer)->Attach( textureRegion - 1);
 	}
-	auto vertexType=drawData.GetShader().lock()->GetVertexShader().lock()->GetInputVertexType();
+	auto vertexType=drawData.GetShader().lock()->GetVertexShader()->GetInputVertexType();
 	drawData.GetMesh().lock()->Draw(vertexType);
 
 	vwp_graphicDevice.lock()->GetCommandList().IASetPrimitiveTopology((D3D_PRIMITIVE_TOPOLOGY)drawData.vlp_drawInfo->drawSettings.topologyType);
@@ -328,4 +328,22 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_billBoardZ()
 void ButiEngine::ButiRendering::DrawObject_Dx12::MatrixUpdater_RemoveDecimalPart()
 {
 	drawData.GetCBuffer()->Get().World = drawData.transform.GetPositionFloor_transpose();
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
+{
+	return ObjectFactory::Create<MeshDrawObject_Dx12>(arg_vwp_mesh,arg_vwp_shader,arg_vwp_material, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(),arg_vlp_drawInfo,  arg_vlp_transform);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
+{
+	return ObjectFactory::Create<MeshDrawObject_Dx12>(arg_vwp_mesh, arg_vwp_shader, arg_list_vwp_material, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
+{
+	return ObjectFactory::Create<MeshDrawObject_Dx12>(arg_vwp_model, arg_vwp_shader, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
+{
+	return ObjectFactory::Create<MeshDrawObject_Dx12>(arg_vwp_model, arg_vwp_shader, arg_list_vwp_material,arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform);
 }

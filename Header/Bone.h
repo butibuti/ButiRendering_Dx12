@@ -101,7 +101,7 @@ struct Bone
 
 	bool addLocal = false;
 
-	BUTIRENDERING_API void SetOtherBoneLinks(const std::vector<Value_ptr< Bone>>& arg_vec_bones);
+	BUTIRENDERING_API void SetOtherBoneLinks(const List<Value_ptr< Bone>>& arg_vec_bones);
 
 	BUTIRENDERING_API void AddBonePower();
 

@@ -69,3 +69,10 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelUpdate()
 		cbuffer_bone->Get(i) = (*itr)->GetPoseMatrix();
 	}
 }
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
+	return ObjectFactory::Create<ModelDrawObject_Dx12>(arg_vwp_model, arg_shader, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform, arg_vlp_bone);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
+	return ObjectFactory::Create<ModelDrawObject_Dx12>(arg_vwp_model, arg_shader, arg_list_material, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform, arg_vlp_bone);
+}

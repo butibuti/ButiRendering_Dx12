@@ -194,7 +194,7 @@
     <ClInclude Include="..\Header\Rendering_Dx12\PipelineStateManager.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Material_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Mesh_Dx12.h" />
-    <ClInclude Include="..\Header\Rendering_Dx12\Resource_RealTimeMesh_Dx12.h" />
+    <ClInclude Include="..\Header\Rendering_Dx12\Resource_DynamicMesh_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Shader_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Texture_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Texture_Dx12_DepthStencil.h" />
@@ -205,7 +205,7 @@
     <ClInclude Include="..\Header\Resource_Mesh.h" />
     <ClInclude Include="..\Header\Resource_Model.h" />
     <ClInclude Include="..\Header\Resource_Motion.h" />
-    <ClInclude Include="..\Header\Resource_RealTimeMesh.h" />
+    <ClInclude Include="..\Header\Resource_DynamicMesh.h" />
     <ClInclude Include="..\Header\Resource_Shader.h" />
     <ClInclude Include="..\Header\Resource_Texture.h" />
     <ClInclude Include="..\Header\ShaderVariable.h" />
@@ -233,7 +233,7 @@
     <ClCompile Include="Source\Rendering_Dx12\PipelineStateManager.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Material_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Mesh_Dx12.cpp" />
-    <ClCompile Include="Source\Rendering_Dx12\Resource_RealTimeMesh_Dx12.cpp" />
+    <ClCompile Include="Source\Rendering_Dx12\Resource_DynamicMesh_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Shader_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12_DepthStencil.cpp" />
@@ -243,7 +243,7 @@
     <ClCompile Include="Source\Resource_Mesh.cpp" />
     <ClCompile Include="Source\Resource_Model.cpp" />
     <ClCompile Include="Source\Resource_Motion.cpp" />
-    <ClCompile Include="Source\Resource_RealTimeMesh.cpp" />
+    <ClCompile Include="Source\Resource_DynamicMesh.cpp" />
     <ClCompile Include="Source\Resource_Shader.cpp" />
     <ClCompile Include="Source\Resource_Texture.cpp" />
     <ClCompile Include="Source\ShaderVariable.cpp" />

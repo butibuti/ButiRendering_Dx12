@@ -7,13 +7,10 @@
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"RenderingStatus.h"
 namespace ButiEngine {
-
 namespace ButiRendering {
 class IResource_Texture;
 class IDepthStencil;
 class IRenderTarget;
-}
-namespace ButiRendering {
 struct GPUResource {
 	virtual void  ResourceUpdate() {}
 	virtual void  UpdateResourceRelease() {}
@@ -96,13 +93,10 @@ namespace std {
 }
 
 namespace ButiEngine {
-class IApplication;
 namespace ButiRendering {
 class GraphicDevice :public IObject
 {
 public:
-
-
 	virtual void Present() = 0;
 	virtual void Release() = 0;
 	virtual void ResourceUpload() = 0;
@@ -113,6 +107,7 @@ public:
 	virtual void Reset()=0;
 	virtual void ClearWindow() = 0;
 	virtual void ClearDepthStancil(const float arg_depth) = 0;
+	
 	BUTIRENDERING_API Matrix4x4 GetProjectionMatrix();
 	BUTIRENDERING_API Matrix4x4 GetCameraViewMatrix();
 	BUTIRENDERING_API const Vector3& GetCameraPos();
@@ -166,8 +161,7 @@ protected:
 
 	Vector4 clearColor = Vector4(1, 1, 1, 1);
 	Vector3 cameraPos;
-
-
 };
+BUTIRENDERING_API Value_ptr<GraphicDevice> CreateGraphicDevice(const bool arg_isWindowApp);
 }
 }

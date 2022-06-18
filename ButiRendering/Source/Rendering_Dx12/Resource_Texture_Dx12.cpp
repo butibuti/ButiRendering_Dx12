@@ -347,3 +347,9 @@ size_t __cdecl ButiEngine::ButiRendering::Resource_Texture_Dx12::TexMetadata::Co
 		return size_t(-1);
 	}
 }
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_Texture_Dx12>(arg_vlp_imageData, arg_vlp_graphicDevice);
+}
+

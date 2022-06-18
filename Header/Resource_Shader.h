@@ -34,7 +34,7 @@ public:
 class Resource_Shader :public IResource_Shader
 {
 public:
-	BUTIRENDERING_API Resource_Shader(Value_weak_ptr<IResource_VertexShader> arg_vwp_vertexShader, Value_weak_ptr<IResource_PixelShader> arg_vwp_pixelShader, Value_weak_ptr<IResource_GeometryShader> arg_vwp_geometryShader, const std::string& arg_shaderName);
+	BUTIRENDERING_API Resource_Shader(Value_ptr<IResource_VertexShader> arg_vlp_vertexShader, Value_ptr<IResource_PixelShader> arg_vlp_pixelShader, Value_ptr<IResource_GeometryShader> arg_vlp_geometryShader, const std::string& arg_shaderName);
 	void Initialize()override {}
 	void PreInitialize()override {}
 	BUTIRENDERING_API virtual void Attach()const;
@@ -42,13 +42,13 @@ public:
 	BUTIRENDERING_API bool GetIsContainGeometryShader()const;
 	BUTIRENDERING_API std::string GetShaderName()const;
 
-	BUTIRENDERING_API Value_weak_ptr<IResource_VertexShader> GetVertexShader();
-	BUTIRENDERING_API Value_weak_ptr<IResource_PixelShader> GetPixelShader();
-	BUTIRENDERING_API Value_weak_ptr<IResource_GeometryShader> GetGeometryShader();
+	BUTIRENDERING_API Value_ptr<IResource_VertexShader> GetVertexShader()override;
+	BUTIRENDERING_API Value_ptr<IResource_PixelShader> GetPixelShader()override;
+	BUTIRENDERING_API Value_ptr<IResource_GeometryShader> GetGeometryShader()override;
 private:
-	Value_weak_ptr<IResource_VertexShader> vwp_vertexShader;
-	Value_weak_ptr<IResource_PixelShader> vwp_pixelShader;
-	Value_weak_ptr<IResource_GeometryShader> vwp_geometryShader;
+	Value_ptr<IResource_VertexShader> vlp_vertexShader;
+	Value_ptr<IResource_PixelShader> vlp_pixelShader;
+	Value_ptr<IResource_GeometryShader> vlp_geometryShader;
 	std::string shaderName;
 };
 }

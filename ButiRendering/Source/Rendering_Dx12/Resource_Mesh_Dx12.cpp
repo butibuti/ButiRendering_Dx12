@@ -112,3 +112,91 @@ void ButiEngine::ButiRendering::Resource_Mesh_Dx12::UpdateResourceRelease()
 		vertexBuffer.second.vertexBufferUploadHeap = nullptr;
 	}
 }
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Mesh> ButiEngine::ButiRendering::CreateMesh(const std::string& arg_meshName, const List<ButiEngine::Value_ptr<ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+{
+	auto vlp_graphicDevice_Dx12 = arg_vwp_graphicDevice.lock()->GetThis<ButiRendering::GraphicDevice_Dx12>();
+	auto output = ObjectFactory::Create<ButiRendering::Resource_Mesh_Dx12>(vlp_graphicDevice_Dx12);
+
+	std::uint32_t vertexCount;
+	std::uint32_t indexCount;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexBuffer;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexBufferUploadHeap;
+	D3D12_INDEX_BUFFER_VIEW indexBufferView;
+	D3D12_HEAP_PROPERTIES defDesc = HeapPropertiesHelper::GetHeapProp(D3D12_HEAP_TYPE_DEFAULT);
+	D3D12_HEAP_PROPERTIES updesc = HeapPropertiesHelper::GetHeapProp(D3D12_HEAP_TYPE_UPLOAD);
+	for (auto& vlp_primitive : arg_list_vlp_inputMeshData) {
+		output->SetBackupData(vlp_primitive);
+
+		Microsoft::WRL::ComPtr<ID3D12Resource> vertexBuffer;
+		Microsoft::WRL::ComPtr<ID3D12Resource> vertexBufferUploadHeap;
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView;
+
+
+		std::uint32_t vertexBufferSize = (std::uint32_t)(vlp_primitive->GetVertexCount() * vlp_primitive->GetVertexSize());
+		D3D12_RESOURCE_DESC vBuffDesc = ResourceDescHelper::GetBufferResourceDesc(vertexBufferSize);
+		//頂点バッファの作成
+		{
+			vlp_graphicDevice_Dx12->CreateCommittedResource(
+				&defDesc,
+				D3D12_HEAP_FLAG_NONE,
+				&vBuffDesc,
+				D3D12_RESOURCE_STATE_COPY_DEST,
+				nullptr,
+				IID_PPV_ARGS(&vertexBuffer));
+
+			vlp_graphicDevice_Dx12->CreateCommittedResource(
+				&updesc,
+				D3D12_HEAP_FLAG_NONE,
+				&vBuffDesc,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(&vertexBufferUploadHeap));
+			// Initialize the vertex buffer view.
+			vertexBufferView.BufferLocation = vertexBuffer->GetGPUVirtualAddress();
+			vertexBufferView.StrideInBytes = static_cast<std::uint32_t>(vlp_primitive->GetVertexSize());
+			vertexBufferView.SizeInBytes = static_cast<std::uint32_t>(vertexBufferSize);
+		}
+		//頂点数の設定
+		vertexCount = static_cast<std::uint32_t>(vlp_primitive->GetVertexCount());
+		output->SetVertexBuffer(vlp_primitive->GetVertexType(), vertexBuffer, vertexBufferUploadHeap, vertexBufferView);
+	}
+	output->SetVertexCount(vertexCount);
+	//インデックスバッファの作成
+	std::uint32_t indexBufferSize = static_cast<std::uint32_t>(sizeof(std::uint32_t) * arg_list_vlp_inputMeshData.GetFront()->GetIndexCount());
+	D3D12_RESOURCE_DESC indexBuffDesc = ResourceDescHelper::GetBufferResourceDesc(indexBufferSize);
+	{
+		vlp_graphicDevice_Dx12->CreateCommittedResource(
+			&defDesc,
+			D3D12_HEAP_FLAG_NONE,
+			&indexBuffDesc,
+			D3D12_RESOURCE_STATE_COPY_DEST,
+			nullptr,
+			IID_PPV_ARGS(&indexBuffer));
+
+		vlp_graphicDevice_Dx12->CreateCommittedResource(
+			&updesc,
+			D3D12_HEAP_FLAG_NONE,
+			&indexBuffDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&indexBufferUploadHeap));
+
+		// Describe the index buffer view.
+		indexBufferView.BufferLocation = indexBuffer->GetGPUVirtualAddress();
+		indexBufferView.Format = DXGI_FORMAT_R32_UINT;
+		indexBufferView.SizeInBytes = indexBufferSize;
+
+	}
+	//インデックス数の設定
+	indexCount = static_cast<std::uint32_t>(arg_list_vlp_inputMeshData.GetFront()->GetIndexCount());
+
+	output->SetIndexBuffer(indexBuffer);
+	output->SetIndexBufferUploadHeap(indexBufferUploadHeap);
+	output->SetIndexBufferView(indexBufferView);
+	output->SetIndexCount(indexCount);
+	output->SetTagName(arg_meshName);
+	vlp_graphicDevice_Dx12->AddUploadResource(output.get());
+
+	return output;
+}
+

@@ -64,8 +64,6 @@ public:
 	virtual void SetOrder(const std::int32_t arg_order) = 0;
 	virtual std::int32_t GetOrder()const = 0;
 };
-
-
 class ModelAnimation;
 struct MotionKeyFrameData;
 struct Bone;
@@ -75,8 +73,6 @@ class Morph;
 class IRenderer;
 class MeshPrimitiveBase;
 class GraphicDevice;
-
-
 class IRenderTarget {
 public:
 	virtual void SetRenderTarget(Vector4& arg_clearColor) = 0;
@@ -135,9 +131,9 @@ public:
 
 	virtual std::string GetShaderName()const = 0;
 
-	virtual Value_weak_ptr<IResource_VertexShader> GetVertexShader() = 0;
-	virtual Value_weak_ptr<IResource_PixelShader> GetPixelShader() = 0;
-	virtual Value_weak_ptr<IResource_GeometryShader> GetGeometryShader() = 0;
+	virtual Value_ptr<IResource_VertexShader> GetVertexShader() = 0;
+	virtual Value_ptr<IResource_PixelShader> GetPixelShader() = 0;
+	virtual Value_ptr<IResource_GeometryShader> GetGeometryShader() = 0;
 };
 
 class IResource_Texture :public IObject {
@@ -208,7 +204,7 @@ public:
 	virtual void AddMorph(Value_ptr<Morph::Morph> arg_morph) = 0;
 	virtual void SetVersion(const float arg_version) = 0;
 	virtual void SetSubset(const std::vector<std::uint32_t>& arg_subset) = 0;
-
+	virtual void SetBone(const List<Bone>& arg_list_bone) = 0;
 	virtual std::vector<std::uint32_t> GetSubset() = 0;
 	virtual const std::string& GetName() = 0;
 	virtual const std::string& GetEngName() = 0;
@@ -216,11 +212,23 @@ public:
 	virtual const std::string& GetEngModelName() = 0;
 	virtual const std::string& GetComment() = 0;
 	virtual const std::string& GetEngComment() = 0;
-	virtual std::vector<Value_ptr<Bone>> GetBone() = 0;
+	virtual List<Value_ptr<Bone>> GetBone() = 0;
 	virtual Value_weak_ptr<IResource_Mesh> GetMesh()const = 0;
 	virtual const List<Value_weak_ptr<IResource_Material>>& GetMaterial()const = 0;
 	virtual List<Value_weak_ptr<IResource_Material>>& GetMaterial() = 0;
 };
+BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
+BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,  Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateGeometryShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Shader> CreateShader(Value_ptr<IResource_VertexShader> arg_vlp_vertexShader, Value_ptr<IResource_PixelShader> arg_vlp_pixelShader, Value_ptr<IResource_GeometryShader> arg_vlp_geometryShader,const std::string& arg_shaderName);
 }
 }
 

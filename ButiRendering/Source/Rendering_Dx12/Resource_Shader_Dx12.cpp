@@ -192,24 +192,16 @@ void ButiEngine::ButiRendering::Dx12Compile::InputLayoutCompile(const std::strin
 
 void ButiEngine::ButiRendering::Dx12Compile::ReadCompiled(const std::string& filePath,  Microsoft::WRL::ComPtr<ID3DBlob>& out)
 {
-
-
 	auto dirPath = StringHelper::GetDirectory(filePath) ;
-
 	auto fileName = StringHelper::GetFileName(filePath, false);
-
 
 	BinaryReader shaderReader;
 	shaderReader.ReadStart(dirPath + fileName + ".dx12cps");
-
 	std::int32_t size = shaderReader.ReadVariable<std::int32_t>();
-
 	auto hr = D3DCreateBlob(size, out.GetAddressOf());
 	auto compiledData = shaderReader.ReadCharactor();
-
 	memcpy(out->GetBufferPointer(), compiledData,size);
 	shaderReader.ReadEnd();
-
 	delete compiledData;
 }
 
@@ -296,4 +288,21 @@ Microsoft::WRL::ComPtr<ID3DBlob>& ButiEngine::ButiRendering::Resource_GeometrySh
 std::string ButiEngine::ButiRendering::Resource_GeometryShader_Dx12::GetName() const
 {
 	return shaderName;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_VertexShader_Dx12>(arg_filePath, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::CreatePixelShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_PixelShader_Dx12>(arg_filePath, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::CreateGeometryShader(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_GeometryShader_Dx12>(arg_filePath, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Shader> ButiEngine::ButiRendering::CreateShader(Value_ptr<IResource_VertexShader> arg_vlp_vertexShader, Value_ptr<IResource_PixelShader> arg_vlp_pixelShader, Value_ptr<IResource_GeometryShader> arg_vlp_geometryShader, const std::string& arg_shaderName)
+{
+	return ObjectFactory::Create<Resource_Shader>(arg_vlp_vertexShader, arg_vlp_pixelShader, arg_vlp_geometryShader, arg_shaderName);
 }

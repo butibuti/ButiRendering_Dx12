@@ -6,7 +6,7 @@ namespace ButiEngine {
 
 namespace ButiRendering {
 class GraphicDevice;
-class Resource_RealTimeMesh : public GPUResource, public IResource_Mesh
+class Resource_DynamicMesh : public GPUResource, public IResource_Mesh
 {
 public:
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include"ButiEngineHeader/Header/Common/CollisionPrimitive.h"
 #include"ButiRendering_Dx12/Header/DrawData/IDrawData.h"
-#include"ButiRendering_Dx12/Header/Resource_RealTimeMesh.h"
+#include"ButiRendering_Dx12/Header/Resource_DynamicMesh.h"
 void ButiEngine::ButiRendering::DrawData::SetBlendMode(const BlendMode& arg_BlendMode)
 {
 }

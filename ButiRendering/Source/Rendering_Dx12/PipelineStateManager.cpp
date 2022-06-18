@@ -40,14 +40,14 @@ Microsoft::WRL::ComPtr<ID3D12PipelineState> ButiEngine::ButiRendering::PipelineS
 		return map_pipeLineState.at(key)->GetPielineState();
 	}
 	Microsoft::WRL::ComPtr<ID3DBlob> gemetryBlob;
-	if (arg_shader->GetGeometryShader().lock()) {
-		gemetryBlob = arg_shader->GetGeometryShader().lock()->GetThis<Resource_GeometryShader_Dx12>()->GetGeometryShaderBlob();
+	if (arg_shader->GetGeometryShader()) {
+		gemetryBlob = arg_shader->GetGeometryShader()->GetThis<Resource_GeometryShader_Dx12>()->GetGeometryShaderBlob();
 	}
 	auto output = PipelineStateHelper::CreateDefault3D(rootSignature, RetDesc, arg_rasteriserDesc,
-		arg_shader->GetVertexShader().lock()->GetThis<Resource_VertexShader_Dx12>()->GetInputLayoutVector(),
-		arg_shader->GetVertexShader().lock()->GetThis<Resource_VertexShader_Dx12>()->GetVertexShaderBlob(),
-		arg_shader->GetPixelShader().lock()->GetThis<Resource_PixelShader_Dx12>()->GetPixelShaderBlob(), gemetryBlob,
-		arg_shader->GetPixelShader().lock()->GetThis<Resource_PixelShader_Dx12>()->GetFormats(),
+		arg_shader->GetVertexShader()->GetThis<Resource_VertexShader_Dx12>()->GetInputLayoutVector(),
+		arg_shader->GetVertexShader()->GetThis<Resource_VertexShader_Dx12>()->GetVertexShaderBlob(),
+		arg_shader->GetPixelShader()->GetThis<Resource_PixelShader_Dx12>()->GetPixelShaderBlob(), gemetryBlob,
+		arg_shader->GetPixelShader()->GetThis<Resource_PixelShader_Dx12>()->GetFormats(),
 		arg_BlendMode,arg_topologyType, vwp_graphicDevice.lock()->GetDevice(),arg_isDepth);
 	map_pipeLineState.emplace(key, ObjectFactory::Create<PipelineState>(output) );
 	return output;

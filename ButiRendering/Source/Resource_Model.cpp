@@ -48,8 +48,8 @@ void ButiEngine::ButiRendering::Resource_Model::SetEngComment(const std::string&
 
 void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone & arg_bone)
 {
-	arg_bone.ownIndex = vec_bone.size();
-	vec_bone.push_back(arg_bone);
+	arg_bone.ownIndex = list_bone.GetSize();
+	list_bone.Add(arg_bone);
 }
 
 void ButiEngine::ButiRendering::Resource_Model::AddMorph(Value_ptr<Morph::Morph> arg_morph)
@@ -62,23 +62,28 @@ void ButiEngine::ButiRendering::Resource_Model::SetVersion(const float arg_versi
 	version = arg_version;
 }
 
+void ButiEngine::ButiRendering::Resource_Model::SetBone(const List<Bone>& arg_list_bone)
+{
+	list_bone = arg_list_bone;
+}
+
 void ButiEngine::ButiRendering::Resource_Model::SetSubset(const std::vector<std::uint32_t>& arg_subset)
 {
 	subset = arg_subset;
 }
 
 
-std::vector<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEngine::ButiRendering::Resource_Model::GetBone()
+ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEngine::ButiRendering::Resource_Model::GetBone()
 {
-	std::vector<Value_ptr<Bone>> out;
+	List<Value_ptr<Bone>> out;
 
-	out.reserve(vec_bone.size());
-	for (auto itr = vec_bone.begin(); itr != vec_bone.end(); itr++) {
-		auto push = ObjectFactory::CreateCopy<Bone>(*itr);
-		push->transform = make_value<BoneTransform>(push->position,push->rotation,Vector3(1,1,1));
+	out.Reserve(list_bone.GetSize());
+	for (auto bone : list_bone) {
+		auto push = ObjectFactory::CreateCopy<Bone>(bone);
+		push->transform = make_value<BoneTransform>(push->position, push->rotation, Vector3(1, 1, 1));
 		out.push_back(push);
 	}
-	out.shrink_to_fit();
+
 
 	for (auto itr = out.begin(); itr != out.end(); itr++) {
 		std::int32_t parentTransformIndex = (*itr)->parentBoneIndex;
@@ -148,4 +153,13 @@ const std::string & ButiEngine::ButiRendering::Resource_Model::GetComment()
 const std::string & ButiEngine::ButiRendering::Resource_Model::GetEngComment()
 {
 	return commentEng;
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::ButiRendering::CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone, const std::string& arg_name)
+{
+	auto output = ObjectFactory::Create<Resource_Model>();
+	output->SetMesh(arg_vwp_mesh);
+	output->SetName(arg_name);
+	output->SetMaterial(arg_list_vwp_material);
+	output->SetBone(arg_list_bone);
+	return output;
 }

@@ -1,3 +1,6 @@
+#ifndef CBUFFER_H
+#define CBUFFER_H
+
 #pragma once
 #include<string>
 #include "ButiUtil/ButiUtil/ObjectFactory.h"
@@ -37,7 +40,7 @@ public:
 protected:
 };
 
-template <class T>
+template <typename T>
 class CBuffer :public ICBuffer
 {
 public:
@@ -49,5 +52,8 @@ public:
 private:
 	std::function<bool(T&)> m_func_control;
 };
+template<typename T> Value_ptr<CBuffer<T>> CreateCBuffer(const std::int32_t arg_slot, const std::string& arg_bufferName) { return nullptr; }
 }
 }
+
+#endif // !CBUFFER_H

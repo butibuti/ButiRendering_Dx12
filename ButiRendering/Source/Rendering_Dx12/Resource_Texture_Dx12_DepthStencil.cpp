@@ -213,3 +213,7 @@ std::string ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::GetNa
 {
 	return GetTexturePath();
 }
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_Texture_Dx12_DepthStencil>(arg_vlp_imageData,  arg_vlp_graphicDevice);
+}

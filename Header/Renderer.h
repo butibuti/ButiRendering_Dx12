@@ -1,9 +1,14 @@
 #pragma once
-#include"stdafx.h"
+//#include"stdafx.h"
+#include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
+#include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"DrawData/IDrawObject.h"
 namespace ButiEngine {
 namespace ButiRendering {
 class IDrawLayer;
+class ICamera;
+class RenderingSceneInfo;
+template <typename T>class CBuffer;
 /// <summary>
 /// シーンが所持する描画用クラス
 /// </summary>

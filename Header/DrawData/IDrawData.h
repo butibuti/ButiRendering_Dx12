@@ -1,7 +1,6 @@
 #ifndef IDrawData_H
 #define IDrawData_H
 #pragma once
-#include"stdafx.h"
 #include"ButiRendering_Dx12/Header/MeshPrimitive.h"
 #include"IDrawObject.h"
 #include"../CArrayBuffer.h"
@@ -198,6 +197,14 @@ public:
 	virtual Value_ptr<IBoneObject>& GetModelBone() = 0;
 	virtual Value_ptr< CArrayBuffer<Matrix4x4>>& GetBoneCBuffer() = 0;
 };
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_vwp_shader, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const Value_weak_ptr<IResource_Shader>& arg_shader, const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+
 }
 }
 

@@ -24,6 +24,7 @@ public:
 	BUTIRENDERING_API void AddBone(Bone& arg_bone) override;
 	BUTIRENDERING_API void AddMorph(Value_ptr<Morph::Morph> arg_morph) override;
 	BUTIRENDERING_API void SetVersion(const float arg_version) override;
+	BUTIRENDERING_API void SetBone(const List<Bone>& arg_list_bone)override;
 	BUTIRENDERING_API void SetSubset(const std::vector<std::uint32_t>& arg_subset) override;
 	BUTIRENDERING_API std::vector<std::uint32_t> GetSubset() override;
 	BUTIRENDERING_API const std::string& GetName() override;
@@ -32,8 +33,7 @@ public:
 	BUTIRENDERING_API const std::string& GetEngModelName() override;
 	BUTIRENDERING_API const std::string& GetComment() override;
 	BUTIRENDERING_API const std::string& GetEngComment() override;
-	BUTIRENDERING_API std::vector<Value_ptr<Bone>> GetBone() override;
-
+	BUTIRENDERING_API List<Value_ptr<Bone>> GetBone() override;
 	BUTIRENDERING_API Value_weak_ptr<IResource_Mesh> GetMesh()const override;
 	BUTIRENDERING_API const List<Value_weak_ptr<IResource_Material>>& GetMaterial()const override;
 	BUTIRENDERING_API List<Value_weak_ptr<IResource_Material>>& GetMaterial() override;
@@ -51,7 +51,7 @@ private:
 	Value_weak_ptr<IResource_Mesh> vwp_mesh;
 	List<Value_weak_ptr<IResource_Material>> list_vwp_material;
 
-	std::vector<Bone> vec_bone;
+	List<Bone> list_bone;
 
 	float version;
 };

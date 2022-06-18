@@ -81,7 +81,6 @@ void ButiEngine::ButiRendering::Camera_Dx12::Initialize()
 void ButiEngine::ButiRendering::Camera_Dx12::Start()
 {
 	if (!drawCommandList) {
-
 		drawCommandList = CommandListHelper::CreateDefault(nullptr, vwp_graphicDevice.lock()->GetDevice(), vwp_graphicDevice.lock()->GetCommandAllocator());
 		CommandListHelper::Close(drawCommandList);
 	}

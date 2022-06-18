@@ -165,3 +165,12 @@ void ButiEngine::ButiRendering::Resource_MaterialList_Dx12::SetMaterialList(cons
 {
 	m_list_material = arg_list_material;
 }
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+{
+	return CreateMaterial(arg_var, { arg_texture }, arg_vwp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterial(const MaterialValue& arg_var, const List<Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+{
+	return ObjectFactory::Create<ButiRendering::Resource_Material_Dx12>(arg_var, arg_list_texture, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>());
+}
+

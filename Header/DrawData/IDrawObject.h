@@ -1,9 +1,8 @@
-
-
 #ifndef IDRAWOBJ_H
 #define IDRAWOBJ_H
-#include"stdafx.h"
 #include"../Bone.h"
+#include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
+#include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 namespace ButiEngine {
 namespace ButiRendering {
 class IDrawObject :public IObject {

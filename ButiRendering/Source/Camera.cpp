@@ -127,7 +127,7 @@ ButiEngine::Value_weak_ptr<ButiEngine::ButiRendering::IRenderer> ButiEngine::But
 	return vlp_renderer;
 }
 
-ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::CameraCreater::CreateCamera(const CameraProperty& arg_cameraProp, const std::string& cameraName, const bool initActive, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::CreateCamera(const CameraProperty& arg_cameraProp, const std::string& cameraName, const bool initActive, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
 	Value_ptr<ICamera> out;
 	out = ObjectFactory::Create<Camera_Dx12>(arg_cameraProp, cameraName,arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>());
@@ -136,7 +136,7 @@ ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRende
 	return out;
 }
 
-ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::CameraCreater::CreateCamera(const std::string& cameraName, const bool initActive, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::CreateCamera(const std::string& cameraName, const bool initActive, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
 	CameraProperty cameraProp = CameraProperty(0, 0, 0, 0);
 	Value_ptr<ICamera> out;

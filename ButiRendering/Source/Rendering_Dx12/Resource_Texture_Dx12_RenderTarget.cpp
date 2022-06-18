@@ -3,16 +3,16 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/Resource_Texture_Dx12_RenderTarget.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiUtil/ButiUtil/ImageFileIO.h"
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget> ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Create(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget> ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Create(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData,format,arg_vwp_graphicDevice);
+	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData,arg_format,arg_vwp_graphicDevice);
 }
-ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,const std::int32_t format ,Value_ptr<GraphicDevice> arg_graphicDevice)
+ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,const std::int32_t arg_format ,Value_ptr<GraphicDevice> arg_graphicDevice)
 	//:Resource_Texture_Dx12(std::vector<BYTE>(width*height*4,255),width,height,arg_graphicDevice)
 {
 	vwp_graphicDevice = arg_graphicDevice->GetThis<GraphicDevice_Dx12>();
 	image.vlp_imageData = arg_vlp_imageData;
-	image.format =(DXGI_FORMAT) format;
+	image.format =static_cast<DXGI_FORMAT>( arg_format);
 	{
 		D3D12_DESCRIPTOR_HEAP_DESC desc = {};
 		desc.NumDescriptors = 1;
@@ -36,7 +36,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 	desc.Height = image.vlp_imageData->height;
 	desc.DepthOrArraySize = 1;
 	desc.MipLevels = 0;
-	desc.Format = (DXGI_FORMAT)format;
+	desc.Format = static_cast<DXGI_FORMAT>(arg_format);
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET;
@@ -44,7 +44,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 
 	// ÉNÉäÉAílÇÃê›íË.
 	D3D12_CLEAR_VALUE clearValue;
-	clearValue.Format = (DXGI_FORMAT)format;
+	clearValue.Format = static_cast<DXGI_FORMAT>(arg_format);
 	clearValue.DepthStencil.Depth = 1.0f;
 	clearValue.DepthStencil.Stencil = 0;
 
@@ -63,7 +63,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Format = (DXGI_FORMAT)format;
+	rtvDesc.Format = static_cast<DXGI_FORMAT>(arg_format);
 	vwp_graphicDevice.lock()->GetDevice().CreateRenderTargetView(texture.Get(), &rtvDesc, rtdhHandle);
 
 
@@ -309,3 +309,8 @@ std::int32_t ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::GetD
 	return image.vlp_imageData->width * image.vlp_imageData->height * image.vlp_imageData->pixSize;
 }
 
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture>  ButiEngine::ButiRendering::CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData, arg_format,arg_vwp_graphicDevice);
+}

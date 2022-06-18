@@ -7,7 +7,7 @@ ButiEngine::Matrix4x4 ButiEngine::ButiRendering::Bone::GetPoseMatrix()
 	return  bindPoseInverse*transform->GetBoneMatrix();
 }
 
-void ButiEngine::ButiRendering::Bone::SetOtherBoneLinks(const std::vector<Value_ptr< Bone>>& arg_vec_bones)
+void ButiEngine::ButiRendering::Bone::SetOtherBoneLinks(const List<Value_ptr< Bone>>& arg_vec_bones)
 {
 	if (ikDatas.size()) {
 		isIK = true;

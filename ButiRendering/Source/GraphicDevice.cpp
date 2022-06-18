@@ -1,7 +1,7 @@
 #pragma once
 #include"stdafx.h"
 #include"ButiRendering_Dx12/Header/GraphicDevice.h"
-
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 
 ButiEngine::Matrix4x4 ButiEngine::ButiRendering::GraphicDevice::GetProjectionMatrix()
 {
@@ -74,4 +74,9 @@ void ButiEngine::ButiRendering::GraphicDevice::SetClearColor(const Vector4& arg_
 ButiEngine::Vector4 ButiEngine::ButiRendering::GraphicDevice::GetClearColor()
 {
 	return clearColor;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::GraphicDevice> ButiEngine::ButiRendering::CreateGraphicDevice(const bool arg_isWindowApp)
+{
+	return CreateGraphicDeviceDx12(arg_isWindowApp);
 }
