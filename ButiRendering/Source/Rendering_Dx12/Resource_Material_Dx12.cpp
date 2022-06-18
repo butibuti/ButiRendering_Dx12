@@ -2,7 +2,7 @@
 
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/Resource_Material_Dx12.h"
-#include"ButiRendering_Dx12/Header/Rendering_Dx12/CBuffer_Dx12.h"
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/CArrayBuffer_Dx12.h"
 #include"ButiRendering_Dx12\Header\Rendering_Dx12\Resource_Material_Dx12.h"
 #include "ButiRendering_Dx12\Header\Rendering_Dx12\Resource_Material_Dx12.h"
@@ -24,7 +24,7 @@ ButiEngine::ButiRendering::Resource_Material_Dx12::Resource_Material_Dx12(const 
 
 void ButiEngine::ButiRendering::Resource_Material_Dx12::Initialize()
 {
-	auto materialBuffer_Dx12 = ObjectFactory::Create<CBuffer_Dx12<MaterialValue>>(1);
+	auto materialBuffer_Dx12 = CreateCBuffer <MaterialValue>(1,"Material");
 	materialBuffer_Dx12->SetGraphicDevice(vwp_graphicDevice.lock());
 
 	materialBuffer_Dx12->Get().ambient = GetMaterialVariable().ambient;

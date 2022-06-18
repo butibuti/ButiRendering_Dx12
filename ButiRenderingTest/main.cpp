@@ -8,7 +8,7 @@
 #include"ButiRendering_Dx12/Header/RenderingPath.h"
 #include"ButiRendering_Dx12/Header/ResourceInterface.h"
 #include"ButiRendering_Dx12/Header/MeshHelper.h"
-#include"ButiRendering_Dx12/Header/Rendering_Dx12/CBuffer_Dx12.h"
+#include"ButiRendering_Dx12/Header/CBuffer.h"
 #include"ButiRendering_Dx12/Header/DrawData/IDrawData.h"
 std::int32_t main() {
 	using namespace ButiEngine;
@@ -26,13 +26,8 @@ std::int32_t main() {
 	auto prop = ButiRendering::CameraProperty(960, 540, 0, 0);
 	prop.farClip = 200.0f;
 	prop.cameraName = "main";
-	prop.isEditActive = false;
-	prop.isInitActive = true;
-	auto vlp_camera = ButiRendering::CreateCamera(prop, "main", true,vlp_renderer, vlp_graphicDevice);
-	vlp_camera->Initialize();
-	vlp_camera->GetCameraProperty().layer = 0;
-	auto mainCameraPath = make_value< ButiRendering::ForwardCameraRenderingPath>(vlp_camera,vlp_renderer);
-	mainCameraPath->SetOrder(0);
+	
+	auto mainCameraPath = ButiRendering::CreateForwardRenderingPath(ButiRendering::CreateCamera(prop, "main", true, vlp_renderer, vlp_graphicDevice),vlp_renderer);
 	
 	Value_ptr<ButiRendering::IResource_Material> vlp_material;
 	Value_ptr<ButiRendering::IResource_Shader> vlp_shader;
@@ -56,8 +51,7 @@ std::int32_t main() {
 	auto drawInfo = ObjectFactory::Create<ButiRendering::DrawInformation>();
 	drawInfo->layer = 0;
 	{
-		auto info = ObjectFactory::Create<ButiRendering::CBuffer_Dx12< ButiRendering::ObjectInformation>>(3);
-		info->SetExName("ObjectInformation");
+		auto info = ButiRendering::CreateCBuffer< ButiRendering::ObjectInformation>(3, "ObjectInformation");
 		info->Get().lightDir = Vector4(Vector3(-1.0f, -1.0f, 0.0f).GetNormalize(), 1);
 		info->Get().color = ButiColor::Cyan();
 		drawInfo->vec_exCBuffer.push_back(info);
@@ -68,27 +62,14 @@ std::int32_t main() {
 	vlp_renderer->RegistDrawObject(drawObject,false,0);
 	while (vlp_window->Update()) {
 		//•`‰æŠJŽn
-		vlp_renderer->BefRendering();
-		mainCameraPath->BefExecute();
-		vlp_graphicDevice->UploadResourceRelease();
-		vlp_graphicDevice->UploadResourceBufferMerge();
-
-
-		vlp_graphicDevice->Reset();
-		vlp_graphicDevice->ClearWindow();
-		vlp_graphicDevice->ResourceUpload();
-
-		//•`‰æˆ—
 		vlp_renderer->RenderingStart();
+
 		vlp_transform->RollWorldRotationY_Degrees(0.1);
+		//•`‰æˆ—
 		mainCameraPath->Execute();
-		mainCameraPath->End();
 
 		//•`‰æI—¹
-		vlp_graphicDevice->ResetPipeLine();
-		vlp_graphicDevice->Present();
-
-
+		vlp_renderer->RenderingEnd();
 	}
 	vlp_renderer->UnRegistDrawObject(drawObject,false,0);
 	//‰ð•ú
@@ -98,7 +79,6 @@ std::int32_t main() {
 	drawObject = nullptr;
 	drawInfo = nullptr;
 	
-	vlp_renderer->ReleaseRendererCBuffer();
 	vlp_renderer->Release();
 	vlp_window->Release();
 	vlp_graphicDevice->Release();

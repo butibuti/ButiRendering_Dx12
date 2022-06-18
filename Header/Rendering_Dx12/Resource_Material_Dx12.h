@@ -2,7 +2,6 @@
 #include"stdafx.h"
 #include"../Resource_Material.h"
 #include"../../Header/Rendering_Dx12/CArrayBuffer_Dx12.h"
-#include"../../Header/Rendering_Dx12/CBuffer_Dx12.h"
 namespace ButiEngine {
 
 namespace ButiRendering {
@@ -24,7 +23,7 @@ public:
 	BUTIRENDERING_API void OnDescriptorHeapUpdate()override;
 private:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
-	Value_ptr< CBuffer_Dx12<MaterialValue>> materialBuffer;
+	Value_ptr< CBuffer<MaterialValue>> materialBuffer;
 };
 
 class Resource_MaterialList_Dx12 :public Resource_Material {

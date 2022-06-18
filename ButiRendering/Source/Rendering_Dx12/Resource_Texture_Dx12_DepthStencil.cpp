@@ -165,7 +165,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::SetDepthSten
 		isCleared = true;
 		vwp_graphicDevice.lock()->GetCommandList().ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 	}
-	vwp_graphicDevice.lock()->SetDepthStencilView(&dsvHandle);
+	vwp_graphicDevice.lock()->SetDepthStencilView(&dsvHandle,GetThis<IDepthStencil>());
 }
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::DisSetDepthStencil()

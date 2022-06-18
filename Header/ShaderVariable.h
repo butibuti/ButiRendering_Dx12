@@ -3,13 +3,13 @@
 namespace ButiEngine {
 
 namespace ButiRendering {
-struct ShaderVariable
+struct Matrices
 {
 	Matrix4x4 World;
 	Matrix4x4 View;
 	Matrix4x4 Projection;
 	Matrix4x4 MVP;
-	ShaderVariable() {
+	Matrices() {
 	};
 	template<class Archive>
 	void serialize(Archive& archive)

@@ -3,7 +3,7 @@
 #include<algorithm>
 #include"ButiRendering_Dx12/Header/Renderer.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
-#include"ButiRendering_Dx12/Header/Rendering_Dx12/CBuffer_Dx12.h"
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 
 
@@ -136,9 +136,7 @@ ButiEngine::ButiRendering::Renderer::Renderer(Value_weak_ptr<GraphicDevice> arg_
 }
 void ButiEngine::ButiRendering::Renderer::Initialize()
 {	
-	CBuffer_Renderer = ObjectFactory::Create<CBuffer_Dx12<RenderingSceneInfo>>(2);
-
-	CBuffer_Renderer->SetExName("FogParameter");
+	CBuffer_Renderer = CreateCBuffer<RenderingSceneInfo>(2, "FogParameter");
 	CBuffer_Renderer->Get().fogColor = Vector4(100.0f/256.0f,149.0f/256.0f , 247.0f/256.0f, 0.0f);
 	CBuffer_Renderer->Get().fogCoord = ComputeFogCoord(50,100.0f);
 	CBuffer_Renderer->SetGraphicDevice(vwp_graphicDevice.lock());
@@ -152,6 +150,11 @@ void ButiEngine::ButiRendering::Renderer::Update()
 
 void ButiEngine::ButiRendering::Renderer::RenderingStart()
 {
+	BefRendering();
+	vwp_graphicDevice.lock()->UploadResourceBufferMerge();
+	vwp_graphicDevice.lock()->Reset();
+	vwp_graphicDevice.lock()->ClearWindow();
+	vwp_graphicDevice.lock()->ResourceUpload();
 	//GetRendererCBuffer()->Get().Time +=GameDevice::WorldSpeed* 0.01f;
 	for (auto itr = vec_drawLayers.begin(); itr != vec_drawLayers.end(); itr++) {
 		(*itr)->CommandSet();
@@ -183,8 +186,8 @@ void ButiEngine::ButiRendering::Renderer::ShadowRendering(const std::uint32_t ar
 
 void ButiEngine::ButiRendering::Renderer::RenderingEnd()
 {
+	vwp_graphicDevice.lock()->ResetPipeLine();
 	vwp_graphicDevice.lock()->Present();
-
 	vwp_graphicDevice.lock()->UploadResourceRelease();
 }
 
@@ -270,7 +273,7 @@ ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRende
 
 void ButiEngine::ButiRendering::Renderer::Release()
 {
-
+	ReleaseRendererCBuffer();
 	ClearDrawObjects();
 }
 
@@ -331,7 +334,6 @@ void ButiEngine::ButiRendering::DrawLayer::Clear()
 
 void ButiEngine::ButiRendering::DrawLayer::BefRendering()
 {
-
 	if (vlp_shadowLayer)
 	{
 		vlp_shadowLayer->BefRendering();

@@ -104,7 +104,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetRenderTar
 		isCleared = true;
 		vwp_graphicDevice.lock()->GetCommandList().ClearRenderTargetView(rtvHandle, arg_clearColor.GetData(), 0, nullptr);
 	}
-	vwp_graphicDevice.lock()->PushRenderTarget(rtvHandle);
+	vwp_graphicDevice.lock()->PushRenderTarget(rtvHandle,GetThis<IRenderTarget>());
 
 }
 

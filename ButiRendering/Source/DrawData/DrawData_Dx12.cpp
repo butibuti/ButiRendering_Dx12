@@ -2,6 +2,7 @@
 
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/PipelineStateManager.h"
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiRendering_Dx12/Header/DrawData/DrawData_Dx12.h"
 #include"ButiRendering_Dx12/Header/Renderer.h"
 
@@ -82,7 +83,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize(const std::uint32_t 
 
 
 
-	auto cbuffer_Dx12 = ObjectFactory::Create<CBuffer_Dx12<ShaderVariable>>(0);
+	auto cbuffer_Dx12 = CreateCBuffer<Matrices>(0,"Matrix");
 
 	cbuffer_Dx12->SetGraphicDevice(vwp_graphicDevice.lock());
 

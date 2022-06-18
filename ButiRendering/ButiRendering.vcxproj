@@ -185,9 +185,7 @@
     <ClInclude Include="..\Header\Renderer.h" />
     <ClInclude Include="..\Header\RenderingPath.h" />
     <ClInclude Include="..\Header\RenderingStatus.h" />
-    <ClInclude Include="..\Header\Rendering_Dx12\Camera_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\CArrayBuffer_Dx12.h" />
-    <ClInclude Include="..\Header\Rendering_Dx12\CBuffer_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\DescriptorHeapManager.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\GraphicDevice_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
@@ -217,7 +215,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Source\Bone.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
-    <ClCompile Include="Source\Camera_Dx12.cpp" />
     <ClCompile Include="Source\CBuffer.cpp" />
     <ClCompile Include="Source\DrawData\DrawData_Dx12.cpp" />
     <ClCompile Include="Source\DrawData\IDrawData.cpp" />
@@ -228,6 +225,7 @@
     <ClCompile Include="Source\Morph.cpp" />
     <ClCompile Include="Source\Renderer.cpp" />
     <ClCompile Include="Source\RenderingPath.cpp" />
+    <ClCompile Include="Source\Rendering_Dx12\CBufferUpdater_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\DescriptorHeapManager.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\GraphicDevice_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\PipelineStateManager.cpp" />

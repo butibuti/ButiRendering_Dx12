@@ -27,9 +27,9 @@ public:
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> uploadCommandList;
 
-	std::vector<GPUResource*> vec_uploadResources;
-	std::vector<GPUResource*> vec_uploadResourcesBuffer;
-	std::vector<GPUResource*> vec_befUploadResources;
+	List<GPUResource*> list_uploadResources;
+	List<GPUResource*> list_uploadResourcesBuffer;
+	List<GPUResource*> list_befUploadResources;
 
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> drawCommandList;
 
@@ -39,12 +39,14 @@ public:
 
 	Value_ptr<PipelineStateManager> vlp_pipelineStateManager;
 
-	std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> vec_renderTargetHandles;
+	List<D3D12_CPU_DESCRIPTOR_HANDLE> list_renderTargetHandles;
+	List<Value_ptr<IRenderTarget>>list_vlp_usedRenderTargets;
+	List<Value_ptr<IDepthStencil>>list_vlp_usedDepthStencils;
 
 	ID3D12GraphicsCommandList* p_currentCommandList = nullptr;
 	ID3D12PipelineState* currentPipelineState = nullptr;
 
-	std::vector< ID3D12CommandList*> vec_drawCommandLists;
+	List< ID3D12CommandList*> vec_drawCommandLists;
 	Microsoft::WRL::ComPtr<ID3D12Fence>  fence;
 
 	std::map<std::wstring, std::pair<Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC>> map_rootSignature;
@@ -106,8 +108,8 @@ void GraphicDevice_Dx12_WithWindow::Present()
 	hr = m_uqp_impl->presentCommandList->Close();
 	InsertCommandList();
 
-	if (m_uqp_impl->vec_drawCommandLists.size()) {
-		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+	if (m_uqp_impl->vec_drawCommandLists.GetSize()) {
+		m_uqp_impl->commandQueue->ExecuteCommandLists(static_cast<std::uint32_t>(m_uqp_impl->vec_drawCommandLists.GetSize()), &(m_uqp_impl->vec_drawCommandLists[0]));
 
 		const UINT64 fenceV = m_uqp_impl->fenceValue;
 		auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
@@ -126,7 +128,15 @@ void GraphicDevice_Dx12_WithWindow::Present()
 		res->OutputToMemory();
 	}
 	m_uqp_impl->vec_outputInfo.clear();
-	m_uqp_impl->vec_drawCommandLists.clear();
+	m_uqp_impl->vec_drawCommandLists.Clear();
+
+	for (auto usedRenderTarget : m_uqp_impl->list_vlp_usedRenderTargets) {
+		usedRenderTarget->SetIsCleared(true);
+	}
+	m_uqp_impl->list_vlp_usedRenderTargets.Clear();
+	for (auto usedDepthStencil : m_uqp_impl->list_vlp_usedDepthStencils) {
+		usedDepthStencil->SetIsCleared(true);
+	}
 }
 void GraphicDevice_Dx12_WithWindow::WaitGPU()
 {
@@ -524,21 +534,21 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetRootSignature(const std::
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::AddUploadResource(GPUResource* arg_resource)
 {
 	std::lock_guard<std::mutex> lock(m_uqp_impl->mtx_uploadResource);
-	m_uqp_impl->vec_uploadResourcesBuffer.push_back(arg_resource);
+	m_uqp_impl->list_uploadResourcesBuffer.push_back(arg_resource);
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::UploadResourceBufferMerge()
 {
 	std::lock_guard<std::mutex> lock(m_uqp_impl->mtx_uploadResource);
-	m_uqp_impl->vec_uploadResources = m_uqp_impl->vec_uploadResourcesBuffer;
-	m_uqp_impl->vec_uploadResourcesBuffer.clear();
+	m_uqp_impl->list_uploadResources = m_uqp_impl->list_uploadResourcesBuffer;
+	m_uqp_impl->list_uploadResourcesBuffer.Clear();
 }
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::UploadResourceRelease()
 {
-	for (auto itr = m_uqp_impl->vec_befUploadResources.begin(); itr != m_uqp_impl->vec_befUploadResources.end(); itr++) {
+	for (auto itr = m_uqp_impl->list_befUploadResources.begin(); itr != m_uqp_impl->list_befUploadResources.end(); itr++) {
 		(*itr)->UpdateResourceRelease();
 	}
-	m_uqp_impl->vec_befUploadResources.clear();
+	m_uqp_impl->list_befUploadResources.Clear();
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::AddOutputResource(GPUResource* arg_resource, const FileFormat arg_format, const std::string& arg_fileName)
@@ -571,8 +581,6 @@ IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 {
-
-
 	if (m_uqp_impl->fence->GetCompletedValue() < m_uqp_impl->fenceValue)
 	{
 		auto hr = m_uqp_impl->fence->SetEventOnCompletion(m_uqp_impl->fenceValue, m_uqp_impl->fenceEvent);
@@ -584,9 +592,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 			std::int32_t i = 0;
 		}
 	}
-
-	
-
 }
 
 
@@ -602,8 +607,8 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 	hr = m_uqp_impl->presentCommandList->Close();
 	InsertCommandList();
 
-	if (m_uqp_impl->vec_drawCommandLists.size()) {
-		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+	if (m_uqp_impl->vec_drawCommandLists.GetSize()) {
+		m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.GetSize(), &(m_uqp_impl->vec_drawCommandLists[0]));
 
 		const UINT64 fenceV = m_uqp_impl->fenceValue;
 		auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
@@ -621,7 +626,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 		res->OutputToMemory();
 	}
 	m_uqp_impl->vec_outputInfo.clear();
-	m_uqp_impl->vec_drawCommandLists.clear();
+	m_uqp_impl->vec_drawCommandLists.Clear();
 
 }
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawStart()
@@ -637,7 +642,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawEnd()
 {
 	InsertCommandList();
 
-	m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.size(), &(m_uqp_impl->vec_drawCommandLists[0]));
+	m_uqp_impl->commandQueue->ExecuteCommandLists((std::uint32_t)m_uqp_impl->vec_drawCommandLists.GetSize(), &(m_uqp_impl->vec_drawCommandLists[0]));
 
 	const UINT64 fenceV = m_uqp_impl->fenceValue;
 	auto hr = m_uqp_impl->commandQueue->Signal(m_uqp_impl->fence.Get(), fenceV);
@@ -649,8 +654,8 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::DrawEnd()
 	WaitGPU();
 
 	m_uqp_impl->fenceValue++;
-	m_uqp_impl->vec_drawCommandLists.clear();
-	m_uqp_impl->vec_renderTargetHandles.clear();
+	m_uqp_impl->vec_drawCommandLists.Clear();
+	m_uqp_impl->list_renderTargetHandles.Clear();
 	m_uqp_impl->currentDSV = nullptr;
 }
 
@@ -693,7 +698,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetDefaultRenderTarget()
 
 	m_uqp_impl->currentDSV = &m_uqp_impl->defaultDSVHandle;
 
-	m_uqp_impl->vec_renderTargetHandles.push_back(rtvHandle);
+	m_uqp_impl->list_renderTargetHandles.Add(rtvHandle);
 
 }
 
@@ -709,12 +714,13 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::CommandList_SetScissorRect()
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::CommandList_SetRenderTargetView()
 {
-	m_uqp_impl->p_currentCommandList->OMSetRenderTargets(m_uqp_impl->vec_renderTargetHandles.size(), m_uqp_impl->vec_renderTargetHandles.data(), false, m_uqp_impl->currentDSV);
+	m_uqp_impl->p_currentCommandList->OMSetRenderTargets(m_uqp_impl->list_renderTargetHandles.GetSize(), &m_uqp_impl->list_renderTargetHandles.GetFront(), false, m_uqp_impl->currentDSV);
 }
 
-void ButiEngine::ButiRendering::GraphicDevice_Dx12::PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle)
+void ButiEngine::ButiRendering::GraphicDevice_Dx12::PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle, Value_ptr<IRenderTarget> arg_vlp_renderTarget)
 {
-	m_uqp_impl->vec_renderTargetHandles.push_back(arg_rtvHandle);
+	m_uqp_impl->list_renderTargetHandles.Add(arg_rtvHandle);
+	m_uqp_impl->list_vlp_usedRenderTargets.Add(arg_vlp_renderTarget);
 }
 
 
@@ -729,20 +735,20 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::InsertCommandList()
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResourceUpload()
 {
-	m_uqp_impl->vec_befUploadResources = m_uqp_impl->vec_uploadResources;
-	if (!m_uqp_impl->vec_uploadResources.size()) {
+	m_uqp_impl->list_befUploadResources = m_uqp_impl->list_uploadResources;
+	if (!m_uqp_impl->list_uploadResources.GetSize()) {
 		return;
 	}
 	CommandListHelper::Reset(m_uqp_impl->uploadCommandList,*m_uqp_impl->commandAllocator[GetFrameIndex()].Get());
 
 	SetCommandList(m_uqp_impl->uploadCommandList.Get());
 
-	for (auto itr = m_uqp_impl->vec_uploadResources.begin(); itr != m_uqp_impl->vec_uploadResources.end(); itr++) {
+	for (auto itr = m_uqp_impl->list_uploadResources.begin(); itr != m_uqp_impl->list_uploadResources.end(); itr++) {
 		(*itr)->ResourceUpdate();
 	}
 	CommandListHelper::Close(m_uqp_impl->uploadCommandList);
 	InsertCommandList();
-	m_uqp_impl->vec_uploadResources.clear();
+	m_uqp_impl->list_uploadResources.Clear();
 }
 
 
@@ -790,9 +796,10 @@ std::uint32_t ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFrameIndex() con
 	return 0;
 }
 
-void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv)
+void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv, Value_ptr<IDepthStencil> arg_vlp_depthStencil)
 {
 	m_uqp_impl->currentDSV = arg_dsv;
+	m_uqp_impl->list_vlp_usedDepthStencils.Add(arg_vlp_depthStencil);
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE* ButiEngine::ButiRendering::GraphicDevice_Dx12::GetDepthStencil()

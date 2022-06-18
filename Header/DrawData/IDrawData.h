@@ -118,8 +118,8 @@ public:
 
 		return nullptr;
 	}
-	Value_ptr < CBuffer<ShaderVariable>>& GetCBuffer() { return cbuffer; }
-	void SetCbuffer(const Value_ptr < CBuffer<ShaderVariable>>& arg_cBuffer) { cbuffer = arg_cBuffer; }
+	Value_ptr < CBuffer<Matrices>>& GetCBuffer() { return cbuffer; }
+	void SetCbuffer(const Value_ptr < CBuffer<Matrices>>& arg_cBuffer) { cbuffer = arg_cBuffer; }
 	std::uint32_t* GetCollisionIndex() { return p_collisionRegistIndex; }
 	void SetCollisionIndex(std::uint32_t* arg_p_collisionIndex) { p_collisionRegistIndex = arg_p_collisionIndex; }
 	std::uint32_t GetCBufferCount()const { return cBufferCount; }
@@ -136,7 +136,7 @@ public:
 	void SetMaterial(const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material) { list_vwp_material = arg_list_vwp_material; }
 private:
 	std::uint32_t cBufferCount = 0;
-	Value_ptr < CBuffer<ShaderVariable>> cbuffer;
+	Value_ptr < CBuffer<Matrices>> cbuffer;
 	std::uint32_t* p_collisionRegistIndex;
 	Value_weak_ptr<IResource_Model> vwp_model;
 	Value_weak_ptr<IResource_Mesh> vwp_mesh;

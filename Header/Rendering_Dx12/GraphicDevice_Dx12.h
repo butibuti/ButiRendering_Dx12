@@ -81,7 +81,7 @@ public:
 	BUTIRENDERING_API void CommandList_SetScissorRect();
 
 	BUTIRENDERING_API void CommandList_SetRenderTargetView();
-	BUTIRENDERING_API void PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle);
+	BUTIRENDERING_API void PushRenderTarget(const D3D12_CPU_DESCRIPTOR_HANDLE& arg_rtvHandle,Value_ptr<IRenderTarget> arg_vlp_renderTarget);
 	BUTIRENDERING_API void InsertCommandList();
 	BUTIRENDERING_API void ResourceUpload()override;
 
@@ -96,7 +96,7 @@ public:
 	BUTIRENDERING_API const D3D12_RECT& GetScissorRect()const;
 	BUTIRENDERING_API virtual std::uint32_t GetFrameCount() const;
 	BUTIRENDERING_API virtual std::uint32_t GetFrameIndex()const;
-	BUTIRENDERING_API void SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv);
+	BUTIRENDERING_API void SetDepthStencilView(D3D12_CPU_DESCRIPTOR_HANDLE* arg_dsv,Value_ptr<IDepthStencil> arg_vlp_depthStencil);
 	BUTIRENDERING_API D3D12_CPU_DESCRIPTOR_HANDLE* GetDepthStencil();
 	BUTIRENDERING_API void DisSetDepthStencil();
 	BUTIRENDERING_API void ResetPipeLine()override;

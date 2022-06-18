@@ -1,7 +1,7 @@
 #pragma once
 #include"stdafx.h"
 #include"IDrawData.h"
-#include"ButiRendering_Dx12/Header/Rendering_Dx12/CBuffer_Dx12.h"
+
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/CArrayBuffer_Dx12.h"
 namespace ButiEngine {
 namespace ButiRendering {

@@ -20,6 +20,8 @@ namespace ButiRendering {
 
 
 class RenderingPathData;
+class IRenderTarget;
+class IDepthStencil;
 /// <summary>
 /// 描画パスのインターフェース
 /// </summary>
@@ -28,29 +30,17 @@ public:
 	void Initialize()override {}
 	void PreInitialize()override {}
 	/// <summary>
-	/// フレームの開始時の処理
-	/// </summary>
-	virtual void BefExecute() = 0;
-	/// <summary>
 	/// 実行
 	/// </summary>
 	virtual void Execute() = 0;
 	/// <summary>
-	/// フレームの終了時の処理
-	/// </summary>
-	virtual void End() = 0;
-	/// <summary>
-	/// 解放処理
-	/// </summary>
-	virtual void Release() = 0;
-	/// <summary>
 	/// ゲームシーン実行中に有効な描画パスなら起動、違ったら停止
 	/// </summary>
-	virtual void SetPlayActive() = 0;
+	virtual void ActivatePlayScene() = 0;
 	/// <summary>
 	/// ゲームシーン編集中に有効な描画パスなら起動、違ったら停止
 	/// </summary>
-	virtual void SetEditActive() = 0;
+	virtual void ActivateEditScene() = 0;
 	/// <summary>
 	/// 名前の設定
 	/// </summary>
@@ -61,8 +51,34 @@ public:
 	/// </summary>
 	/// <returns>名前</returns>
 	virtual const std::string& GetName()const = 0;
+	/// <summary>
+	/// 描画結果を出力するレンダーターゲットテクスチャの追加
+	/// </summary>
+	/// <param name="arg_renderTarget">描画結果を出力するレンダーターゲットテクスチャ</param>
+	virtual void PushRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) = 0;
+	/// <summary>
+	/// 描画結果を出力するレンダーターゲットテクスチャの削除
+	/// </summary>
+	/// <param name="arg_renderTarget">描画結果を出力するレンダーターゲットテクスチャ</param>
+	virtual void RemoveRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) = 0;
+	/// <summary>
+	/// 参照、出力する深度テクスチャの設定
+	/// </summary>
+	/// <param name="arg_depthStencil">参照、出力する深度テクスチャ</param>
+	virtual void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) = 0;
 	virtual void SetOrder(const std::int32_t arg_order) = 0;
 	virtual std::int32_t GetOrder()const = 0;
+	virtual void SetLayer(const std::int32_t arg_layerIndex) = 0;
+	virtual std::int32_t GetLayer()const = 0;
+	virtual void SetIsShadowRendering(const bool arg_isShadpwRendering) = 0;
+	virtual bool IsShadowRendering()const = 0;
+	virtual void SetIsPlayActive(const bool arg_isActive) = 0;
+	virtual bool IsPlayActive()const = 0;
+	virtual void SetIsEditActive(const bool arg_isActive) = 0;
+	virtual bool IsEditActive()const = 0;
+	virtual void SetIsCurrentActive(const bool arg_isActive) = 0;
+	virtual bool IsCurrentActive()const = 0;
+
 };
 class ModelAnimation;
 struct MotionKeyFrameData;
