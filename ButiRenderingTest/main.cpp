@@ -43,8 +43,8 @@ std::int32_t main() {
 		ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uvNormal);
 		ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_normal);
 		vlp_mesh = ButiRendering::CreateMesh("Cube", { cubePrim,cubePrim_normal,cubePrim_uvNormal }, vlp_graphicDevice);
-
-		vlp_shader = ButiRendering::CreateShader(ButiRendering::CreateVertexShader("Resource/UVNormalVS", vlp_graphicDevice), ButiRendering::CreatePixelShader("Resource/OnlyMaterialPS", vlp_graphicDevice), nullptr,"OnlyColor");
+		vlp_shader = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUVNormal(vlp_graphicDevice),
+			ButiRendering::DefaultPixelShader::CreateOnlyMaterial( vlp_graphicDevice), nullptr, "OnlyColor");
 	}
 	auto vlp_transform = ObjectFactory::Create<Transform>(Vector3(0,0,10),Vector3(12,15,18),Vector3(1,1,1));
 
