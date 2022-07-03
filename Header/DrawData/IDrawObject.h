@@ -23,65 +23,57 @@ public:
 };
 class IBoneObject :public  IObject {
 public:
-	std::vector<Value_ptr<Bone>> vec_bone;
-	std::vector<Value_ptr<Bone>> vec_IKBone;
-	std::vector<Value_ptr<Bone>> vec_addBone;
+	List<Value_ptr<Bone>> m_list_bone;
+	List<Value_ptr<Bone>> m_list_IKBone;
+	List<Value_ptr<Bone>> m_list_addBone;
 	void InverseKinematic() {
-		for (auto itr = vec_IKBone.begin(); itr != vec_IKBone.end(); itr++) {
-			(*itr)->CCDInverseKinematic();
+		for (auto itr : m_list_IKBone) {
+			(itr)->CCDInverseKinematic();
 		}
 	}
 	inline void BonePowerAdd() {
-		for (auto itr = vec_addBone.begin(); itr != vec_addBone.end(); itr++) {
-			(*itr)->AddBonePower();
+		for (auto itr : m_list_addBone) {
+			(itr)->AddBonePower();
 		}
 	}
 
-	std::vector<Value_ptr<Bone>>& GetBones() {
-		return vec_bone;
+	List<Value_ptr<Bone>>& GetBones() {
+		return m_list_bone;
 	}
-	std::vector<Value_ptr<Bone>>& GetIKBones() {
-		return vec_IKBone;
+	List<Value_ptr<Bone>>& GetIKBones() {
+		return m_list_IKBone;
 	}
 	void SetIKBone() {
-		vec_IKBone.clear();
-		for (auto itr = vec_bone.begin(); itr != vec_bone.end(); itr++) {
-			if ((*itr)->isIK) {
-				vec_IKBone.push_back(*itr);
+		m_list_IKBone.Clear();
+		for (auto itr : m_list_bone) {
+			if ((itr)->isIK) {
+				m_list_IKBone.Add(itr);
 			}
 		}
 	}
 	void SetAddBone() {
-		vec_addBone.clear();
-		for (auto itr = vec_bone.begin(); itr != vec_bone.end(); itr++) {
-			if ((*itr)->addBoneIndex >= 0) {
-				vec_addBone.push_back(*itr);
+		m_list_addBone.Clear();
+		for (auto itr :m_list_bone) {
+			if ((itr)->addBoneIndex >= 0) {
+				m_list_addBone.push_back(itr);
 			}
 		}
 	}
 	inline Value_ptr<Bone> searchBoneByName(const std::string& arg_boneName) {
-		for (auto itr = vec_bone.begin(); itr != vec_bone.end(); itr++) {
-			if ((*itr)->boneName == arg_boneName) {
-				return (*itr);
-			}
-		}
-		return nullptr;
-	}
-	inline Value_ptr<Bone> searchBoneByEngName(const std::string& arg_engBoneName) {
-		for (auto itr = vec_bone.begin(); itr != vec_bone.end(); itr++) {
-			if ((*itr)->boneNameEng == arg_engBoneName) {
-				return (*itr);
+		for (auto itr:m_list_bone) {
+			if ((itr)->boneName == arg_boneName) {
+				return (itr);
 			}
 		}
 		return nullptr;
 	}
 	inline Value_ptr<Bone> searchBoneByIndex(const std::int32_t arg_index) {
-		if (arg_index < 0 || arg_index>vec_bone.size() - 1) {
+		if (arg_index < 0 || arg_index>m_list_bone.GetSize() - 1) {
 			return nullptr;
 		}
 		else
 		{
-			return vec_bone.at(arg_index);
+			return m_list_bone.at(arg_index);
 		}
 	}
 };

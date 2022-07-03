@@ -98,8 +98,6 @@ struct MaterialValue {
 	//roughness ÇÕåªç›emissiveÇÃAÇégóp
 	float materialID = 2.1;
 	float roughness;
-	MaterialValue() {
-	};
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
@@ -111,25 +109,22 @@ struct MaterialValue {
 };
 
 struct MaterialValue_Deferred {
-	Vector4 emissive = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector4 diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector4 ambient = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector4 specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-
-	MaterialValue_Deferred() {
-
-	};
-	MaterialValue_Deferred(const MaterialValue& arg_v) :emissive(arg_v.emissive),diffuse(arg_v.diffuse),ambient(arg_v.ambient),specular(arg_v.specular){};
+	MaterialValue datas [256];
+	MaterialValue_Deferred(){memset(datas, 0, sizeof(datas)); };
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(emissive);
-		archive(diffuse);
-		archive(ambient);
-		archive(specular);
+		archive(datas);
 	}
 };
-
+struct BoneMatrix {
+	Matrix4x4 datas[256];
+	template<class Archive>
+	void serialize(Archive& archive)
+	{
+		archive(datas);
+	}
+};
 struct ParticleParameter {
 	Vector4 startColor = Vector4(0, 0, 0, 1);
 	Vector4 endColor = Vector4(1, 1, 1, 1);

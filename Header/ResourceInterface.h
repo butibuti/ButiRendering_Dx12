@@ -7,6 +7,7 @@
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiUtil/ButiUtil/ObjectFactory.h"
 #include"ShaderVariable.h"
+#include "DrawSettings.h"
 namespace ButiEngine {
 
 namespace ImageFileIO {
@@ -18,10 +19,14 @@ enum class VertexType :std::uint8_t;
 
 namespace ButiRendering {
 
-
+struct ShaderStructReflection;
+struct ConstantBufferReflection;
+struct TextureReflection;
+struct SamplerReflection;
 class RenderingPathData;
 class IRenderTarget;
 class IDepthStencil;
+class IResource_Shader;
 /// <summary>
 /// 描画パスのインターフェース
 /// </summary>
@@ -56,6 +61,8 @@ public:
 	/// </summary>
 	/// <param name="arg_renderTarget">描画結果を出力するレンダーターゲットテクスチャ</param>
 	virtual void PushRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) = 0;
+	virtual List<Value_ptr<IRenderTarget>>&GetRenderTargets() = 0;
+	virtual const List<Value_ptr<IRenderTarget>>&GetRenderTargets()const = 0;
 	/// <summary>
 	/// 描画結果を出力するレンダーターゲットテクスチャの削除
 	/// </summary>
@@ -66,6 +73,7 @@ public:
 	/// </summary>
 	/// <param name="arg_depthStencil">参照、出力する深度テクスチャ</param>
 	virtual void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) = 0;
+	virtual Value_ptr<IDepthStencil> GetDepthStencil()const = 0;
 	virtual void SetOrder(const std::int32_t arg_order) = 0;
 	virtual std::int32_t GetOrder()const = 0;
 	virtual void SetLayer(const std::int32_t arg_layerIndex) = 0;
@@ -112,6 +120,19 @@ class IDescriptorHeapUpdateListner {
 public:
 	virtual void OnDescriptorHeapUpdate() = 0;
 };
+
+
+class IRootSignature :public IObject {
+public:
+	virtual void Attach() = 0;
+};
+class IPiplineState :public IObject {
+public:
+	virtual void Attach() = 0;
+	virtual Value_ptr<IRootSignature> GetRootSignature() const= 0;
+	virtual Value_ptr<IResource_Shader> GetShader()const = 0;
+};
+
 class IResource_Motion :public IObject {
 public:
 	virtual Value_ptr<ModelAnimation> GetAnimation() = 0;
@@ -121,35 +142,53 @@ public:
 class IResource_VertexShader :public IObject {
 public:
 	virtual void Attach()const = 0;
-	virtual std::string GetName()const = 0;
+	virtual const std::string& GetName()const = 0;
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
 	virtual std::uint32_t GetInputVertexType()const = 0;
+	virtual std::int32_t GetConstantBufferCount() const = 0;
+	virtual const List<ConstantBufferReflection>& GetConstantBufferReflectionDatas() const = 0;
+	virtual const List<TextureReflection>& GetTextureReflectionDatas() const = 0;
+	virtual const List<SamplerReflection>& GetSamplerReflectionDatas() const = 0;
+	virtual const ShaderStructReflection& GetInputLayout()const = 0;
+	virtual const ShaderStructReflection& GetOutputLayout()const = 0;
 };
 class IResource_PixelShader :public IObject {
 public:
 	virtual void Attach()const = 0;
-	virtual std::string GetName()const = 0;
-	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
-	virtual std::vector<std::uint32_t> GetOutputPixelFormat()const = 0;
+	virtual const std::string& GetName()const = 0;
+	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0; 
+	virtual std::int32_t GetConstantBufferCount() const = 0;
+	virtual const List<ConstantBufferReflection>& GetConstantBufferReflectionDatas() const = 0;
+	virtual const List<TextureReflection>& GetTextureReflectionDatas() const = 0;
+	virtual const List<SamplerReflection>& GetSamplerReflectionDatas() const = 0;
+	virtual const ShaderStructReflection& GetInputLayout()const = 0;
+	virtual const ShaderStructReflection& GetOutputLayout()const = 0;
 };
 class IResource_GeometryShader :public IObject {
 public:
 	virtual void Attach()const = 0;
-	virtual std::string GetName()const = 0;
+	virtual const std::string& GetName()const = 0;
 	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
+	virtual std::int32_t GetConstantBufferCount() const= 0;
+	virtual const List<ConstantBufferReflection>& GetConstantBufferReflectionDatas() const= 0;
+	virtual const List<TextureReflection>& GetTextureReflectionDatas() const = 0;
+	virtual const List<SamplerReflection>& GetSamplerReflectionDatas() const = 0;
+	virtual const ShaderStructReflection& GetInputLayout()const = 0;
+	virtual const ShaderStructReflection& GetOutputLayout()const = 0;
 };
 
 class IResource_Shader :public IObject {
 public:
 	virtual void Attach()const = 0;
-
 	virtual bool GetIsContainGeometryShader()const = 0;
-
 	virtual std::string GetShaderName()const = 0;
-
 	virtual Value_ptr<IResource_VertexShader> GetVertexShader() = 0;
 	virtual Value_ptr<IResource_PixelShader> GetPixelShader() = 0;
 	virtual Value_ptr<IResource_GeometryShader> GetGeometryShader() = 0;
+	virtual std::int32_t GetConstantBufferCount() const = 0;
+	virtual List<ConstantBufferReflection> GetConstantBufferReflectionDatas() const = 0;
+	virtual const ShaderStructReflection& GetInputLayout()const = 0;
+	virtual const ShaderStructReflection& GetOutputLayout()const = 0;
 };
 
 class IResource_Texture :public IObject {
@@ -190,10 +229,14 @@ public:
 	virtual void SetTexture(const List<Value_weak_ptr<IResource_Texture>>& arg_list_vwp_textures) = 0;
 	virtual void SetSphereTexture(Value_weak_ptr<IResource_Texture>  arg_vwp_texture) = 0;
 	virtual void SetMaterialVariable(const MaterialValue& arg_var) = 0;
-	virtual MaterialValue_Deferred GetMaterialDeferredValue()const = 0;
 	virtual const List<Value_weak_ptr<IResource_Texture>>& GetTextures()const = 0;
 	virtual const std::string& GetTagName()const = 0;
 	virtual void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material){}
+	virtual Value_ptr<IPiplineState> GetPipelineState()const=0;
+	virtual const DrawSettings& GetDrawSettings()const = 0;
+	virtual DrawSettings& GetDrawSettings() = 0;
+	virtual Value_ptr<IResource_Shader> GetShader()const = 0;
+	virtual void SetShader(Value_ptr<IResource_Shader> arg_vlp_shader)= 0;
 };
 class IResource_Mesh :public IObject {
 public:
@@ -237,8 +280,9 @@ BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, cons
 BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var,Value_weak_ptr<IResource_Shader> arg_vlp_shader,Value_weak_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_weak_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,  Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

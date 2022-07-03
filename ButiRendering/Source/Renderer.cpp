@@ -9,7 +9,7 @@
 
 namespace ButiEngine {
 namespace ButiRendering {
-struct RegistCommand {
+struct DrawObjectRegistCommand {
 	bool isAfter;
 	bool isShadow;
 	Value_ptr< IDrawObject> vlp_obj = nullptr;
@@ -43,12 +43,15 @@ public:
 	Value_ptr<GraphicDevice> GetGraphicDevice() const;
 	Value_ptr<IDrawLayer> GetDrawLayer(const std::int32_t arg_index)const override { return vec_drawLayers[arg_index]; }
 	void RemoveDrawLayer(const std::int32_t arg_index) override { vec_drawLayers.erase(vec_drawLayers.begin() + arg_index); }
+	void PushDrawFunction(std::function<void()> arg_drawFunction) override { m_list_drawFunctions.Add(arg_drawFunction); }
+	virtual void PopDrawFunction() override { m_list_drawFunctions.RemoveLast(); }
 private:
 
 
 	Value_weak_ptr<GraphicDevice> vwp_graphicDevice;
 	std::vector<Value_ptr< IDrawLayer>> vec_drawLayers;
 	Value_ptr<CBuffer<RenderingSceneInfo>> CBuffer_Renderer;
+	List<std::function<void()>> m_list_drawFunctions;
 };
 class DrawLayer_Shadow;
 class DrawLayer :public IDrawLayer {
@@ -73,7 +76,7 @@ public:
 	std::vector<Value_ptr< IDrawObject>> vec_befDrawObj;
 	std::vector<Value_ptr< IDrawObject>> vec_afterDrawObj;
 
-	std::vector<RegistCommand> vec_registCommandBuff;
+	std::vector<DrawObjectRegistCommand> vec_registCommandBuff;
 
 	std::int32_t nowFrameAdditionObjectCount = 0;
 	std::int32_t nowFrameAdditionObjectCount_after = 0;
@@ -186,6 +189,9 @@ void ButiEngine::ButiRendering::Renderer::ShadowRendering(const std::uint32_t ar
 
 void ButiEngine::ButiRendering::Renderer::RenderingEnd()
 {
+	for (auto func : m_list_drawFunctions) {
+		func();
+	}
 	vwp_graphicDevice.lock()->ResetPipeLine();
 	vwp_graphicDevice.lock()->Present();
 	vwp_graphicDevice.lock()->UploadResourceRelease();
@@ -432,7 +438,7 @@ void ButiEngine::ButiRendering::DrawLayer::Regist(Value_ptr<IDrawObject> arg_vwp
 		nowFrameAdditionObjectCount++;
 	}
 
-	RegistCommand cmd;
+	DrawObjectRegistCommand cmd;
 
 	cmd.isAfter = arg_isAfterRendering;
 	cmd.vlp_obj = arg_vwp_drawObject;

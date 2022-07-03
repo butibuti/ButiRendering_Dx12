@@ -231,15 +231,18 @@ enum class InputClassfication
     PER_VERTEX_DATA = 0,
     PER_INSTANCE_DATA = 1
 };
-struct InputElement
+struct ShaderElement
 {
 	std::string semanticName;
 	std::uint32_t semanticIndex;
 	Format format;
 	std::uint32_t inputSlot;
-	std::uint32_t alignedByteOffset;
-    InputClassfication inputSlotClass;
-	std::uint32_t instanceDataStepRate;
+	std::uint32_t alignedByteOffset= 0xffffffff;
+    InputClassfication inputSlotClass=InputClassfication::PER_INSTANCE_DATA;
+	std::uint32_t instanceDataStepRate=0;
+    inline bool operator==(const ShaderElement& arg_other)const {
+        return  format == arg_other.format;
+    }
     template<class Archive>
     void serialize(Archive& archive)
     {

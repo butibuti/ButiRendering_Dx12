@@ -151,5 +151,6 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::ForwardCameraRenderingPath> But
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::DeferredCameraRenderingPath> ButiEngine::ButiRendering::CreateDeferredRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath)
 {
-	return ObjectFactory::Create<DeferredCameraRenderingPath>(arg_vlp_camera,arg_vwp_renderer,arg_vwp_forwardPath);
+	return nullptr;
+	//return ObjectFactory::Create<DeferredCameraRenderingPath>(arg_vlp_camera,arg_vwp_renderer,arg_vwp_forwardPath);
 }

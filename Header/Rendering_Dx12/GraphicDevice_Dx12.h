@@ -9,6 +9,7 @@ namespace ButiEngine {
 namespace ButiRendering {
 class DescriptorHeapManager;
 class PipelineStateManager;
+class RootSignatureManager;
 enum FileFormat
 {
 	None, PNG, JPEG, BMP
@@ -37,18 +38,13 @@ public:
 	BUTIRENDERING_API ID3D12GraphicsCommandList& GetCommandList();
 	BUTIRENDERING_API ID3D12GraphicsCommandList& GetUploadCommandList();
 	BUTIRENDERING_API virtual ID3D12GraphicsCommandList& GetClearCommandList();
-	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc);
 
 	BUTIRENDERING_API void SetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState);
 
-	BUTIRENDERING_API std::pair< Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC> GetRootSignature(const std::wstring& Key);
-
 	BUTIRENDERING_API Value_weak_ptr<DescriptorHeapManager> GetDescriptorHeapManager();
 
-	BUTIRENDERING_API PipelineStateManager& GetPipelineStateManager();
-
-	BUTIRENDERING_API void SetRootSignature(const std::wstring& Key, const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootsig, const D3D12_ROOT_SIGNATURE_DESC& arg_desc);
-
+	PipelineStateManager& GetPipelineStateManager();
+	RootSignatureManager& GetRootSignatureManager();
 	BUTIRENDERING_API void AddUploadResource(GPUResource* rarg_resource);
 
 	BUTIRENDERING_API void AddOutputResource(GPUResource* rarg_resource, const FileFormat arg_format, const std::string& arg_fileName);

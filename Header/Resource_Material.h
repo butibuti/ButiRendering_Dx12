@@ -24,13 +24,20 @@ struct Resource_Material :public IResource_Material
 	const List<Value_weak_ptr<IResource_Texture>>& GetTextures()const override {
 		return list_vwp_texture;
 	}
-	List<Value_weak_ptr<IResource_Texture>> list_vwp_texture;
-	Value_weak_ptr<IResource_Texture> vwp_texture;
+	Value_ptr<IResource_Shader> GetShader()const { return m_vlp_shader; }
+	void SetShader(Value_ptr<IResource_Shader> arg_vlp_shader) { m_vlp_shader = arg_vlp_shader; }
+	const DrawSettings& GetDrawSettings()const override{ return m_drawSetting; }
+	DrawSettings& GetDrawSettings()override{ return m_drawSetting; }
+	Value_ptr<IPiplineState> GetPipelineState()const override { return m_vlp_pipelineState; }
 protected:
 	MaterialValue materialVar;
 	std::string materialName;
 	std::string materialNameEng;
 	std::string comment;
+	DrawSettings m_drawSetting;
+	Value_ptr<IResource_Shader> m_vlp_shader;
+	Value_ptr<IPiplineState> m_vlp_pipelineState;
+	List<Value_weak_ptr<IResource_Texture>> list_vwp_texture;
 };
 }
 }

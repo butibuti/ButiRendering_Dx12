@@ -39,9 +39,6 @@
     <ClInclude Include="..\Header\Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\CArrayBuffer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\CBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -147,7 +144,13 @@
     <ClInclude Include="..\Header\Rendering_Dx12\ShaderHelper_Dx12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Rendering_Dx12\CArrayBuffer_Dx12.h">
+    <ClInclude Include="..\Header\DrawSettings.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\ShaderReflection.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Rendering_Dx12\RootSignatureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -252,6 +255,12 @@
       <Filter>ソース ファイル\DrawData</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rendering_Dx12\CBufferUpdater_Dx12.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering_Dx12\PipelineState_Dx12.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering_Dx12\RootSignatureManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

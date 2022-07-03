@@ -113,6 +113,8 @@ public:
 	/// <returns>シャドウ用カメラ</returns>
 	virtual Value_ptr<ICamera> GetShadowCamera(const std::uint32_t arg_layer) = 0;
 	virtual Value_ptr<GraphicDevice> GetGraphicDevice() const= 0;
+	virtual void PushDrawFunction(std::function<void()> arg_drawFunction) = 0;
+	virtual void PopDrawFunction() = 0;
 };
 
 /// <summary>

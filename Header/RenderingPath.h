@@ -25,9 +25,13 @@ public:
 	void SetIsCurrentActive(const bool arg_isActive) override { m_isCurrentActive= arg_isActive; }
 	bool IsCurrentActive()const override { return m_isCurrentActive; }
 
-	void PushRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) { m_list_vlp_renderTarget.Add(arg_renderTarget); }
-	void RemoveRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) { m_list_vlp_renderTarget.Remove(arg_renderTarget); }
-	void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) { m_depthStencilTexture = arg_depthStencil; }
+	void PushRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) override{ m_list_vlp_renderTarget.Add(arg_renderTarget); }
+	void RemoveRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget)override { m_list_vlp_renderTarget.Remove(arg_renderTarget); }
+	void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) override{ m_depthStencilTexture = arg_depthStencil; }
+
+	Value_ptr<IDepthStencil> GetDepthStencil()const { return m_depthStencilTexture; }
+	List<Value_ptr<IRenderTarget>>&GetRenderTargets() { return m_list_vlp_renderTarget; }
+	const List<Value_ptr<IRenderTarget>>& GetRenderTargets()const override { return m_list_vlp_renderTarget; }
 protected:
 	Value_ptr<ICamera> vlp_camera;
 	std::int32_t m_order=0,m_layer=0;

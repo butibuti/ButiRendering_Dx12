@@ -41,7 +41,7 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 		projectionMatrix =
 			Matrix4x4::PersepectiveFovLH(
 				MathHelper::ToRadian(angle),
-				(float)cameraProp.currentWidth / (float)cameraProp.currentHeight,
+				static_cast<float>(cameraProp.currentWidth )/ static_cast<float>(cameraProp.currentHeight),
 				cameraProp.nearClip,
 				cameraProp.farClip
 			);
@@ -53,7 +53,7 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 void ButiEngine::ButiRendering::Camera::Start()
 {
 	cameraPos = vlp_transform->GetWorldPosition();
-	viewMatrix = Matrix4x4::Scale(Vector3{ 1.0f / cameraProp.scaleAdjusment, 1.0f / cameraProp.scaleAdjusment, 1 }) * vlp_transform->GetMatrix().GetInverse();
+	viewMatrix = Matrix4x4::Scale(Vector3{ 1.0f / cameraProp.scaleAdjusment, 1.0f / cameraProp.scaleAdjusment, 1 / cameraProp.scaleAdjusment }) * vlp_transform->GetMatrix().GetInverse();
 	vwp_graphicDevice.lock()->SetCameraPos(cameraPos);
 	vwp_graphicDevice.lock()->SetProjectionMatrix(projectionMatrix);
 	vwp_graphicDevice.lock()->SetRawViewMatrix(viewMatrix);

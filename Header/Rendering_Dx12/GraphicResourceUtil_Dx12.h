@@ -445,13 +445,13 @@ static inline D3D12_RASTERIZER_DESC GetDefaultRasterizerDesc() {
 
 	output.FillMode = D3D12_FILL_MODE_SOLID;
 	output.CullMode = D3D12_CULL_MODE_BACK;
-	output.FrontCounterClockwise = FALSE;
+	output.FrontCounterClockwise = false;
 	output.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
 	output.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
 	output.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	output.DepthClipEnable = TRUE;
-	output.MultisampleEnable = FALSE;
-	output.AntialiasedLineEnable = FALSE;
+	output.DepthClipEnable = true;
+	output.MultisampleEnable = false;
+	output.AntialiasedLineEnable = false;
 	output.ForcedSampleCount = 0;
 	output.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
 

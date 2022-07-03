@@ -1,5 +1,6 @@
 #include"stdafx.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/PipelineStateManager.h"
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/RootSignatureManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include "ButiRendering_Dx12\Header\Rendering_Dx12\GraphicDevice_Dx12.h"
@@ -38,6 +39,7 @@ public:
 	Value_ptr<DescriptorHeapManager> vlp_DescriptorManager;
 
 	Value_ptr<PipelineStateManager> vlp_pipelineStateManager;
+	Value_ptr<RootSignatureManager> vlp_rootSignatureManager;
 
 	List<D3D12_CPU_DESCRIPTOR_HANDLE> list_renderTargetHandles;
 	List<Value_ptr<IRenderTarget>>list_vlp_usedRenderTargets;
@@ -49,7 +51,6 @@ public:
 	List< ID3D12CommandList*> vec_drawCommandLists;
 	Microsoft::WRL::ComPtr<ID3D12Fence>  fence;
 
-	std::map<std::wstring, std::pair<Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC>> map_rootSignature;
 	Microsoft::WRL::ComPtr<ID3D12Resource> renderTargets[FrameCount];
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> resourceUploadHeap;
@@ -131,12 +132,13 @@ void GraphicDevice_Dx12_WithWindow::Present()
 	m_uqp_impl->vec_drawCommandLists.Clear();
 
 	for (auto usedRenderTarget : m_uqp_impl->list_vlp_usedRenderTargets) {
-		usedRenderTarget->SetIsCleared(true);
+		usedRenderTarget->SetIsCleared(false);
 	}
 	m_uqp_impl->list_vlp_usedRenderTargets.Clear();
 	for (auto usedDepthStencil : m_uqp_impl->list_vlp_usedDepthStencils) {
-		usedDepthStencil->SetIsCleared(true);
+		usedDepthStencil->SetIsCleared(false);
 	}
+	m_uqp_impl->list_vlp_usedDepthStencils.Clear();
 }
 void GraphicDevice_Dx12_WithWindow::WaitGPU()
 {
@@ -399,7 +401,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 	m_uqp_impl->vlp_DescriptorManager->Initialize(*m_uqp_impl->device.Get());
 
 	m_uqp_impl->vlp_pipelineStateManager = ObjectFactory::Create<PipelineStateManager>(GetThis<GraphicDevice_Dx12>());
-
+	m_uqp_impl->vlp_rootSignatureManager= ObjectFactory::Create<RootSignatureManager>(GetThis<GraphicDevice_Dx12>());
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::Release()
@@ -476,21 +478,6 @@ ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetCle
 	return *m_uqp_impl->uploadCommandList.Get();
 }
 
-
-Microsoft::WRL::ComPtr<ID3D12RootSignature> ButiEngine::ButiRendering::GraphicDevice_Dx12::CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc)
-{
-
-	auto Ret = GetRootSignature(L"SrvSmpCbvMat:" + std::to_wstring(materialCount) + L"srv:" + std::to_wstring(srvCount) + L"sampler:" + std::to_wstring(samplerCount));
-	if (Ret.first) {
-		arg_rootSignatureDesc = Ret.second;
-		return Ret.first;
-	}
-	auto out = RootSignatureHelper::CreateSrvSmpCbvMat(materialCount, srvCount, samplerCount, arg_rootSignatureDesc, GetDevice());
-	SetRootSignature(L"SrvSmpCbvMat:" + std::to_wstring(materialCount) + L"srv:" + std::to_wstring(srvCount) + L"sampler:" + std::to_wstring(samplerCount), out, arg_rootSignatureDesc);
-
-	return out;
-}
-
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& arg_pipelineState)
 {
 	if (arg_pipelineState.Get() == m_uqp_impl->currentPipelineState) {
@@ -499,16 +486,6 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetPipeLine(const Microsoft:
 	m_uqp_impl->currentPipelineState = arg_pipelineState.Get();
 	CommandListHelper::BundleSetPipeLine(arg_pipelineState, GetCommandList());
 }
-
-std::pair<Microsoft::WRL::ComPtr<ID3D12RootSignature>, D3D12_ROOT_SIGNATURE_DESC> ButiEngine::ButiRendering::GraphicDevice_Dx12::GetRootSignature(const std::wstring& Key)
-{
-	auto it = m_uqp_impl->map_rootSignature.count(Key);
-	if (!it) {
-		return { nullptr, D3D12_ROOT_SIGNATURE_DESC() };
-	}
-	return m_uqp_impl->map_rootSignature[Key];
-}
-
 ButiEngine::Value_weak_ptr< ButiEngine::ButiRendering::DescriptorHeapManager> ButiEngine::ButiRendering::GraphicDevice_Dx12::GetDescriptorHeapManager()
 {
 	return m_uqp_impl->vlp_DescriptorManager;
@@ -519,16 +496,9 @@ ButiEngine::ButiRendering::PipelineStateManager& ButiEngine::ButiRendering::Grap
 	return *m_uqp_impl->vlp_pipelineStateManager;
 }
 
-void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetRootSignature(const std::wstring& Key, const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootsig, const D3D12_ROOT_SIGNATURE_DESC& arg_desc)
+ButiEngine::ButiRendering::RootSignatureManager& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetRootSignatureManager()
 {
-	if (GetRootSignature(Key).first != nullptr) {
-		throw ButiException(
-			L"すでにそのルートシグネチャは存在します",
-			Key,
-			L"DeviceResources::SetRootSignature()"
-		);
-	}
-	m_uqp_impl->map_rootSignature[Key] = { rootsig ,arg_desc };
+	return *m_uqp_impl->vlp_rootSignatureManager;
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::AddUploadResource(GPUResource* arg_resource)
@@ -755,7 +725,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResourceUpload()
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::PipelineClear()
 {
 	m_uqp_impl->vlp_pipelineStateManager->ClearPipelineState();
-	m_uqp_impl->map_rootSignature.clear();
+	m_uqp_impl->vlp_rootSignatureManager->Release();
 }
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> ButiEngine::ButiRendering::GraphicDevice_Dx12::GetRtvHeap() const

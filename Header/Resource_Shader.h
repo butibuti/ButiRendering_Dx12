@@ -11,8 +11,7 @@ public:
 	void Initialize()override {}
 	void PreInitialize()override {}
 	virtual void Attach()const = 0;
-	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
-	virtual std::vector<std::int32_t>& GetFormats() = 0;
+	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;	
 };
 class Resource_VertexShader :public IResource_VertexShader
 {

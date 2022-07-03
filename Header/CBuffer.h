@@ -55,10 +55,11 @@ template <typename T>
 class CBuffer :public ICBuffer
 {
 public:
+	CBuffer(){}
 	CBuffer(const std::int32_t arg_slot, const std::string& arg_bufferName) {
 		this->slot = arg_slot;
-		m_p_updater = CbufferDetail::CreateCBufferUpdater(arg_slot,sizeof(T));
 		this->exName = arg_bufferName;
+		CreateCBufferUpdater();
 	}
 	~CBuffer() {
 		if (m_instance) {
@@ -66,6 +67,11 @@ public:
 			m_instance = nullptr;
 		}
 		ButiMemorySystem::Allocator::deallocate(m_p_updater);
+	}
+	void CreateCBufferUpdater() {
+		if (!m_p_updater) {
+			m_p_updater = CbufferDetail::CreateCBufferUpdater(this->slot, sizeof(T));
+		}		
 	}
 	void Initialize() {
 		m_instance = (make_value<T>());
@@ -94,6 +100,7 @@ public:
 		archive(this->slot);
 		archive(this->exName);
 		archive(m_instance);
+		CreateCBufferUpdater();
 	}
 private:
 	std::function<bool(T&)> m_func_control;

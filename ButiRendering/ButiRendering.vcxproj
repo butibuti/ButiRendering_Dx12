@@ -177,11 +177,11 @@
   <ItemGroup>
     <ClInclude Include="..\Header\Bone.h" />
     <ClInclude Include="..\Header\Camera.h" />
-    <ClInclude Include="..\Header\CArrayBuffer.h" />
     <ClInclude Include="..\Header\CBuffer.h" />
     <ClInclude Include="..\Header\DrawData\DrawData_Dx12.h" />
     <ClInclude Include="..\Header\DrawData\IDrawData.h" />
     <ClInclude Include="..\Header\DrawData\IDrawObject.h" />
+    <ClInclude Include="..\Header\DrawSettings.h" />
     <ClInclude Include="..\Header\GraphicDevice.h" />
     <ClInclude Include="..\Header\ICamera.h" />
     <ClInclude Include="..\Header\MeshHelper.h" />
@@ -191,7 +191,6 @@
     <ClInclude Include="..\Header\Renderer.h" />
     <ClInclude Include="..\Header\RenderingPath.h" />
     <ClInclude Include="..\Header\RenderingStatus.h" />
-    <ClInclude Include="..\Header\Rendering_Dx12\CArrayBuffer_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\DescriptorHeapManager.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\GraphicDevice_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\GraphicResourceUtil_Dx12.h" />
@@ -203,6 +202,7 @@
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Texture_Dx12.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Texture_Dx12_DepthStencil.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\Resource_Texture_Dx12_RenderTarget.h" />
+    <ClInclude Include="..\Header\Rendering_Dx12\RootSignatureManager.h" />
     <ClInclude Include="..\Header\Rendering_Dx12\ShaderHelper_Dx12.h" />
     <ClInclude Include="..\Header\ResourceInterface.h" />
     <ClInclude Include="..\Header\Resource_Material.h" />
@@ -212,6 +212,7 @@
     <ClInclude Include="..\Header\Resource_DynamicMesh.h" />
     <ClInclude Include="..\Header\Resource_Shader.h" />
     <ClInclude Include="..\Header\Resource_Texture.h" />
+    <ClInclude Include="..\Header\ShaderReflection.h" />
     <ClInclude Include="..\Header\ShaderVariable.h" />
     <ClInclude Include="..\Header\Vertex.h" />
     <ClInclude Include="Common.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="Source\Rendering_Dx12\DescriptorHeapManager.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\GraphicDevice_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\PipelineStateManager.cpp" />
+    <ClCompile Include="Source\Rendering_Dx12\PipelineState_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Material_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Mesh_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_DynamicMesh_Dx12.cpp" />
@@ -242,6 +244,7 @@
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12_DepthStencil.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12_RenderTarget.cpp" />
+    <ClCompile Include="Source\Rendering_Dx12\RootSignatureManager.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\ShaderHelper_Dx12.cpp" />
     <ClCompile Include="Source\Resource_Material.cpp" />
     <ClCompile Include="Source\Resource_Mesh.cpp" />
