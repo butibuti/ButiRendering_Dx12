@@ -153,6 +153,12 @@
     <ClInclude Include="..\Header\Rendering_Dx12\RootSignatureManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\Header\DrawCommand.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Header\Rendering_Dx12\DrawCommand_Dx12.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -261,6 +267,9 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Source\Rendering_Dx12\RootSignatureManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Rendering_Dx12\DrawCommand_Dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

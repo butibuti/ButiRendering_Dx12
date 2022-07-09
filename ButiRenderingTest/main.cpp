@@ -10,6 +10,8 @@
 #include"ButiRendering_Dx12/Header/MeshHelper.h"
 #include"ButiRendering_Dx12/Header/CBuffer.h"
 #include"ButiRendering_Dx12/Header/DrawData/IDrawData.h"
+#include"ButiUtil/ButiUtil/StopWatch.h"
+#include<typeinfo>
 std::int32_t main() {
 	using namespace ButiEngine;
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -29,55 +31,96 @@ std::int32_t main() {
 	
 	auto mainCameraPath = ButiRendering::CreateForwardRenderingPath(ButiRendering::CreateCamera(prop, "main", true, vlp_renderer, vlp_graphicDevice),vlp_renderer);
 	
-	Value_ptr<ButiRendering::IResource_Material> vlp_material;
-	Value_ptr<ButiRendering::IResource_Shader> vlp_shader;
-	Value_ptr<ButiRendering::IResource_Mesh> vlp_mesh;
+	Value_ptr<ButiRendering::IResource_Material> vlp_material_onlyColor, vlp_material_textureMap;
+	Value_ptr<ButiRendering::IResource_Shader> vlp_shader_onlyMaterial, vlp_shader_texture;
+	Value_ptr<ButiRendering::IResource_Mesh> vlp_mesh_cube, vlp_mesh_sphere;
+	List<Value_ptr<ButiRendering::IResource_Texture>>list_vlp_texture;
 	//ÉäÉ\Å[ÉXçÏê¨
 	{
-		vlp_material = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), List<Value_weak_ptr<ButiRendering::IResource_Texture>>(), vlp_graphicDevice);
-		auto cubePrim = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>>();
-		auto cubePrim_uvNormal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal>>();
-		auto cubePrim_normal=ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>> ();
+		{
+			auto cubePrim = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>>();
+			auto cubePrim_uvNormal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal>>();
+			auto cubePrim_normal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>>();
+			auto cubePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 
-		ButiRendering::MeshHelper::CreateCube(Vector3(1,1,1),std::vector<Vector4>(),*cubePrim,true);
-		ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uvNormal);
-		ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_normal);
-		vlp_mesh = ButiRendering::CreateMesh("Cube", { cubePrim,cubePrim_normal,cubePrim_uvNormal }, vlp_graphicDevice);
-		vlp_shader = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUVNormal(vlp_graphicDevice),
-			ButiRendering::DefaultPixelShader::CreateOnlyMaterial( vlp_graphicDevice), nullptr, "OnlyColor");
+			ButiRendering::MeshHelper::CreateCube(Vector3(1, 1, 1), std::vector<Vector4>(), *cubePrim, true);
+			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uvNormal);
+			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_normal);
+			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uv);
+			vlp_mesh_cube = ButiRendering::CreateMesh("Cube", { cubePrim,cubePrim_uv,cubePrim_normal,cubePrim_uvNormal }, vlp_graphicDevice);
+		}
+		{
+
+			auto spherePrim = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>>();
+			auto spherePrim_uvNormal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal>>();
+			auto spherePrim_normal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>>();
+			auto spherePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
+
+			ButiRendering::MeshHelper::CreateSphere(Vector3(1, 1, 1),24,std::vector<Vector4>(),*spherePrim);
+			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uvNormal);
+			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_normal);
+			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uv);
+			vlp_mesh_sphere = ButiRendering::CreateMesh("Sphere", { spherePrim,spherePrim_uv,spherePrim_normal,spherePrim_uvNormal }, vlp_graphicDevice);
+		}
+		vlp_shader_onlyMaterial = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUVNormal(vlp_graphicDevice),
+			ButiRendering::DefaultPixelShader::CreateOnlyMaterial(vlp_graphicDevice), nullptr, "OnlyColor");
+		vlp_shader_texture = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUV(vlp_graphicDevice),
+			ButiRendering::DefaultPixelShader::CreateUV(vlp_graphicDevice), nullptr, "TextureMap");
+		vlp_material_onlyColor = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), vlp_graphicDevice);
+		vlp_material_onlyColor->GetMaterialVariable().ambient = ButiColor::Blue();
+		vlp_material_onlyColor->GetMaterialVariable().diffuse = ButiColor::Orange();
+		vlp_material_onlyColor->GetMaterialVariable().emissive = ButiColor::DeepPurple();
+		vlp_material_onlyColor->GetMaterialCBuffer()->Update();
+		list_vlp_texture.Add(ButiRendering::CreateTextureFromPNG("Resource/EngineLogo.png", vlp_graphicDevice));
+		vlp_material_textureMap = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, vlp_graphicDevice);
 	}
-	auto vlp_transform = ObjectFactory::Create<Transform>(Vector3(0,0,10),Vector3(12,15,18),Vector3(1,1,1));
 
-	auto drawInfo = ObjectFactory::Create<ButiRendering::DrawInformation>();
-	drawInfo->layer = 0;
-	{
-		auto info = ButiRendering::CreateCBuffer< ButiRendering::ObjectInformation>(3, "ObjectInformation");
-		info->Get().lightDir = Vector4(Vector3(-1.0f, -1.0f, 0.0f).GetNormalize(), 1);
-		info->Get().color = ButiColor::Cyan();
-		drawInfo->vec_exCBuffer.push_back(info);
-	}
-
-	
-	auto drawObject = ButiRendering::CreateMeshDrawObject(vlp_mesh, vlp_shader, vlp_material, vlp_renderer, vlp_graphicDevice, drawInfo,vlp_transform);
-	vlp_renderer->RegistDrawObject(drawObject,false,0);
+	auto drawObject = ButiRendering::CreateMeshDrawObject(vlp_mesh_sphere, vlp_material_textureMap, vlp_renderer, vlp_graphicDevice, nullptr, nullptr);
+	drawObject->GetTransform()->SetLocalPositionZ(10);
+	drawObject->GetTransform()->SetLocalRotation(Vector3(12, 15, 18));
+	vlp_renderer->RegistDrawObject(drawObject, 0);
+	auto drawObject_onlyMaterial = ButiRendering::CreateMeshDrawObject(vlp_mesh_cube, vlp_material_onlyColor, vlp_renderer, vlp_graphicDevice, nullptr, nullptr);
+	drawObject_onlyMaterial->GetTransform()->SetLocalPositionX(2);
+	drawObject_onlyMaterial->GetTransform()->SetLocalPositionZ(10);
+	drawObject_onlyMaterial->GetTransform()->SetLocalRotation(Vector3(12, 15, 18));
+	vlp_renderer->RegistDrawObject(drawObject_onlyMaterial, 0);
+	std::int32_t frame = 0;
+	auto stopWatch = ButiEngine::StopWatch();
 	while (vlp_window->Update()) {
+		stopWatch.Start();
 		//ï`âÊäJén
 		vlp_renderer->RenderingStart();
 
-		vlp_transform->RollWorldRotationY_Degrees(0.1);
+		drawObject->GetTransform()->RollWorldRotationY_Degrees(0.1);
+		drawObject->GetCBuffer<ButiRendering::ObjectInformation>()->Get().color.x -= 0.0005;
 		//ï`âÊèàóù
 		mainCameraPath->Execute();
 
 		//ï`âÊèIóπ
 		vlp_renderer->RenderingEnd();
+
+		if (frame == 300) {
+			vlp_renderer->UnRegistDrawObject(drawObject);
+		}if (frame > 600) {
+			vlp_renderer->RegistDrawObject(drawObject);
+			frame = 0;
+		}
+
+		frame++;
+		stopWatch.Stop();
+		std::uint64_t millSec = stopWatch.GetMillSecond();
+		constexpr float frameSec = 1.0f/60.0f*1000;
+		if (millSec < frameSec) {
+			Sleep(frameSec - millSec);
+		}
 	}
-	vlp_renderer->UnRegistDrawObject(drawObject,false,0);
 	//âï˙
-	vlp_material = nullptr;
-	vlp_shader = nullptr;
-	vlp_mesh = nullptr;
-	drawObject = nullptr;
-	drawInfo = nullptr;
+	vlp_material_onlyColor = nullptr;
+	vlp_material_textureMap = nullptr;
+	vlp_shader_onlyMaterial = nullptr;
+	vlp_shader_texture = nullptr;
+	vlp_mesh_cube = nullptr;
+	drawObject = nullptr; drawObject_onlyMaterial = nullptr;
 	
 	vlp_renderer->Release();
 	vlp_window->Release();

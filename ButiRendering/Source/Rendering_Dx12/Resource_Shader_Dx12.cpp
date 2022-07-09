@@ -260,7 +260,7 @@ ButiEngine::ButiRendering::Resource_VertexShader_Dx12::Resource_VertexShader_Dx1
 	ShaderCompile_Dx12::Compile(arg_source.str(), nullptr,m_vertexShaderBlob ,"VSMain", "vs_5_1");
 	std::vector<ShaderElement> vec_elem;
 
-	for (auto inputLayout : m_vec_inputElementDesc) {
+	for (auto inputLayout : m_list_inputElementDesc) {
 		auto sementicStr = std::string(inputLayout.SemanticName);
 		if (sementicStr == "NORMAL") {
 			m_inputVertexType |= Vertex::VertexFlag::Normal;
@@ -300,8 +300,8 @@ ButiEngine::ButiRendering::Resource_VertexShader_Dx12::Resource_VertexShader_Dx1
 
 ButiEngine::ButiRendering::Resource_VertexShader_Dx12::~Resource_VertexShader_Dx12()
 {
-	for (std::int32_t i = 0; i < m_vec_inputElementDesc.size(); i++) {
-		ButiMemorySystem::Allocator::deallocate(m_vec_inputElementDesc.at(i).SemanticName);
+	for (std::int32_t i = 0; i < m_list_inputElementDesc.GetSize(); i++) {
+		ButiMemorySystem::Allocator::deallocate(m_list_inputElementDesc.at(i).SemanticName);
 	}
 }
 
@@ -319,9 +319,9 @@ Microsoft::WRL::ComPtr<ID3DBlob>& ButiEngine::ButiRendering::Resource_VertexShad
 	return m_vertexShaderBlob;
 }
 
-std::vector<D3D12_INPUT_ELEMENT_DESC>& ButiEngine::ButiRendering::Resource_VertexShader_Dx12::GetInputLayoutVector()
+const ButiEngine::List<D3D12_INPUT_ELEMENT_DESC>& ButiEngine::ButiRendering::Resource_VertexShader_Dx12::GetInputLayoutList()const
 {
-	return m_vec_inputElementDesc;
+	return m_list_inputElementDesc;
 }
 std::uint32_t ButiEngine::ButiRendering::Resource_VertexShader_Dx12::GetInputVertexType() const
 {
@@ -349,7 +349,7 @@ void ButiEngine::ButiRendering::Resource_VertexShader_Dx12::CreateShaderData(con
 		char* semanticP = reinterpret_cast<char*>(ButiMemorySystem::Allocator::allocate(elem.semanticName.size() + 1));
 		memcpy(semanticP, elem.semanticName.c_str(), elem.semanticName.size() + 1);
 		d3dElem.SemanticName = semanticP;
-		m_vec_inputElementDesc.push_back(d3dElem);
+		m_list_inputElementDesc.Add(d3dElem);
 		if (elem.semanticName == "NORMAL") {
 			m_inputVertexType |= Vertex::VertexFlag::Normal;
 		}
@@ -448,15 +448,15 @@ void ButiEngine::ButiRendering::Resource_GeometryShader_Dx12::CreateShaderData(c
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_inputLayoutfilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(arg_shaderName, arg_filePath, arg_inputLayoutfilePath,arg_vlp_graphicDevice);
+	return ObjectFactory::Create<Resource_VertexShader_Dx12>(arg_shaderName, arg_filePath, arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_outputFormatFilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(arg_shaderName, arg_filePath,arg_outputFormatFilePath ,arg_vlp_graphicDevice);
+	return ObjectFactory::Create<Resource_PixelShader_Dx12>(arg_shaderName, arg_filePath,arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::CreateGeometryShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_GeometryShader_Dx12>(arg_filePath, arg_vlp_graphicDevice);
+	return ObjectFactory::Create<Resource_GeometryShader_Dx12>(arg_shaderName,arg_filePath, arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShaderFromSource(const std::string& arg_shaderName, const std::string& arg_source, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
@@ -483,268 +483,322 @@ void ButiEngine::ButiRendering::ShaderCompile(const std::string& arg_sourceFileP
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal::g_VSMain, sizeof(VS::UVNormal::g_VSMain), "UVNormal",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal::g_VSMain, sizeof(VS::UVNormal::g_VSMain), "UVNormal",  arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal_Shadow::g_VSMain, sizeof(VS::UVNormal_Shadow::g_VSMain), "UVNormal_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader:shader=ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal_Shadow::g_VSMain, sizeof(VS::UVNormal_Shadow::g_VSMain), "UVNormal_Shadow",  arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalAttribute(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalAttribute::g_VSMain, sizeof(VS::UVNormalAttribute::g_VSMain), "UVNormalAttribute",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalAttribute::g_VSMain, sizeof(VS::UVNormalAttribute::g_VSMain), "UVNormalAttribute", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColor::g_VSMain, sizeof(VS::UVNormalColor::g_VSMain), "UVNormalColor",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColor::g_VSMain, sizeof(VS::UVNormalColor::g_VSMain), "UVNormalColor", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColorFog::g_VSMain, sizeof(VS::UVNormalColorFog::g_VSMain), "UVNormalColorFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColorFog::g_VSMain, sizeof(VS::UVNormalColorFog::g_VSMain), "UVNormalColorFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalColorFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColorFog_Shadow::g_VSMain, sizeof(VS::UVNormalColorFog_Shadow::g_VSMain), "UVNormalColorFog_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalColorFog_Shadow::g_VSMain, sizeof(VS::UVNormalColorFog_Shadow::g_VSMain), "UVNormalColorFog_Shadow", arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalFog::g_VSMain, sizeof(VS::UVNormalFog::g_VSMain), "UVNormalFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalFog::g_VSMain, sizeof(VS::UVNormalFog::g_VSMain), "UVNormalFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalFog_Shadow::g_VSMain, sizeof(VS::UVNormalFog_Shadow::g_VSMain), "UVNormalFog_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalFog_Shadow::g_VSMain, sizeof(VS::UVNormalFog_Shadow::g_VSMain), "UVNormalFog_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalPhong(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPhong::g_VSMain, sizeof(VS::UVNormalPhong::g_VSMain), "UVNormalPhong",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPhong::g_VSMain, sizeof(VS::UVNormalPhong::g_VSMain), "UVNormalPhong", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalPhong_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPhong_Shadow::g_VSMain, sizeof(VS::UVNormalPhong_Shadow::g_VSMain), "UVNormalPhong_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPhong_Shadow::g_VSMain, sizeof(VS::UVNormalPhong_Shadow::g_VSMain), "UVNormalPhong_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalPosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPosition::g_VSMain, sizeof(VS::UVNormalPosition::g_VSMain), "UVNormalPosition",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalPosition::g_VSMain, sizeof(VS::UVNormalPosition::g_VSMain), "UVNormalPosition", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalTangent(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalTangent::g_VSMain, sizeof(VS::UVNormalTangent::g_VSMain), "UVNormalTangent",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalTangent::g_VSMain, sizeof(VS::UVNormalTangent::g_VSMain), "UVNormalTangent", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormalTangent_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalTangent_Shadow::g_VSMain, sizeof(VS::UVNormalTangent_Shadow::g_VSMain), "UVNormalTangent_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormalTangent_Shadow::g_VSMain, sizeof(VS::UVNormalTangent_Shadow::g_VSMain), "UVNormalTangent_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVPosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVPosition::g_VSMain, sizeof(VS::UVPosition::g_VSMain), "UVPosition",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVPosition::g_VSMain, sizeof(VS::UVPosition::g_VSMain), "UVPosition", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::ShadowMap::g_VSMain, sizeof(VS::ShadowMap::g_VSMain), "ShadowMap",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::ShadowMap::g_VSMain, sizeof(VS::ShadowMap::g_VSMain), "ShadowMap", arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateShadowMap_UV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::ShadowMap_UV::g_VSMain, sizeof(VS::ShadowMap_UV::g_VSMain), "ShadowMap_UV",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::ShadowMap_UV::g_VSMain, sizeof(VS::ShadowMap_UV::g_VSMain), "ShadowMap_UV", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UV::g_VSMain, sizeof(VS::UV::g_VSMain), "UV",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader?shader:shader= ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UV::g_VSMain, sizeof(VS::UV::g_VSMain), "UV", arg_vlp_graphicDevice);;
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUV_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UV_Shadow::g_VSMain, sizeof(VS::UV_Shadow::g_VSMain), "UV_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UV_Shadow::g_VSMain, sizeof(VS::UV_Shadow::g_VSMain), "UV_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVAttribute(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVAttribute::g_VSMain, sizeof(VS::UVAttribute::g_VSMain), "UVAttribute",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVAttribute::g_VSMain, sizeof(VS::UVAttribute::g_VSMain), "UVAttribute", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVColor::g_VSMain, sizeof(VS::UVColor::g_VSMain), "UVColor",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVColor::g_VSMain, sizeof(VS::UVColor::g_VSMain), "UVColor", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVFog::g_VSMain, sizeof(VS::UVFog::g_VSMain), "UVFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVFog::g_VSMain, sizeof(VS::UVFog::g_VSMain), "UVFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVFog_Shadow::g_VSMain, sizeof(VS::UVFog_Shadow::g_VSMain), "UVFog_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVFog_Shadow::g_VSMain, sizeof(VS::UVFog_Shadow::g_VSMain), "UVFog_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateGrid(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{	
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid::g_PSMain, sizeof(PS::Grid::g_PSMain), "Grid", arg_vlp_graphicDevice);
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid::g_PSMain, sizeof(PS::Grid::g_PSMain), "Grid", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateGrid_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid_Shadow::g_PSMain, sizeof(PS::Grid_Shadow::g_PSMain), "Grid_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid_Shadow::g_PSMain, sizeof(PS::Grid_Shadow::g_PSMain), "Grid_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateGrid_worldColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid_worldColor::g_PSMain, sizeof(PS::Grid_worldColor::g_PSMain), "Grid_worldColor",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid_worldColor::g_PSMain, sizeof(PS::Grid_worldColor::g_PSMain), "Grid_worldColor", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateGridFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::GridFog::g_PSMain, sizeof(PS::GridFog::g_PSMain), "GridFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::GridFog::g_PSMain, sizeof(PS::GridFog::g_PSMain), "GridFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateOnlyMaterial(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial::g_PSMain, sizeof(PS::OnlyMaterial::g_PSMain), "OnlyMaterial",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial::g_PSMain, sizeof(PS::OnlyMaterial::g_PSMain), "OnlyMaterial", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateOnlyMaterial_BloomSource(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial_BloomSource::g_PSMain, sizeof(PS::OnlyMaterial_BloomSource::g_PSMain), "OnlyMaterial_BloomSource",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial_BloomSource::g_PSMain, sizeof(PS::OnlyMaterial_BloomSource::g_PSMain), "OnlyMaterial_BloomSource", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreatePostEffect_GausBlur(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::PostEffect_GausBlur::g_PSMain, sizeof(PS::PostEffect_GausBlur::g_PSMain), "PostEffect_GausBlur",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::PostEffect_GausBlur::g_PSMain, sizeof(PS::PostEffect_GausBlur::g_PSMain), "PostEffect_GausBlur", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreatePostEffect_GausBlurFloat2(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::PostEffect_GausBlurFloat2::g_PSMain, sizeof(PS::PostEffect_GausBlurFloat2::g_PSMain), "PostEffect_GausBlurFloat2",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::PostEffect_GausBlurFloat2::g_PSMain, sizeof(PS::PostEffect_GausBlurFloat2::g_PSMain), "PostEffect_GausBlurFloat2", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::ShadowMap::g_PSMain, sizeof(PS::ShadowMap::g_PSMain), "ShadowMap",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::ShadowMap::g_PSMain, sizeof(PS::ShadowMap::g_PSMain), "ShadowMap", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateShadowMap_UV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::ShadowMap_UV::g_PSMain, sizeof(PS::ShadowMap_UV::g_PSMain), "ShadowMap_UV",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::ShadowMap_UV::g_PSMain, sizeof(PS::ShadowMap_UV::g_PSMain), "ShadowMap_UV", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateSpriteAnimation(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::SpriteAnimation::g_PSMain, sizeof(PS::SpriteAnimation::g_PSMain), "SpriteAnimation",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::SpriteAnimation::g_PSMain, sizeof(PS::SpriteAnimation::g_PSMain), "SpriteAnimation", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColor::g_PSMain, sizeof(PS::UVColor::g_PSMain), "UVColor",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColor::g_PSMain, sizeof(PS::UVColor::g_PSMain), "UVColor", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVColor_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColor_Shadow::g_PSMain, sizeof(PS::UVColor_Shadow::g_PSMain), "UVColor_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColor_Shadow::g_PSMain, sizeof(PS::UVColor_Shadow::g_PSMain), "UVColor_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColorFog::g_PSMain, sizeof(PS::UVColorFog::g_PSMain), "UVColorFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColorFog::g_PSMain, sizeof(PS::UVColorFog::g_PSMain), "UVColorFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVColorFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColorFog_Shadow::g_PSMain, sizeof(PS::UVColorFog_Shadow::g_PSMain), "UVColorFog_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColorFog_Shadow::g_PSMain, sizeof(PS::UVColorFog_Shadow::g_PSMain), "UVColorFog_Shadow", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVDepth(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVDepth::g_PSMain, sizeof(PS::UVDepth::g_PSMain), "UVDepth",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVDepth::g_PSMain, sizeof(PS::UVDepth::g_PSMain), "UVDepth", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UV::g_PSMain, sizeof(PS::UV::g_PSMain), "UV",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UV::g_PSMain, sizeof(PS::UV::g_PSMain), "UV", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVFog::g_PSMain, sizeof(PS::UVFog::g_PSMain), "UVFog",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVFog::g_PSMain, sizeof(PS::UVFog::g_PSMain), "UVFog", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVFog_Shadow::g_PSMain, sizeof(PS::UVFog_Shadow::g_PSMain), "UVFog_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVFog_Shadow::g_PSMain, sizeof(PS::UVFog_Shadow::g_PSMain), "UVFog_Shadow", arg_vlp_graphicDevice);
 }
 
- ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal::g_PSMain, sizeof(PS::UVNormal::g_PSMain), "UVNormal",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal::g_PSMain, sizeof(PS::UVNormal::g_PSMain), "UVNormal", arg_vlp_graphicDevice);
 }
 
- ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal_Shadow::g_PSMain, sizeof(PS::UVNormal_Shadow::g_PSMain), "UVNormal_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal_Shadow::g_PSMain, sizeof(PS::UVNormal_Shadow::g_PSMain), "UVNormal_Shadow", arg_vlp_graphicDevice);
 }
 
- ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColor::g_PSMain, sizeof(PS::UVNormalColor::g_PSMain), "UVNormalColor",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColor::g_PSMain, sizeof(PS::UVNormalColor::g_PSMain), "UVNormalColor", arg_vlp_graphicDevice);
 }
 
- ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColor_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColor_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColor_Shadow::g_PSMain, sizeof(PS::UVNormalColor_Shadow::g_PSMain), "UVNormalColor_Shadow",  arg_vlp_graphicDevice);
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColor_Shadow::g_PSMain, sizeof(PS::UVNormalColor_Shadow::g_PSMain), "UVNormalColor_Shadow", arg_vlp_graphicDevice);
 }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColorFog::g_PSMain, sizeof(PS::UVNormalColorFog::g_PSMain), "UVNormalColorFog",  arg_vlp_graphicDevice);
-}
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColorFog::g_PSMain, sizeof(PS::UVNormalColorFog::g_PSMain), "UVNormalColorFog", arg_vlp_graphicDevice);
+ }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalColorFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColorFog_Shadow::g_PSMain, sizeof(PS::UVNormalColorFog_Shadow::g_PSMain), "UVNormalColorFog_Shadow",  arg_vlp_graphicDevice);
-}
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalColorFog_Shadow::g_PSMain, sizeof(PS::UVNormalColorFog_Shadow::g_PSMain), "UVNormalColorFog_Shadow", arg_vlp_graphicDevice);
+ }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalFog::g_PSMain, sizeof(PS::UVNormalFog::g_PSMain), "UVNormalFog",  arg_vlp_graphicDevice);
-}
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalFog::g_PSMain, sizeof(PS::UVNormalFog::g_PSMain), "UVNormalFog", arg_vlp_graphicDevice);
+ }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormalFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{
-	 return ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalFog_Shadow::g_PSMain, sizeof(PS::UVNormalFog_Shadow::g_PSMain), "UVNormalFog_Shadow",  arg_vlp_graphicDevice);
-}
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalFog_Shadow::g_PSMain, sizeof(PS::UVNormalFog_Shadow::g_PSMain), "UVNormalFog_Shadow", arg_vlp_graphicDevice);
+ }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreateOutLine(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
-{
-	 return ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::OutLine::g_GSMain, sizeof(GS::OutLine::g_GSMain), "OutLine", arg_vlp_graphicDevice);
-}
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::OutLine::g_GSMain, sizeof(GS::OutLine::g_GSMain), "OutLine", arg_vlp_graphicDevice);
+ }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToCube(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
  {
-	 return ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToCube::g_GSMain, sizeof(GS::PointToCube::g_GSMain), "PointToCube", arg_vlp_graphicDevice);
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToCube::g_GSMain, sizeof(GS::PointToCube::g_GSMain), "PointToCube", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToCube_WithoutUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
  {
-	 return ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToCube_WithoutUV::g_GSMain, sizeof(GS::PointToCube_WithoutUV::g_GSMain), "PointToCube_WithoutUV", arg_vlp_graphicDevice);
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToCube_WithoutUV::g_GSMain, sizeof(GS::PointToCube_WithoutUV::g_GSMain), "PointToCube_WithoutUV", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToPlane(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
  {
-	 return ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToPlane::g_GSMain, sizeof(GS::PointToPlane::g_GSMain), "PointToPlane", arg_vlp_graphicDevice);
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToPlane::g_GSMain, sizeof(GS::PointToPlane::g_GSMain), "PointToPlane", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToTriPolygon_WithoutUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
  {
-	 return ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToTriPolygon_WithoutUV::g_GSMain, sizeof(GS::PointToTriPolygon_WithoutUV::g_GSMain), "PointToTriPolygon_WithoutUV", arg_vlp_graphicDevice);
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToTriPolygon_WithoutUV::g_GSMain, sizeof(GS::PointToTriPolygon_WithoutUV::g_GSMain), "PointToTriPolygon_WithoutUV", arg_vlp_graphicDevice);
  }

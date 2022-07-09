@@ -20,15 +20,15 @@ void ButiEngine::ButiRendering::PipelineStateManager::ClearPipelineState()
 
 std::int32_t ButiEngine::ButiRendering::PipelineStateManager::GetPipelineStatePSOutputCount(const std::string& arg_key)
 {
-	return m_map_pipeLineState.at(arg_key)->GetShader()->GetPixelShader()->GetOutputLayout().m_list_format.GetSize();
+	return m_map_pipeLineState.at(arg_key)->GetShader()->GetPixelShader()->GetOutputLayout().m_list_element.GetSize();
 }
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPiplineState> ButiEngine::ButiRendering::PipelineStateManager::GetPipelineState(const std::string& arg_key)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPipelineState> ButiEngine::ButiRendering::PipelineStateManager::GetPipelineState(const std::string& arg_key)
 {
 	return m_map_pipeLineState.at(arg_key);
 }
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPiplineState> ButiEngine::ButiRendering::PipelineStateManager::GetPipelineState(const DrawSettings& arg_drawSettings, Value_ptr<IRootSignature> arg_vlp_rootSignature, Value_weak_ptr<IResource_Shader> arg_vwp_shader)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPipelineState> ButiEngine::ButiRendering::PipelineStateManager::GetPipelineState(const DrawSettings& arg_drawSettings, Value_ptr<IRootSignature> arg_vlp_rootSignature, Value_weak_ptr<IResource_Shader> arg_vwp_shader)
 {
 	auto rasterStr = std::to_string(static_cast<std::int32_t>(arg_drawSettings.cullMode)) + std::to_string(static_cast<std::int32_t>(arg_drawSettings.isFill));
 	auto rootStr = std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().Flags) + std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().NumParameters) + std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().NumStaticSamplers);

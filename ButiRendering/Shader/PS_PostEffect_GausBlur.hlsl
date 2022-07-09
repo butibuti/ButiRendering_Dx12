@@ -1,4 +1,5 @@
 #include"DefaultShader.hlsli"
+Use_GausParameter(b2)
 static const float wDiv = 1.0 / 16;
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
 {

@@ -17,7 +17,7 @@ enum class DrawFixParam {
 	none, removeRotation, removeDecimalPart, removeDecimalPartXY, removeDecimalPartYZ, removeDecimalPartXZ
 };
 enum class TopologyType {
-	triangleList = 4, point = 1, line = 2, triangle = 3, pointList = 1,
+	triangleList = 4, point = 1, line = 2, triangle = 3, pointList = 1,none=-1
 };
 enum class FillMode {
 	solid = 3, wire = 2
@@ -234,14 +234,16 @@ enum class InputClassfication
 struct ShaderElement
 {
 	std::string semanticName;
-	std::uint32_t semanticIndex;
+	std::uint32_t semanticIndex=0;
 	Format format;
-	std::uint32_t inputSlot;
+	std::uint32_t inputSlot=0;
 	std::uint32_t alignedByteOffset= 0xffffffff;
-    InputClassfication inputSlotClass=InputClassfication::PER_INSTANCE_DATA;
+    InputClassfication inputSlotClass=InputClassfication::PER_VERTEX_DATA;
 	std::uint32_t instanceDataStepRate=0;
     inline bool operator==(const ShaderElement& arg_other)const {
         return  format == arg_other.format;
+    }inline bool operator!=(const ShaderElement& arg_other)const {
+        return  format != arg_other.format;
     }
     template<class Archive>
     void serialize(Archive& archive)

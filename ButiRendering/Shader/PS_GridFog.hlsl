@@ -1,5 +1,9 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_ObjectInformation(b1)
+Use_Material(b2)
+Use_RendererStatus(b3)
 
 float4 PSMain(Pixel_UV_Fog pixel) : SV_TARGET
 {

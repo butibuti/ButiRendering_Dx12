@@ -1,5 +1,5 @@
 #include"DefaultShader.hlsli"
-
+Use_ObjectMatrix(b0)
 Pixel_UV_Normal_Color VSMain(Vertex_UV_Normal_Color vertex)
 {
 	Pixel_UV_Normal_Color output;

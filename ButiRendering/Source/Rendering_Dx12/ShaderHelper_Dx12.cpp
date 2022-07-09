@@ -160,31 +160,46 @@ inline Format ShaderTypeToFormat(const std::string& arg_formatStr, const std::st
 void ButiEngine::ButiRendering::ShaderHelper::FXCShaderReflection(const void* arg_data, const std::int32_t arg_size, List<ConstantBufferReflection>& arg_output_list_cBuffer, List<TextureReflection>& arg_output_list_texture, List<SamplerReflection>& arg_output_list_sampler, ShaderStructReflection& arg_output_input, ShaderStructReflection& arg_output_output) {
 
 	Microsoft::WRL::ComPtr<ID3D12ShaderReflection> shaderReflection;
-	D3DReflect(arg_data, arg_size, IID_PPV_ARGS(&shaderReflection));
+	D3DReflect(arg_data, arg_size, IID_ID3D12ShaderReflection, &shaderReflection);
+	List<D3D12_SHADER_INPUT_BIND_DESC> list_bindData;
 	D3D12_SHADER_DESC desc{};
 	shaderReflection->GetDesc(&desc);
-
+	for (std::int32_t index = 0; index < desc.BoundResources; index++) {
+		D3D12_SHADER_INPUT_BIND_DESC desc{};
+		shaderReflection->GetResourceBindingDesc(index, &desc);
+		list_bindData.Add(desc);
+	}
 	for (std::int32_t index = 0; index < desc.ConstantBuffers; index++) {
 		D3D12_SHADER_BUFFER_DESC shaderBufDesc{};
 		auto cbuffer = shaderReflection->GetConstantBufferByIndex(index);
 		cbuffer->GetDesc(&shaderBufDesc);
+
 		ConstantBufferReflection cbufferRefl;
-		cbufferRefl.m_outputLayoutName = shaderBufDesc.Name;
+		cbufferRefl.m_bufferName = shaderBufDesc.Name;
 		for (auto j = 0; j < shaderBufDesc.Variables; ++j)
 		{
-			D3D12_SHADER_VARIABLE_DESC varDesc{};
-			D3D12_SHADER_TYPE_DESC typeDesc;
-			Microsoft::WRL::ComPtr<ID3D12ShaderReflectionVariable> varRefl = cbuffer->GetVariableByIndex(j);
-			Microsoft::WRL::ComPtr<ID3D12ShaderReflectionType> varTypeRefl = varRefl->GetType();
+			D3D12_SHADER_VARIABLE_DESC varDesc{};D3D12_SHADER_TYPE_DESC typeDesc;
+			auto varRefl = cbuffer->GetVariableByIndex(j);
+			auto varTypeRefl = varRefl->GetType();
 
 			varRefl->GetDesc(&varDesc);
 			varTypeRefl->GetDesc(&typeDesc);
 
 			cbufferRefl.m_list_format.Add(ShaderTypeToFormat( typeDesc.Name,varDesc.Name));
 		}
+		std::function<bool(const D3D12_SHADER_INPUT_BIND_DESC& check)> findFunc = [cbufferRefl](const D3D12_SHADER_INPUT_BIND_DESC& check)->bool {return check.Name == cbufferRefl.m_bufferName; };
+		cbufferRefl.m_slot= list_bindData.Find(findFunc)->BindPoint;
 		arg_output_list_cBuffer.Add(cbufferRefl);
 	}
-	
+	for (auto& bindDesc : list_bindData) {
+		if (bindDesc.Type == D3D_SIT_TEXTURE) {
+			arg_output_list_texture.Add({bindDesc.Name});
+		}
+		else if(bindDesc.Type == D3D_SIT_SAMPLER) {
+			arg_output_list_sampler.Add({ bindDesc.Name });
+		}
+	}
+
 	for (std::int32_t index = 0; index < desc.InputParameters; index++) {
 		D3D12_SIGNATURE_PARAMETER_DESC paramDesc{};
 		shaderReflection->GetInputParameterDesc(index, &paramDesc);
@@ -211,10 +226,9 @@ void ButiEngine::ButiRendering::ShaderHelper::FXCShaderReflection(const void* ar
 		formatName += elementCount > 1 ? std::to_string(static_cast<std::uint32_t>(elementCount)) : "";
 
 		ShaderElement elem;
-		elem.format = ShaderTypeToFormat(formatName, "");
+		elem.format = ShaderTypeToFormat(formatName, paramDesc.SemanticName);
 		elem.semanticName = paramDesc.SemanticName;
 		elem.semanticIndex = paramDesc.SemanticIndex;
-		elem.inputSlot= paramDesc.Register;
 
 		arg_output_input.m_list_element.Add(elem);
 	}
@@ -244,12 +258,11 @@ void ButiEngine::ButiRendering::ShaderHelper::FXCShaderReflection(const void* ar
 		formatName += elementCount > 1 ? std::to_string(static_cast<std::uint32_t>(elementCount)) : "";
 
 		ShaderElement elem;
-		elem.format = ShaderTypeToFormat(formatName, "");
+		elem.format = ShaderTypeToFormat(formatName, paramDesc.SemanticName);
 		elem.semanticName = paramDesc.SemanticName;
 		elem.semanticIndex = paramDesc.SemanticIndex;
-		elem.inputSlot = paramDesc.Register;
 
-		arg_output_input.m_list_element.Add(elem);
+		arg_output_output.m_list_element.Add(elem);
 	}
 }
 

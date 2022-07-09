@@ -10,6 +10,7 @@ ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Valu
 }
 
 ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model,  const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone)
+	: DrawObject_Dx12(DrawData(arg_vlp_transform))
 {
 	vwp_graphicDevice = arg_vwp_graphicDevice;
 	drawData.vlp_renderer = arg_vlp_renderer;
@@ -18,14 +19,13 @@ ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Valu
 	drawData.SetMaterial( arg_list_material);
 	drawData.subset = arg_vwp_model.lock()->GetSubset();
 	drawData.vlp_drawInfo = arg_vlp_drawInfo;
-	drawData.transform = arg_vlp_transform->GetMatrix();
-	drawData.vlp_transform = arg_vlp_transform;
 	vlp_bone = arg_vlp_bone;
 }
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::Initialize()
 {
-	cbuffer_bone = drawData.GetCBuffer<BoneMatrix>("bone");
+	cbuffer_bone = drawData.GetCBuffer<BoneMatrix>();
+	DrawObject_Dx12::Initialize();
 }
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::DrawBefore()

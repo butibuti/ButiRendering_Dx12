@@ -11,10 +11,15 @@ struct ShaderStructReflection {
 	}
 }; 
 struct ConstantBufferReflection {
-	std::string m_outputLayoutName;
+	std::int32_t m_slot = -1;
+	std::int32_t m_descCount = 1;
+	std::string m_bufferName;
 	List<Format> m_list_format;
 	inline bool operator==(const ConstantBufferReflection& arg_other)const {
-		return m_outputLayoutName == arg_other.m_outputLayoutName && m_list_format == arg_other.m_list_format;
+		return m_bufferName == arg_other.m_bufferName && m_list_format == arg_other.m_list_format&&m_slot==arg_other.m_slot&&m_descCount==arg_other.m_descCount;
+	}
+	inline bool IsNotUse()const {
+		return m_list_format.IsEmpty();
 	}
 };
 struct TextureReflection {

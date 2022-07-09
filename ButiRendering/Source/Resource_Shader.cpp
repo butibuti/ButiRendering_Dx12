@@ -1,13 +1,35 @@
 #include"stdafx.h"
 #include"ButiRendering_Dx12/Header/Resource_Shader.h"
-
+#include<algorithm>
 
 ButiEngine::ButiRendering::Resource_Shader::Resource_Shader(Value_ptr<IResource_VertexShader> arg_vlp_vertexShader, Value_ptr<IResource_PixelShader> arg_vlp_pixelShader, Value_ptr<IResource_GeometryShader> arg_vlp_geometryShader, const std::string& arg_shaderName)
+	:vlp_vertexShader(arg_vlp_vertexShader), vlp_pixelShader(arg_vlp_pixelShader), vlp_geometryShader(arg_vlp_geometryShader), shaderName(arg_shaderName)
+{}
+
+void ButiEngine::ButiRendering::Resource_Shader::Initialize()
 {
-	vlp_vertexShader = arg_vlp_vertexShader;
-	vlp_pixelShader = arg_vlp_pixelShader;
-	vlp_geometryShader = arg_vlp_geometryShader;
-	shaderName = arg_shaderName;
+	m_list_cBufferReflection = vlp_vertexShader->GetConstantBufferReflectionDatas();
+	m_list_cBufferReflection.Add_noDuplicate(vlp_pixelShader->GetConstantBufferReflectionDatas());
+	if (vlp_geometryShader) {
+		m_list_cBufferReflection.Add_noDuplicate(vlp_geometryShader->GetConstantBufferReflectionDatas());
+	}
+	std::sort(m_list_cBufferReflection.begin(), m_list_cBufferReflection.end(),
+		[](const ConstantBufferReflection& arg_x,const ConstantBufferReflection& arg_y)->bool {return arg_x.m_slot < arg_y.m_slot; });
+	/*for (std::int32_t currentSlot = 0, lastSlot = m_list_cBufferReflection.GetLast().m_slot; currentSlot != lastSlot; currentSlot++) {
+		if (m_list_cBufferReflection.At(currentSlot).m_slot != currentSlot) {
+			m_list_cBufferReflection.Insert(currentSlot, { currentSlot,0,"None" });
+		}
+	}*/
+	m_list_samplerReflection = vlp_vertexShader->GetSamplerReflectionDatas();
+	m_list_samplerReflection.Add_noDuplicate(vlp_pixelShader->GetSamplerReflectionDatas());
+	if (vlp_geometryShader) {
+		m_list_samplerReflection.Add_noDuplicate(vlp_geometryShader->GetSamplerReflectionDatas());
+	}
+	m_list_textureReflection = vlp_vertexShader->GetTextureReflectionDatas();
+	m_list_textureReflection.Add_noDuplicate(vlp_pixelShader->GetTextureReflectionDatas());
+	if (vlp_geometryShader) {
+		m_list_textureReflection.Add_noDuplicate(vlp_geometryShader->GetTextureReflectionDatas());
+	}
 }
 
 void ButiEngine::ButiRendering::Resource_Shader::Attach() const

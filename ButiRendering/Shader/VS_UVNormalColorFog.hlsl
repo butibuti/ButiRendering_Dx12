@@ -1,5 +1,8 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_ObjectInformation(b1)
+Use_RendererStatus(b3)
 Pixel_UV_Normal_Color_Fog VSMain(Vertex_UV_Normal_Color vertex)
 {
 	Pixel_UV_Normal_Color_Fog output;

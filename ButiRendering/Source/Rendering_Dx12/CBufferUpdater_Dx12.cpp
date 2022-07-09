@@ -9,7 +9,7 @@ namespace CbufferDetail {
 class CBufferUpdater_Dx12 :public ICBufferUpdater, public GPUResource
 {
 public:
-	CBufferUpdater_Dx12(const std::uint32_t arg_slot, const std::uint32_t arg_size) :m_size((arg_size + 255) & ~255), m_slot(arg_slot) {}
+	CBufferUpdater_Dx12( const std::uint32_t arg_size) :m_size((arg_size + 255) & ~255) {}
 	CBufferUpdater_Dx12() {}
 	void Release()override {
 		if (vwp_heapManager.lock()) {
@@ -29,9 +29,9 @@ public:
 
 	}
 	void Attach(const std::uint32_t arg_slotOffset)const override {
-		vwp_graphicDevice.lock()->GetCommandList().SetGraphicsRootDescriptorTable(arg_slotOffset + m_slot, gpuDescriptorHandle);
+		vwp_graphicDevice.lock()->GetCommandList().SetGraphicsRootDescriptorTable(arg_slotOffset , gpuDescriptorHandle);
 	}
-	void Update(void* arg_p_data)const override {
+	void Update(void* arg_p_data)override {
 
 		vwp_heapManager.lock()->ConstantBufferUpdate(arg_p_data, m_index, m_size);
 	}
@@ -43,12 +43,12 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorHandle;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 	Value_weak_ptr<DescriptorHeapManager> vwp_heapManager;
-	std::int32_t m_size = 0, m_slot = 0, m_index = 0;
+	std::int32_t m_size = 0, m_index = 0;
 };
 }
 }
 }
-ButiEngine::ButiRendering::CbufferDetail::ICBufferUpdater* ButiEngine::ButiRendering::CbufferDetail::CreateCBufferUpdater(const std::int32_t arg_slot, const std::int32_t arg_size)
+ButiEngine::ButiRendering::CbufferDetail::ICBufferUpdater* ButiEngine::ButiRendering::CbufferDetail::CreateCBufferUpdater(const std::int32_t arg_size)
 {
-	return ButiMemorySystem::Allocator::allocate<CBufferUpdater_Dx12>(arg_slot, arg_size);
+	return ButiMemorySystem::Allocator::allocate<CBufferUpdater_Dx12>(arg_size);
 }

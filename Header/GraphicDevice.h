@@ -6,9 +6,9 @@
 #include<map>
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"DrawSettings.h"
+#include"ResourceInterface.h"
 namespace ButiEngine {
 namespace ButiRendering {
-class IResource_Texture;
 class IDepthStencil;
 class IRenderTarget;
 struct GPUResource {
@@ -25,6 +25,10 @@ struct GPUResource {
 
 namespace ButiEngine {
 namespace ButiRendering {
+class IResource_Mesh;
+class IResource_Material;
+class IResource_Texture;
+class ICBuffer;
 class GraphicDevice :public IObject
 {
 public:
@@ -38,6 +42,8 @@ public:
 	virtual void Reset()=0;
 	virtual void ClearWindow() = 0;
 	virtual void ClearDepthStancil(const float arg_depth) = 0;
+
+	virtual void SetTopologyType(const TopologyType arg_current_topologyType)=0;
 	
 	BUTIRENDERING_API Matrix4x4 GetProjectionMatrix();
 	BUTIRENDERING_API Matrix4x4 GetCameraViewMatrix();
@@ -68,8 +74,8 @@ public:
 		return viewMatrix_billBoardZ;
 	}
 
-	BUTIRENDERING_API void SetClearColor(const Vector4& arg_clearColor);
-	BUTIRENDERING_API Vector4 GetClearColor();
+	void SetClearColor(const Vector4& arg_clearColor) { m_clearColor = arg_clearColor; }
+	const Vector4& GetClearColor()const { return m_clearColor; }
 	Value_ptr<IRenderTarget> GetDefaultRenderTarget() { return m_defaultRenderTarget; }
 	void SetDefaultRenderTarget(Value_ptr<IRenderTarget> arg_renderTargetTexture) {
 		m_defaultRenderTarget = arg_renderTargetTexture;
@@ -78,19 +84,32 @@ public:
 	void SetDefaultDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) {
 		m_defaultDepthStencil=arg_depthStencil;
 	}
+
+	void SetMesh(Value_ptr<IResource_Mesh> arg_vlp_mesh,const std::int32_t arg_currentMeshVertexType);
+	void SetMaterial(Value_ptr<IResource_Material> arg_vlp_material);
+	void SetTexture(Value_ptr<IResource_Texture> arg_vlp_texture, const std::int32_t arg_textureRegisterIndex);
+	virtual void SetSamplerState(SamplerState arg_samplerState, const std::int32_t arg_samplerStateRegisterIndex)=0;
+	void SetConstantBuffer(Value_ptr<ICBuffer> arg_vlp_cBuffer,const std::int32_t arg_cBufferRegisterIndex);
+
+	Value_ptr<IResource_Mesh>GetCurrentMesh()const { return m_vlp_currentMesh; }
+	Value_ptr<IResource_Material>GetCurrentMaterial()const { return m_vlp_currentMaterial; }
+	const List<Value_ptr<IResource_Texture>>& GetCurrentTexture()const { return m_list_currentTexture; }
+	SamplerState GetCurrentSamplerState(const std::int32_t arg_samplerStateRegisterIndex)const { return m_map_currentSamplerState.at(arg_samplerStateRegisterIndex); }
+	Value_ptr<ICBuffer>GetCurrentConstatntBuffer(const std::int32_t arg_cBufferRegisterIndex)const { return m_map_currentConstancBuffer.at(arg_cBufferRegisterIndex); }
+	TopologyType GetTopologyType()const { return m_current_topologyType; }
 protected:
 	Value_ptr<IRenderTarget> m_defaultRenderTarget;
 	Value_ptr<IDepthStencil> m_defaultDepthStencil;
+	Value_ptr<IResource_Mesh> m_vlp_currentMesh;
+	Value_ptr<IResource_Material> m_vlp_currentMaterial;
+	std::map<std::int32_t, Value_ptr< ICBuffer>> m_map_currentConstancBuffer;
+	std::map<std::int32_t, SamplerState> m_map_currentSamplerState;
+	List<Value_ptr<IResource_Texture>> m_list_currentTexture;
 	Matrix4x4 projectionMatrix;
-
-	Matrix4x4 viewMatrix;
-	Matrix4x4 viewMatrix_billBoard;
-	Matrix4x4 viewMatrix_billBoardX;
-	Matrix4x4 viewMatrix_billBoardY;
-	Matrix4x4 viewMatrix_billBoardZ;
-	Matrix4x4 rawViewMatrix;
-
-	Vector4 clearColor = Vector4(1, 1, 1, 1);
+	TopologyType m_current_topologyType;
+	Matrix4x4 viewMatrix, viewMatrix_billBoard, viewMatrix_billBoardX, viewMatrix_billBoardY, viewMatrix_billBoardZ, rawViewMatrix;
+	std::int32_t m_currentMeshVertexType=0;
+	Vector4 m_clearColor = Vector4(1, 1, 1, 1);
 	Vector3 cameraPos;
 };
 BUTIRENDERING_API Value_ptr<GraphicDevice> CreateGraphicDevice(const bool arg_isWindowApp);

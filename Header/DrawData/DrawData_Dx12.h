@@ -12,22 +12,16 @@ using MatrixUpdateFunc = void (DrawObject_Dx12::*)();
 
 class DrawObject_Dx12 :public DrawObject {
 public:
-	BUTIRENDERING_API void Initialize(const std::uint32_t srvCount);
-
-	BUTIRENDERING_API void CreatePipeLineState(const std::uint32_t arg_exCBuffer, const std::uint32_t srvCount);
-	BUTIRENDERING_API void CommandExecute();
+	DrawObject_Dx12() {}
+	DrawObject_Dx12(const DrawData& arg_data) :DrawObject(arg_data) {}
+	BUTIRENDERING_API void Initialize()override;
 	BUTIRENDERING_API void BufferUpdate()override;
 	BUTIRENDERING_API void SetInfo();
-	BUTIRENDERING_API void SetInfo_WithoutCommand();
-	BUTIRENDERING_API void CommandSet();
-	BUTIRENDERING_API Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer)override;
+	BUTIRENDERING_API void CommandExecute();
 	BUTIRENDERING_API bool IsCreated()override;
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList;
 
+protected:
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
-
-	MatrixUpdateFunc p_matrixUpdateFunc;
-
 private:
 	void MatrixUpdater_NoRotation();
 	void MatrixUpdater_RemoveDecimalPart();
@@ -39,7 +33,7 @@ private:
 	void MatrixUpdater_billBoardX();
 	void MatrixUpdater_billBoardY();
 	void MatrixUpdater_billBoardZ();
-
+	MatrixUpdateFunc p_matrixUpdateFunc;
 };
 
 class MeshDrawObject_Dx12 :public DrawObject_Dx12 {
@@ -52,7 +46,7 @@ public:
 	BUTIRENDERING_API void DrawBefore()override;
 	BUTIRENDERING_API void Draw()override;
 
-	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
+	void SetTransform(Value_ptr<Transform> arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
 		drawData.vlp_transform = arg_transform;
 	}
@@ -62,7 +56,6 @@ public:
 	}
 	void ShowZ() override {}
 
-	BUTIRENDERING_API void Initialize()override;
 };
 
 class ModelDrawObject_Dx12 :public DrawObject_Dx12, public IModelObject {
@@ -78,7 +71,7 @@ public:
 
 	BUTIRENDERING_API void DrawBefore()override;
 
-	void SetTransform(const Value_ptr<Transform>& arg_transform)override {
+	void SetTransform(Value_ptr<Transform> arg_transform)override {
 		drawData.transform = arg_transform->GetMatrix();
 		drawData.vlp_transform = arg_transform;
 	}

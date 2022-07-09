@@ -15,13 +15,13 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IRootSignature> ButiEngine::But
 	return m_map_rootSignature.at(arg_key);
 }
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IRootSignature> ButiEngine::ButiRendering::RootSignatureManager::GetRootSignature(const std::int32_t arg_srvCount, const std::int32_t arg_cBufferCount, const std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>& arg_samplerHandles)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IRootSignature> ButiEngine::ButiRendering::RootSignatureManager::GetRootSignature(Value_ptr<IResource_Shader> arg_vlp_shader)
 {
-	std::string key = "SrvSmpCbvMat:" + std::to_string(arg_cBufferCount) + "srv:" + std::to_string(arg_srvCount) + "sampler:" + std::to_string(arg_samplerHandles.size());
-	if (m_map_rootSignature.at(key)) {
+	std::string key = "SrvSmpCbvMat:" + std::to_string(arg_vlp_shader->GetConstantBufferReflectionDatas().GetSize()) + "srv:" + std::to_string(arg_vlp_shader->GetTextureReflectionDatas().GetSize()) + "sampler:" + std::to_string(arg_vlp_shader->GetSamplerReflectionDatas().GetSize());
+	if (m_map_rootSignature.count(key)) {
 		m_map_rootSignature.at(key);
 	}
-	auto output = ObjectFactory::Create<RootSignature_Dx12>(arg_srvCount,arg_cBufferCount,arg_samplerHandles,m_vwp_graphicDevice);
+	auto output = ObjectFactory::Create<RootSignature_Dx12>(arg_vlp_shader,m_vwp_graphicDevice);
 	m_map_rootSignature.emplace(key, output);
 	return output;
 }

@@ -1,9 +1,6 @@
 #include"DefaultShader.hlsli"
-//lighDir
-///x	â°ÇÃoffset
-///y	ècÇÃoffset
-///z	ècÇÃscaleSize
-///w	ècÇÃscaleSize
+
+Use_ObjectInformation(b1)
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
 {
 	float2 uv = pixel.uv;

@@ -1,13 +1,16 @@
 #pragma once
+#ifndef RENDERER_H
+#define RENDERER_H
 //#include"stdafx.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"DrawData/IDrawObject.h"
+#include<functional>
 namespace ButiEngine {
 namespace ButiRendering {
 class IDrawLayer;
 class ICamera;
-class RenderingSceneInfo;
+class RendererState;
 template <typename T>class CBuffer;
 /// <summary>
 /// シーンが所持する描画用クラス
@@ -70,18 +73,16 @@ public:
 	/// 描画オブジェクトの登録
 	/// </summary>
 	/// <param name="arg_vlp_drawObject">描画オブジェクト</param>
-	/// <param name="arg_afterDraw">遅らせて描画するか(半透明オブジェクト等)</param>
 	/// <param name="arg_layerIndex">登録する描画レイヤーの番号</param>
 	/// <param name="isShadow">影を落とすか</param>
-	virtual void RegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_afterDraw, const std::uint32_t arg_layerIndex = 0, const bool isShadow = false) = 0;
+	virtual void RegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const std::uint32_t arg_layerIndex = 0, const bool isShadow = false) = 0;
 	/// <summary>
 	/// 描画オブジェクトの登録解除
 	/// </summary>
 	/// <param name="arg_vlp_drawObject">描画オブジェクト</param>
-	/// <param name="arg_afterDraw">遅らせて描画するか(半透明オブジェクト等)</param>
 	/// <param name="arg_layerIndex">登録する描画レイヤーの番号</param>
 	/// <param name="isShadow">影を落とすか</param>
-	virtual void UnRegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_afterDraw, const std::uint32_t arg_layerIndex = 0, const bool isShadow = false) = 0;
+	virtual void UnRegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const std::uint32_t arg_layerIndex = 0, const bool isShadow = false) = 0;
 	/// <summary>
 	/// 解放処理
 	/// </summary>
@@ -90,7 +91,7 @@ public:
 	/// Renderer制御の定数バッファ更新
 	/// </summary>
 	/// <param name="arg_param">更新する値</param>
-	virtual void UpdateRendererCBuffer(const RenderingSceneInfo& arg_param) = 0;
+	virtual void UpdateRendererCBuffer(const RendererState& arg_param) = 0;
 	/// <summary>
 	/// Renderer制御の定数バッファ解放
 	/// </summary>
@@ -99,7 +100,7 @@ public:
 	/// Renderer制御の定数バッファ取得
 	/// </summary>
 	/// <returns>Renderer制御の定数バッファ</returns>
-	virtual Value_ptr<CBuffer<RenderingSceneInfo>> GetRendererCBuffer() = 0;
+	virtual Value_ptr<CBuffer<RendererState>> GetRendererCBuffer() = 0;
 	/// <summary>
 	/// シャドウ用カメラの設定
 	/// </summary>
@@ -122,10 +123,6 @@ public:
 /// </summary>
 class IDrawLayer :public IObject {
 public:
-
-	void Initialize()override {};
-	void PreInitialize()override {}
-
 	/// <summary>
 	/// 中身の削除
 	/// </summary>
@@ -138,17 +135,15 @@ public:
 	/// 描画オブジェクトを登録
 	/// </summary>
 	/// <param name="arg_vwp_drawObject">描画オブジェクト</param>
-	/// <param name="arg_isAfterRendering">遅らせて描画するか(半透明オブジェクト等)</param>
 	/// <param name="arg_ret_pim">描画オブジェクトの形状</param>
 	/// <param name="arg_isShadow">影を生成するオブジェクトか</param>
-	virtual void Regist(Value_ptr< IDrawObject> arg_vwp_drawObject, const bool arg_isAfterRendering, const bool arg_isShadow = false) = 0;
+	virtual void Regist(Value_ptr< IDrawObject> arg_vwp_drawObject, const bool arg_isShadow = false) = 0;
 	/// <summary>
 	/// 描画オブジェクトの登録解除
 	/// </summary>
 	/// <param name="arg_vlp_drawObject">描画オブジェクト</param>
-	/// <param name="arg_isAfterRendering">描画を遅らせるか</param>
 	/// <param name="arg_isShadow">影を生成するオブジェクトか</param>
-	virtual void UnRegist(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_isAfterRendering, const bool arg_isShadow = false) = 0;
+	virtual void UnRegist(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_isShadow = false) = 0;
 	/// <summary>
 	/// シャドウ撮影用カメラの登録
 	/// </summary>
@@ -166,7 +161,7 @@ public:
 	/// <summary>
 	/// 描画コマンドの構築
 	/// </summary>
-	virtual void CommandSet() = 0;
+	virtual void CreateCommandBundle() = 0;
 	/// <summary>
 	/// 影のレンダリング
 	/// </summary>
@@ -197,3 +192,5 @@ public:
 BUTIRENDERING_API Value_ptr<IRenderer> CreateRenderer(Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 }
 }
+
+#endif // !RENDERER_H

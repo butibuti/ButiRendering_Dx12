@@ -1,5 +1,7 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectInformation(b1)
+Use_RendererStatus(b2)
 float4 PSMain(Pixel_UV_Color_Fog pixel) : SV_TARGET
 {
 	float4 Tex = (mainTexture.Sample(mainSampler,pixel.uv));

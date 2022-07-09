@@ -1,5 +1,7 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_ObjectInformation(b1)
 [maxvertexcount(3)]
 void GSMain(
     triangle Vertex_UV_Normal input[3],

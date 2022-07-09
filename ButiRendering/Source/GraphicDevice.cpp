@@ -66,14 +66,66 @@ void ButiEngine::ButiRendering::GraphicDevice::SetViewMatrix_billBoardZ(const Ma
 	viewMatrix_billBoardZ = arg_viewMatrix;
 }
 
-void ButiEngine::ButiRendering::GraphicDevice::SetClearColor(const Vector4& arg_clearColor)
+void ButiEngine::ButiRendering::GraphicDevice::SetMesh(Value_ptr<IResource_Mesh> arg_vlp_mesh, std::int32_t arg_currentMeshVertexType)
 {
-	clearColor = arg_clearColor;
+	if (m_vlp_currentMesh == arg_vlp_mesh&&m_currentMeshVertexType==arg_currentMeshVertexType) {
+		return;
+	}
+	m_vlp_currentMesh = arg_vlp_mesh;
+	m_currentMeshVertexType = arg_currentMeshVertexType;
+	if (!m_vlp_currentMesh) {
+		return;
+	}
+	m_vlp_currentMesh->Draw(m_currentMeshVertexType);
 }
 
-ButiEngine::Vector4 ButiEngine::ButiRendering::GraphicDevice::GetClearColor()
+void ButiEngine::ButiRendering::GraphicDevice::SetMaterial(Value_ptr<IResource_Material> arg_vlp_material)
 {
-	return clearColor;
+	if (m_vlp_currentMaterial == arg_vlp_material) {
+		return;
+	}
+	m_vlp_currentMaterial = arg_vlp_material;
+
+	if (!m_vlp_currentMaterial) {
+		return;
+	}
+	m_vlp_currentMaterial->Attach();
+}
+
+void ButiEngine::ButiRendering::GraphicDevice::SetTexture(Value_ptr<IResource_Texture> arg_vlp_texture, const std::int32_t arg_textureRegisterIndex)
+{
+	if (m_list_currentTexture.GetSize() <= arg_textureRegisterIndex) {
+		for (std::int32_t additionIndex = 0; m_list_currentTexture.GetSize() <= arg_textureRegisterIndex; additionIndex++) {
+			
+			if (m_list_currentTexture.GetSize() == arg_textureRegisterIndex) {
+				m_list_currentTexture.Add(arg_vlp_texture);
+			}
+			else {
+				m_list_currentTexture.Add(nullptr);
+			}
+		}
+	}
+	else {
+		if (m_list_currentTexture[arg_textureRegisterIndex] == arg_vlp_texture) {
+			return;
+		}
+	}
+	arg_vlp_texture->Attach(arg_textureRegisterIndex);
+}
+
+void ButiEngine::ButiRendering::GraphicDevice::SetConstantBuffer(Value_ptr<ICBuffer> arg_vlp_cBuffer, const std::int32_t arg_cBufferRegisterIndex)
+{
+	if (m_map_currentConstancBuffer.count(arg_cBufferRegisterIndex)) {
+		if (m_map_currentConstancBuffer.at(arg_cBufferRegisterIndex) == arg_vlp_cBuffer) { return; }
+
+		m_map_currentConstancBuffer.at(arg_cBufferRegisterIndex) = arg_vlp_cBuffer;
+	}
+	else {
+		m_map_currentConstancBuffer.emplace(arg_cBufferRegisterIndex, arg_vlp_cBuffer);
+	}
+	
+	arg_vlp_cBuffer->Attach(arg_cBufferRegisterIndex);
+
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::GraphicDevice> ButiEngine::ButiRendering::CreateGraphicDevice(const bool arg_isWindowApp)

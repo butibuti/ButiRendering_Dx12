@@ -1,5 +1,6 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
 
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
 {

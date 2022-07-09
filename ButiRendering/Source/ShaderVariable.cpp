@@ -2,11 +2,11 @@
 #include"ButiRendering_Dx12/Header/ShaderVariable.h"
 
 
-float ButiEngine::ButiRendering::GausVariable::GaussianDistribution(const Vector2& pos, float rho)
+float ButiEngine::ButiRendering::GausParameter::GaussianDistribution(const Vector2& pos, float rho)
 {
 	return exp(-(pos.x * pos.x + pos.y * pos.y) / (2.0f * rho * rho));
 }
-void ButiEngine::ButiRendering::GausVariable::CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation)
+void ButiEngine::ButiRendering::GausParameter::CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation)
 {
 	auto tu = 1.0f / float(width);
 	auto tv = 1.0f / float(height);

@@ -6,13 +6,14 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiRendering_Dx12/Header/DrawData/DrawData_Dx12.h"
 #include"ButiRendering_Dx12/Header/Renderer.h"
-
+#include"ButiRendering_Dx12/Header/Rendering_Dx12/DrawCommand_Dx12.h"
 ButiEngine::ButiRendering::MeshDrawObject_Dx12::MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh,  const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
 	:MeshDrawObject_Dx12(arg_vwp_mesh,  List<Value_weak_ptr<IResource_Material>>{arg_vwp_material}, arg_vlp_renderer, arg_vwp_graphicDevice, arg_vlp_drawInfo, arg_vlp_transform)
 {
 }
 
 ButiEngine::ButiRendering::MeshDrawObject_Dx12::MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
+	: DrawObject_Dx12(DrawData(arg_vlp_transform))
 {
 	drawData.vlp_renderer = arg_vlp_renderer;
 	drawData.SetMesh(arg_vwp_mesh);
@@ -20,8 +21,6 @@ ButiEngine::ButiRendering::MeshDrawObject_Dx12::MeshDrawObject_Dx12(const Value_
 	vwp_graphicDevice = arg_vwp_graphicDevice;
 	drawData.subset.push_back(arg_vwp_mesh.lock()->GetIndexCount());
 	drawData.vlp_drawInfo = arg_vlp_drawInfo;
-	drawData.transform = arg_vlp_transform->GetMatrix();
-	drawData.vlp_transform = arg_vlp_transform;
 }
 
 ButiEngine::ButiRendering::MeshDrawObject_Dx12::MeshDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform)
@@ -40,10 +39,6 @@ ButiEngine::ButiRendering::MeshDrawObject_Dx12::MeshDrawObject_Dx12(const Value_
 	drawData.subset = arg_vwp_model.lock()->GetSubset();
 }
 
-void ButiEngine::ButiRendering::MeshDrawObject_Dx12::Initialize()
-{
-	//SetInfo_WithoutCommand();
-}
 void ButiEngine::ButiRendering::MeshDrawObject_Dx12::DrawBefore()
 {
 	drawData.transform = drawData.vlp_transform->ToMatrix();
@@ -57,36 +52,44 @@ void ButiEngine::ButiRendering::MeshDrawObject_Dx12::Draw() {
 
 
 
-void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize(const std::uint32_t srvCount)
+void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 {
-
-	CreatePipeLineState(drawData.vlp_drawInfo->vec_exCBuffer.size()+1, srvCount);
-
-	//デスクプリタヒープのハンドルの配列の作成
-
-	for (auto itr = drawData.vlp_drawInfo->vec_exCBuffer.begin(); itr != drawData.vlp_drawInfo->vec_exCBuffer.end(); itr++) {
-		(*itr)->SetGraphicDevice(vwp_graphicDevice.lock());
-		(*itr)->CreateBuffer();
+	if (!drawData.vlp_drawInfo) {
+		drawData.vlp_drawInfo = ObjectFactory::Create<DrawInformation>();
 	}
 
-
-
-	auto cbuffer_Dx12 = CreateCBuffer<Matrices>(0,"Matrix");
-
+	auto cbuffer_Dx12 = CreateCBuffer<Matrices>();
 	cbuffer_Dx12->SetGraphicDevice(vwp_graphicDevice.lock());
-
 	cbuffer_Dx12->CreateBuffer();
-
-	Matrix4x4 mat;
-	cbuffer_Dx12->Get().World = mat;
-
 	drawData.SetCbuffer( cbuffer_Dx12);
 
+	List<ConstantBufferReflection> list_cbRef;
+	for (auto material : drawData.GetMaterial()) {
+		list_cbRef.Add_noDuplicate(material.lock()->GetShader()->GetConstantBufferReflectionDatas());
+	}
+	for (auto cbRef : list_cbRef) {
+		if (GetICBuffer(cbRef.m_bufferName)) {
+			continue;
+		}
+		if (cbRef.m_bufferName == "ObjectInformation") {
+			drawData.vlp_drawInfo->vec_exCBuffer.push_back(CreateCBuffer<ObjectInformation>());
+		}
+		else if (cbRef.m_bufferName == "GausParameter") {
+			drawData.vlp_drawInfo->vec_exCBuffer.push_back(CreateCBuffer<GausParameter>());
+		}
+		else if (cbRef.m_bufferName == "ParticleParameter") {
+			drawData.vlp_drawInfo->vec_exCBuffer.push_back(CreateCBuffer<ParticleParameter>());
+		}
+		else if (cbRef.m_bufferName == "Bone") {
+			drawData.vlp_drawInfo->vec_exCBuffer.push_back(CreateCBuffer<BoneMatrix>());
+		}
+	}
 
-
-	auto billBoard = drawData.vlp_drawInfo->billboardMode;
-
-	switch (billBoard)
+	for (auto itr : drawData.vlp_drawInfo->vec_exCBuffer) {
+		itr->SetGraphicDevice(vwp_graphicDevice.lock());
+		itr->CreateBuffer();
+	}
+	switch (drawData.vlp_drawInfo->billboardMode)
 	{
 	case BillBoardMode::full:
 		p_matrixUpdateFunc = &DrawObject_Dx12::MatrixUpdater_billBoard;
@@ -107,10 +110,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize(const std::uint32_t 
 		p_matrixUpdateFunc = &DrawObject_Dx12::MatrixUpdater_default;
 		break;
 	}
-
-	auto drawFix = drawData.vlp_drawInfo->drawFixParam;
-
-	switch (drawFix)
+	switch (drawData.vlp_drawInfo->drawFixParam)
 	{
 	case DrawFixParam::removeDecimalPart:
 		p_matrixUpdateFunc = &DrawObject_Dx12::MatrixUpdater_RemoveDecimalPart;
@@ -130,21 +130,18 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize(const std::uint32_t 
 	default:
 		break;
 	}
-
-}
-
-void ButiEngine::ButiRendering::DrawObject_Dx12::CreatePipeLineState(const std::uint32_t arg_exCBuffer, const std::uint32_t srvCount)
-{
-	if (arg_exCBuffer <= drawData.GetCBufferCount())
-		return;
-
-	drawData.SetCBufferCount(arg_exCBuffer);
+	std::int32_t drawOffsets = 0, index = 0;
+	for (auto drawStep : drawData.subset) {
+		m_list_command.Add(ObjectFactory::Create<DrawCommand_Dx12>(drawOffsets, drawStep, GetThis<IDrawObject>(), drawData.GetMesh(), drawData.GetMaterial()[index], drawData.GetCBuffer(), drawData.vlp_drawInfo->vec_exCBuffer, drawData.vlp_renderer, vwp_graphicDevice));
+		drawOffsets += drawStep;
+		if (drawData.subset.size() == drawData.GetMaterial().GetSize()) {
+			index++;
+		}
+	}
 }
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::CommandExecute()
-{
-	vwp_graphicDevice.lock()->GetCommandList().ExecuteBundle(commandList.Get());
-}
+{}
 
 void ButiEngine::ButiRendering::DrawObject_Dx12::BufferUpdate()
 {
@@ -167,83 +164,8 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::SetInfo()
 	if (!IsCreated()) {
 		return;
 	}
-	commandList = CommandListHelper::CreateBundleCommandList(vwp_graphicDevice.lock()->GetDevice(), vwp_graphicDevice.lock()->GetBundleCommandAllocator());
-	CommandListHelper::Close(commandList);
-
-	CommandListHelper::BundleReset(nullptr, commandList,vwp_graphicDevice.lock()->GetBundleCommandAllocator());
-	ID3D12DescriptorHeap* ppHeaps[] = { vwp_graphicDevice.lock()->GetDescriptorHeapManager().lock()->GetDescriptorHeap().Get() ,vwp_graphicDevice.lock()->GetDescriptorHeapManager().lock()->GetSamplerHeap().Get() };
-	auto heapCount = _countof(ppHeaps);
-	commandList->SetDescriptorHeaps(heapCount, ppHeaps);
-
-	vwp_graphicDevice.lock()->SetCommandList(commandList.Get());
-	CommandSet();
-	vwp_graphicDevice.lock()->UnSetCommandList();
-
-	CommandListHelper::Close(commandList);
 }
 
-void ButiEngine::ButiRendering::DrawObject_Dx12::SetInfo_WithoutCommand()
-{
-	if (!(drawData.vlp_drawInfo->IsContainExCBuffer("FogParameter"))) {
-		drawData.vlp_drawInfo->vec_exCBuffer.push_back(drawData. vlp_renderer->GetRendererCBuffer());
-	}
-	drawData.vlp_drawInfo->RemoveExCBuffer("FogParameter");
-}
-
-void ButiEngine::ButiRendering::DrawObject_Dx12::CommandSet()
-{
-	if (!IsCreated()) {
-		return;
-	}/*
-
-	std::int32_t samplerRegion = vec_samplerBufferDescriptorHandle.size();
-	for (std::int32_t i = 0; i < samplerRegion; i++) {
-		vwp_graphicDevice.lock()->GetCommandList().SetGraphicsRootDescriptorTable(textureRegion+i, vec_samplerBufferDescriptorHandle[i]);
-	}
-
-	drawData.GetCBuffer()->Attach(samplerRegion + textureRegion);
-
-	for (auto itr = drawData.vlp_drawInfo->vec_exCBuffer.begin(); itr != drawData.vlp_drawInfo->vec_exCBuffer.end(); itr++) {
-		(*itr)->Attach(samplerRegion + textureRegion);
-	}
-	drawData.vlp_renderer->GetRendererCBuffer()->Attach(samplerRegion + textureRegion);
-	if (drawData.vlp_drawInfo->drawSettings.isShadowMap&&textureRegion) {
-		drawData.vlp_renderer->GetShadowTexture(drawData.vlp_drawInfo->layer)->Attach( textureRegion - 1);
-	}
-	auto vertexType=drawData.GetShader().lock()->GetVertexShader()->GetInputVertexType();
-	drawData.GetMesh().lock()->Draw(vertexType);
-
-	vwp_graphicDevice.lock()->GetCommandList().IASetPrimitiveTopology((D3D_PRIMITIVE_TOPOLOGY)drawData.vlp_drawInfo->drawSettings.topologyType);
-	auto splitCount = drawData.subset.size();
-
-	std::uint32_t offset = 0;
-	if (drawData.GetMaterial().GetSize() == drawData.subset.size()) {
-		for (std::int32_t i = 0; i < drawData.subset.size(); i++) {
-			drawData.GetMaterial()[i].lock()->Attach(samplerRegion + textureRegion, drawData.vlp_renderer);
-			std::uint32_t count = drawData.subset.at(i);
-			vwp_graphicDevice.lock()->GetCommandList().DrawIndexedInstanced(count, 1, offset, 0, 0);
-
-			offset += count;
-		}
-	}
-	else {
-		for (std::int32_t i = 0; i < drawData.subset.size(); i++) {
-			drawData.GetMaterial()[i].lock()->Attach(samplerRegion + textureRegion, drawData.vlp_renderer);
-			std::uint32_t count = drawData.subset.at(i);
-			vwp_graphicDevice.lock()->GetCommandList().DrawIndexedInstanced(count, 1, offset, 0, 0);
-
-			offset += count;
-		}
-	}*/
-}
-
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::ICBuffer> ButiEngine::ButiRendering::DrawObject_Dx12::AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer)
-{
-	CreatePipeLineState(arg_cbuffer->GetSlot(),0);
-	auto output= drawData.AddICBuffer(arg_cbuffer);
-	SetInfo();
-	return output;
-}
 bool ButiEngine::ButiRendering::DrawObject_Dx12::IsCreated()
 {
 	assert(0);

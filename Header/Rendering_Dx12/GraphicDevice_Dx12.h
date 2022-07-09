@@ -28,6 +28,8 @@ public:
 	void Release()override;
 	void SetWindow(std::int64_t arg_handle, std::int32_t arg_width, std::int32_t arg_height)override;
 	void ClearDepthStancil(const float arg_depth = 1.0f) override;
+
+	void SetTopologyType(const TopologyType arg_current_topologyType)override;
 	BUTIRENDERING_API ID3D12Device& GetDevice();
 	BUTIRENDERING_API HRESULT CreateCommittedResource(const D3D12_HEAP_PROPERTIES* pHeapProperties, D3D12_HEAP_FLAGS HeapFlags, const D3D12_RESOURCE_DESC* pDesc, D3D12_RESOURCE_STATES InitialResourceState,
 		const D3D12_CLEAR_VALUE* pOptimizedClearValue, const IID& riidResource, void** ppvResource);
@@ -96,6 +98,7 @@ public:
 	BUTIRENDERING_API D3D12_CPU_DESCRIPTOR_HANDLE* GetDepthStencil();
 	BUTIRENDERING_API void DisSetDepthStencil();
 	BUTIRENDERING_API void ResetPipeLine()override;
+	void SetSamplerState(SamplerState arg_samplerState, const std::int32_t arg_index)override;
 protected:
 	class Impl;
 	std::unique_ptr<Impl> m_uqp_impl;

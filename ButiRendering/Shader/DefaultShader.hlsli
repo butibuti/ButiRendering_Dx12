@@ -39,22 +39,10 @@ matrix inverse(matrix m) {
     return ret;
 }
 
-cbuffer ObjectMatrix : register(b0)
-{
-	matrix modelMatrix: packoffset(c0);
-	matrix viewMatrix: packoffset(c4);
-    matrix projectionMatrix: packoffset(c8);
-    matrix mvpMatrix: packoffset(c12);
-};
-cbuffer Material : register(b1)
-{
-	float4 emissive : packoffset(c0);
-	float4 diffuse	: packoffset(c1);
-	float4 ambient  : packoffset(c2);
-	float4 specular : packoffset(c3);
-    float materialID  : packoffset(c4);
-    float roughness : packoffset(c4.y);
-};
+#define Use_ObjectMatrix(registerIndex) cbuffer ObjectMatrix :register(registerIndex){matrix modelMatrix: packoffset(c0);matrix viewMatrix: packoffset(c4);matrix projectionMatrix: packoffset(c8);matrix mvpMatrix: packoffset(c12);};\
+float3 GetModelPos() { return float3(-modelMatrix[0][3], -modelMatrix[1][3], -modelMatrix[2][3]); }
+#define Use_ObjectInformation(registerIndex) cbuffer ObjectInformation : register(registerIndex){float4 lightDir: packoffset(c0);float4 color:packoffset(c1);float2 Tiling:packoffset(c2);float2 OffSet:packoffset(c2.z);float4 ExInfo:packoffset(c3);};
+#define Use_Material(registerIndex)cbuffer Material:register(registerIndex){float4 emissive : packoffset(c0);float4 diffuse	: packoffset(c1);float4 ambient:packoffset(c2);float4 specular : packoffset(c3);float materialID  : packoffset(c4);float roughness : packoffset(c4.y);};
 
 struct Material_Deferred {
     float4 emissive;
@@ -62,53 +50,11 @@ struct Material_Deferred {
     float4 ambient;
     float4 specular;
 };
-
-cbuffer MaterialList:register(b1) {
-    Material_Deferred Material_DeferredList[256]:packoffset(c0);
-};
-
-cbuffer RendererState:register(b2) {
-
-    float4 fogColor:packoffset(c0);
-    float4 cameraPos:packoffset(c1);
-    float2 fogCoord:packoffset(c2);
-    float2 pixelScale:packoffset(c2.z);
-    matrix shadowvpMatrix: packoffset(c3);
-    matrix shadowvMatrix: packoffset(c7);
-    matrix forwordCameraMatrix: packoffset(c11);
-    float3 shadowCameraPos : packoffset(c15);
-    float Time : packoffset(c15.w);
-}
-cbuffer ObjectInformation : register(b3)
-{
-    float4 lightDir	: packoffset(c0);
-    float4 color	: packoffset(c1);
-    float2 Tiling:packoffset(c2);
-    float2 OffSet:packoffset(c2.z);
-    float4 ExInfo:packoffset(c3);
-};
-cbuffer GausParameter : register(b4)
-{
-    float4 gausOffset[16]: packoffset(c0);
-};
-cbuffer Bone : register(b4)
-{
-    matrix bones[256]: packoffset(c0);
-};
-
-cbuffer ParticleParameter : register(b4)
-{
-    float4 startColor: packoffset(c0);
-    float4 endColor: packoffset(c1);
-    float time : packoffset(c2);
-    float power : packoffset(c2.y);
-    uint noise: packoffset(c2.z);
-    float MaxRange : packoffset(c2.w);
-    float MinRange : packoffset(c3.x);
-    float size : packoffset(c3.y);
-    float minSize : packoffset(c3.z);
-    float rotationPase : packoffset(c3.w);
-};
+#define Use_MaterialList(registerIndex)cbuffer MaterialList:register(registerIndex) {Material_Deferred Material_DeferredList[256]:packoffset(c0);};
+#define Use_GausParameter(registerIndex)cbuffer GausParameter : register(registerIndex){float4 gausOffset[16]: packoffset(c0);};
+#define Use_Bone(registerIndex)cbuffer Bone : register(registerIndex){matrix bones[256]: packoffset(c0);};
+#define Use_RendererStatus(registerIndex)cbuffer RendererState:register(registerIndex){float4 fogColor:packoffset(c0);float4 cameraPos:packoffset(c1);float2 fogCoord:packoffset(c2);float2 pixelScale:packoffset(c2.z);matrix shadowvpMatrix: packoffset(c3);matrix shadowvMatrix: packoffset(c7);matrix forwordCameraMatrix: packoffset(c11);float3 shadowCameraPos : packoffset(c15);float Time : packoffset(c15.w);};
+#define Use_ParticleParameter(registerIndex)cbuffer ParticleParameter:register(registerIndex){float4 startColor: packoffset(c0);float4 endColor: packoffset(c1);float time : packoffset(c2);float power : packoffset(c2.y);uint noise: packoffset(c2.z);float MaxRange : packoffset(c2.w);float MinRange : packoffset(c3.x);float size : packoffset(c3.y);float minSize : packoffset(c3.z);float rotationPase : packoffset(c3.w);};
 
 Texture2D mainTexture : register(t0);
 Texture2D subTexture_1 : register(t1);
@@ -165,9 +111,6 @@ float3x3 RollZ(float angle) {
         );
 }
 
-float3 GetModelPos() {
-    return float3(-modelMatrix[0][3], -modelMatrix[1][3], -modelMatrix[2][3]);
-}
 
 //PostEffect Functions
 float3 RadialBlur(float2 uv) {

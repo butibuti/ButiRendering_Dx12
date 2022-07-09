@@ -48,7 +48,7 @@ public:
 	BUTIRENDERING_API void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override;
 
 	BUTIRENDERING_API Microsoft::WRL::ComPtr<ID3DBlob>& GetVertexShaderBlob();
-	BUTIRENDERING_API std::vector<D3D12_INPUT_ELEMENT_DESC>& GetInputLayoutVector();
+	BUTIRENDERING_API const List<D3D12_INPUT_ELEMENT_DESC>& GetInputLayoutList()const;
 	BUTIRENDERING_API std::uint32_t GetInputVertexType()const override;
 	const std::string& GetName()const override { return m_shaderName; }
 	std::int32_t GetConstantBufferCount() const override { return m_list_constBufferReflection.GetSize(); }
@@ -60,7 +60,7 @@ public:
 private:
 	void CreateShaderData(const unsigned char* arg_compiledSource, const std::int32_t arg_size, const bool arg_isfxc);
 	Microsoft::WRL::ComPtr<ID3DBlob> m_vertexShaderBlob = nullptr;
-	std::vector<D3D12_INPUT_ELEMENT_DESC> m_vec_inputElementDesc;
+	List<D3D12_INPUT_ELEMENT_DESC> m_list_inputElementDesc;
 	Value_weak_ptr<GraphicDevice_Dx12> m_vwp_graphicDevice;
 	List<ConstantBufferReflection> m_list_constBufferReflection;
 	List<TextureReflection> m_list_textureReflection;

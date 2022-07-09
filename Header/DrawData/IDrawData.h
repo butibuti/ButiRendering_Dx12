@@ -9,23 +9,19 @@ namespace ButiEngine {
 namespace ButiRendering {
 struct DrawInformation :public IObject {
 	DrawInformation() {}
-	std::uint32_t layer = 0;
-	void Initialize()override {}
-	void PreInitialize()override {}
 	std::vector<Value_ptr<ICBuffer>> vec_exCBuffer;
 	DrawFixParam drawFixParam = DrawFixParam::none;
 	BillBoardMode billboardMode = BillBoardMode::none;
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(layer);
 		archive(vec_exCBuffer);
 		archive(billboardMode);
 		archive(drawFixParam);
 	}
 	bool IsContainExCBuffer(const std::string& arg_cbufferName) {
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); itr++) {
-			if ((*itr)->GetExName() == arg_cbufferName) {
+			if ((*itr)->GetBufferName() == arg_cbufferName) {
 				return true;
 			}
 		}
@@ -33,7 +29,7 @@ struct DrawInformation :public IObject {
 	}
 	void RemoveExCBuffer(const std::string& arg_cbufferName) {
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); ) {
-			if ((*itr)->GetExName() == arg_cbufferName) {
+			if ((*itr)->GetBufferName() == arg_cbufferName) {
 				vec_exCBuffer.erase(itr);
 				return;
 			}
@@ -43,7 +39,7 @@ struct DrawInformation :public IObject {
 	}
 	Value_ptr<ICBuffer> GetExCBuffer(const std::string& arg_cbufferName) {
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); ) {
-			if ((*itr)->GetExName() == arg_cbufferName) {
+			if ((*itr)->GetBufferName() == arg_cbufferName) {
 				return *itr;
 			}
 			else {
@@ -55,7 +51,8 @@ struct DrawInformation :public IObject {
 
 	Value_ptr< DrawInformation > Clone() {
 		auto output = ObjectFactory::Create<DrawInformation>();
-		output->layer = layer;
+		output->billboardMode = billboardMode;
+		output->drawFixParam= drawFixParam;
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); itr++) {
 			output->vec_exCBuffer.push_back((*itr)->Clone());
 		}
@@ -65,26 +62,27 @@ struct DrawInformation :public IObject {
 };
 class DrawData {
 public:
-	BUTIRENDERING_API void SetBlendMode(const BlendMode& arg_BlendMode);
-	BUTIRENDERING_API void MatrixUpdate();
+	DrawData(){}
+	DrawData(Value_ptr<Transform> arg_vlp_transform):vlp_transform(arg_vlp_transform?arg_vlp_transform:ObjectFactory::Create<Transform>())
+	{transform = (vlp_transform->GetMatrix());}
 	Matrix4x4 transform;
 	Value_ptr<Transform> vlp_transform;
-
+	bool m_isAlphaDraw = false;
+	std::vector<std::uint32_t> subset;
+	Value_ptr< DrawInformation >vlp_drawInfo;
+	Value_ptr<IRenderer> vlp_renderer;
 	inline float GetMaxZ(const Matrix4x4& arg_viewMatrix) {
 		auto viewPos = transform.GetPosition_Transpose() * arg_viewMatrix;
 		return viewPos.z;
 	}
-	std::vector<std::uint32_t> subset;
-	Value_ptr< DrawInformation >vlp_drawInfo;
-	Value_ptr<IRenderer> vlp_renderer;
 	inline Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer) {
 		vlp_drawInfo->vec_exCBuffer.push_back(arg_cbuffer);
 		return arg_cbuffer;
 	}
-	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName) {
+	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const {
 
 		for (auto itr = vlp_drawInfo->vec_exCBuffer.begin(); itr != vlp_drawInfo->vec_exCBuffer.end(); itr++) {
-			if ((*itr)->GetExName() == arg_bufferName) {
+			if ((*itr)->GetBufferName() == arg_bufferName) {
 				return *itr;
 			}
 		}
@@ -93,9 +91,9 @@ public:
 	}
 
 	template <class T>
-	inline Value_ptr<CBuffer<T>> GetCBuffer(const std::string& arg_bufferName) {
+	inline Value_ptr<CBuffer<T>> GetCBuffer()const {
 
-		auto out = GetICBuffer(arg_bufferName);
+		auto out = GetICBuffer(T::GetConstantBufferName());
 		if (out && out->IsThis<CBuffer<T>>()) {
 			return out->GetThis<CBuffer<T>>();
 		}
@@ -127,25 +125,27 @@ private:
 
 class DrawObject :public IDrawObject {
 public:
-	virtual void SetTransform(const Value_ptr<Transform>& arg_transform) = 0;
+	DrawObject(){}
+	DrawObject(const DrawData& arg_data):drawData(arg_data){}
 	virtual bool IsCreated() = 0;
-	BUTIRENDERING_API void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
-	BUTIRENDERING_API std::uint32_t* GetOctRegistPtr() override;
 	DrawData& GetDrawData() { return drawData; }
 	const DrawData& GetDrawData()const { return drawData; }
-	virtual Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer) {
-		return drawData.AddICBuffer(arg_cbuffer);
-	}
-	virtual inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName) {
+	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const override {
 		return drawData.GetICBuffer(arg_bufferName);
 	}
+	List<Value_ptr<IDrawCommand>>& GetCommands() { return m_list_command; }
+	const List<Value_ptr<IDrawCommand>>& GetCommands()const {return m_list_command;}
+	bool IsAlphaObject()const override { return drawData.m_isAlphaDraw; }
+	Value_ptr<Transform> GetTransform()const { return drawData.vlp_transform; }
+	void SetTransform(const Value_ptr<Transform> arg_vlp_transform) { drawData.vlp_transform = arg_vlp_transform; }
 protected:
 	DrawData drawData;
+	List<Value_ptr<IDrawCommand>> m_list_command;
 };
 class DualDrawObject :public DrawObject {
 public:
+	DualDrawObject(Value_ptr<DrawObject> arg_vlp_befDrawObj, Value_ptr<DrawObject> arg_vlp_afterDrawObj):m_vlp_befDrawObj(arg_vlp_befDrawObj),m_vlp_afterDrawObj(arg_vlp_afterDrawObj){}
 	BUTIRENDERING_API void Initialize()override;
-	BUTIRENDERING_API void PreInitialize() override;
 	BUTIRENDERING_API void Draw()override;
 	BUTIRENDERING_API void DrawBefore() override;
 	BUTIRENDERING_API float GetZ(const Matrix4x4& arg_vpMatrix)override;
@@ -154,24 +154,21 @@ public:
 	BUTIRENDERING_API void BufferUpdate() override;
 	BUTIRENDERING_API void CommandSet() override;
 	BUTIRENDERING_API void CommandExecute() override;
-	BUTIRENDERING_API void SetTransform(const Value_ptr<Transform>& arg_transform)override;
-	BUTIRENDERING_API void SetOctRegistPtr(std::uint32_t* arg_ptr) override;
+	BUTIRENDERING_API void SetTransform(Value_ptr<Transform> arg_transform)override;
+	Value_ptr<Transform> GetTransform()const { return m_vlp_befDrawObj->GetTransform(); }
 	bool IsCreated()override {
-		return vlp_afterDrawObj->IsCreated() && vlp_befDrawObj->IsCreated();
+		return m_vlp_afterDrawObj->IsCreated() && m_vlp_befDrawObj->IsCreated();
 	}
-	BUTIRENDERING_API std::uint32_t* GetOctRegistPtr() override;
-	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)override {
-		auto end = vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer.end();
-		for (auto itr = vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer.begin(); itr != end; itr++) {
-			if ((*itr)->GetExName() == arg_bufferName) {
-				return *itr;
+	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const override {
+		for (auto itr :m_vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer) {
+			if ((itr)->GetBufferName() == arg_bufferName) {
+				return itr;
 			}
 		}
-
 		return nullptr;
 	}
-	Value_ptr<DrawObject> vlp_befDrawObj;
-	Value_ptr<DrawObject> vlp_afterDrawObj;
+private:
+	Value_ptr<DrawObject> m_vlp_befDrawObj,m_vlp_afterDrawObj;
 };
 class IModelObject {
 public:

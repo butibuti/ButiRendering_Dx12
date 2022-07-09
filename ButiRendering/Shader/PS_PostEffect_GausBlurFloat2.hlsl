@@ -1,5 +1,5 @@
 #include"DefaultShader.hlsli"
-
+Use_GausParameter(b2)
 float2 PSMain(Pixel_UV pixel) : SV_TARGET
 {
     float2 output = 0;

@@ -3,6 +3,7 @@
 #include"../Bone.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
+#include"../DrawCommand.h"
 namespace ButiEngine {
 namespace ButiRendering {
 class IDrawObject :public IObject {
@@ -17,9 +18,19 @@ public:
 	virtual void CommandExecute() {}
 	virtual void ShowZ() {}
 	virtual List<Value_ptr<IDrawObject>>& GetChilds() { static List<Value_ptr<IDrawObject>> empty; return empty; }
-
-	virtual void SetOctRegistPtr(std::uint32_t* arg_ptr) = 0;
-	virtual std::uint32_t* GetOctRegistPtr() = 0;
+	virtual List<Value_ptr<IDrawCommand>>& GetCommands() = 0;
+	virtual const List<Value_ptr<IDrawCommand>>& GetCommands()const=0;
+	virtual bool IsAlphaObject()const = 0;
+	virtual Value_ptr<Transform> GetTransform()const = 0;
+	virtual void SetTransform(const Value_ptr<Transform> arg_vlp_transform)=0;
+	virtual Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const = 0;
+	template <typename T> Value_ptr<CBuffer<T>> GetCBuffer()const {
+		auto out = GetICBuffer(T::GetConstantBufferName());
+		if (out && out->IsThis<CBuffer<T>>()) {
+			return out->GetThis<CBuffer<T>>();
+		}
+		return nullptr;
+	}
 };
 class IBoneObject :public  IObject {
 public:

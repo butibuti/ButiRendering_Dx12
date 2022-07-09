@@ -19,10 +19,14 @@ struct Matrices
 		archive(Projection);
 		archive(MVP);
 	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "ObjectMatrix";
+		return bufferName;
+	}
 };
 
 
-struct RenderingSceneInfo {
+struct RendererState {
 
 	Vector4 fogColor;
 	Vector4 cameraPos;
@@ -33,7 +37,7 @@ struct RenderingSceneInfo {
 	Matrix4x4 forwordCameraMatrix;
 	Vector3 shadowCameraPos;
 	float Time = 0.0;
-	RenderingSceneInfo() {
+	RendererState() {
 	}
 
 
@@ -49,10 +53,14 @@ struct RenderingSceneInfo {
 		archive(shadowCameraPos);
 		archive(Time);
 	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "RendererState";
+		return bufferName;
+	}
 };
 
 struct ObjectInformation {
-	Vector4 lightDir;
+	Vector4 lightDir = Vector4(Vector3(-1.0f, -1.0f, -1.0f).GetNormalize(), 1);
 	Vector4 color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	Vector2 Tiling = Vector2(1.0f, 1.0f);
 	Vector2 OffSet;
@@ -72,11 +80,15 @@ struct ObjectInformation {
 		archive(OffSet);
 		archive(ExInfo);
 	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "ObjectInformation";
+		return bufferName;
+	}
 };
 constexpr std::int32_t gausOffsetLength=0x10;
-struct GausVariable {
+struct GausParameter {
 
-	GausVariable() {
+	GausParameter() {
 	}
 
 	Vector4 gausOffset[gausOffsetLength];
@@ -88,16 +100,19 @@ struct GausVariable {
 	{
 		archive(gausOffset);
 	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "GausParameter";
+		return bufferName;
+	}
 };
 
 struct MaterialValue {
 	Vector4 emissive = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	Vector4 diffuse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	Vector4 ambient = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	Vector4 specular = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	//roughness ÇÕåªç›emissiveÇÃAÇégóp
-	float materialID = 2.1;
-	float roughness;
+	Vector4 specular = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	float materialID = 2;
+	float roughness=1.0f;
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
@@ -105,6 +120,11 @@ struct MaterialValue {
 		archive(diffuse);
 		archive(ambient);
 		archive(specular);
+		archive(roughness);
+	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "Material";
+		return bufferName;
 	}
 };
 
@@ -116,6 +136,10 @@ struct MaterialValue_Deferred {
 	{
 		archive(datas);
 	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "MaterialList";
+		return bufferName;
+	}
 };
 struct BoneMatrix {
 	Matrix4x4 datas[256];
@@ -123,6 +147,10 @@ struct BoneMatrix {
 	void serialize(Archive& archive)
 	{
 		archive(datas);
+	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "Bone";
+		return bufferName;
 	}
 };
 struct ParticleParameter {
@@ -153,6 +181,10 @@ struct ParticleParameter {
 		archive(size);
 		archive(minSize);
 		archive(rotationPase);
+	}
+	static const std::string& GetConstantBufferName() {
+		static const std::string bufferName = "ParticleParameter";
+		return bufferName;
 	}
 
 };

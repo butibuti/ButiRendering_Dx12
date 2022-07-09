@@ -1,5 +1,7 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_RendererStatus(b3)
 Pixel_UV_Fog VSMain(Vertex_UV vertex)
 {
 	Pixel_UV_Fog output;

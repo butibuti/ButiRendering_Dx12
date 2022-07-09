@@ -1,5 +1,8 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectInformation(b1)
+Use_RendererStatus(b3)
+Use_Material(b2)
 
 float4 PSMain(Pixel_UV_Normal_VertexPosition pixel) : SV_TARGET
 {

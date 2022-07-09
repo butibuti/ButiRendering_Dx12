@@ -1,5 +1,6 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
 Pixel_UV_Color VSMain(Vertex_UV_Color vertex)
 {
 	Pixel_UV_Color output;

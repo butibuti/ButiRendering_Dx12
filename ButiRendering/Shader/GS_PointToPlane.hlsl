@@ -1,5 +1,6 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
 static const float4 array_Offset[6] = {
     float4(0.09f,0.16f,0.0,0),
     float4(0.09f,-0.16f,0.0,0),

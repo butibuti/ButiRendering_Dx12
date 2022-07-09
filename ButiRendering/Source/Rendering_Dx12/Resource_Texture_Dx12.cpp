@@ -353,3 +353,10 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::
 	return ObjectFactory::Create<Resource_Texture_Dx12>(arg_vlp_imageData, arg_vlp_graphicDevice);
 }
 
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::CreateTextureFromPNG(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	auto resourceData=ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+	ImageFileIO::InputPNG(arg_filePath, *resourceData);
+	return CreateTexture(resourceData, arg_vlp_graphicDevice);
+}
+

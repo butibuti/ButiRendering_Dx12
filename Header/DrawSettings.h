@@ -29,7 +29,7 @@ struct DrawSettings
 	CullMode cullMode = CullMode::back;
 	FillMode isFill = FillMode::solid;
 	BlendMode blendMode = BlendMode::AlphaBlend;
-	std::vector<SamplerState >vec_samplerMode = { SamplerState::LinearClamp };
+	std::vector<SamplerState >vec_samplerMode ;
 	TopologyType topologyType = TopologyType::triangleList;
 	bool isShadowMap = false;
 	bool isAlpha = false;

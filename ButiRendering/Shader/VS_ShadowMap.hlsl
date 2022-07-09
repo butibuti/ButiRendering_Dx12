@@ -1,5 +1,7 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_RendererStatus(b3)
 Pixel_ShadowMapping VSMain(Vertex vertex)
 {
 	Pixel_ShadowMapping output;

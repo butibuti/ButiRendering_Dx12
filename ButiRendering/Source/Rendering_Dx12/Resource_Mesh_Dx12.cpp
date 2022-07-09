@@ -91,16 +91,17 @@ void ButiEngine::ButiRendering::Resource_Mesh_Dx12::ResourceUpdate()
 		DeviceHelper::UpdateSubresources<1>(&vwp_graphicDevice.lock()->GetCommandList(), GetVertexBuffer(prim.first).bufferResource.Get(), GetVertexBuffer(prim.first).vertexBufferUploadHeap.Get(), 0, 0, 1, &vertexData);
 		auto trans = ResourceBarrierHelper::GetResourceBarrierTransition(GetVertexBuffer(prim.first).bufferResource.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_VERTEX_AND_CONSTANT_BUFFER);
 		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
-		//インデックスバッファの更新
-		if (prim.second->GetIndexCount() > 0) {
-			D3D12_SUBRESOURCE_DATA indexData = {};
-			indexData.pData = prim.second->GetIndexData();
-			indexData.RowPitch = prim.second->GetIndexCount() * sizeof(std::uint32_t);
-			indexData.SlicePitch = indexData.RowPitch;
-			DeviceHelper::UpdateSubresources<1>(&vwp_graphicDevice.lock()->GetCommandList(), GetIndexBuffer().Get(), GetIndexBufferUploadHeap().Get(), 0, 0, 1, &indexData);
-			auto tr = ResourceBarrierHelper::GetResourceBarrierTransition(GetIndexBuffer().Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
-			vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &tr);
-		}
+		
+		
+	}
+	if (map_vlp_meshPrimitive.begin()->second->GetIndexCount() > 0) {
+		D3D12_SUBRESOURCE_DATA indexData = {};
+		indexData.pData = map_vlp_meshPrimitive.begin()->second->GetIndexData();
+		indexData.RowPitch = map_vlp_meshPrimitive.begin()->second->GetIndexCount() * sizeof(std::uint32_t);
+		indexData.SlicePitch = indexData.RowPitch;
+		DeviceHelper::UpdateSubresources<1>(&vwp_graphicDevice.lock()->GetCommandList(), GetIndexBuffer().Get(), GetIndexBufferUploadHeap().Get(), 0, 0, 1, &indexData);
+		auto tr = ResourceBarrierHelper::GetResourceBarrierTransition(GetIndexBuffer().Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_INDEX_BUFFER);
+		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &tr);
 	}
 	isDataRefresh = false;
 }

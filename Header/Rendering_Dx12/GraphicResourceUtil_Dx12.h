@@ -3,13 +3,14 @@
 
 #pragma once
 #include"stdafx.h"
+#include"../ShaderReflection.h"
 #include<d3d12.h>
 namespace ButiEngine {
 namespace PipelineStateHelper {
 static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDirect(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& desc, ID3D12Device& arg_device) {
 
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> Ret;
-	auto hr = arg_device.CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(&Ret));
+	auto hr = arg_device.CreateGraphicsPipelineState(&desc,IID_ID3D12PipelineState, &Ret);
 
 	return Ret;
 }
@@ -79,15 +80,17 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 		D3D12_COLOR_WRITE_ENABLE_ALL, };
 			break;
 		}
-		for (std::uint32_t i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+		for (std::uint32_t i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT;i++)
+		{
 			RenderTarget[i] = defaultRenderTargetBlendDesc;
+		}
 	}
 };
-static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc, std::vector<D3D12_INPUT_ELEMENT_DESC>& vec_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob, std::vector<std::int32_t>& arg_vec_outputformat, const ButiRendering::BlendMode arg_BlendMode, const ButiRendering::TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
+static inline Microsoft::WRL::ComPtr<ID3D12PipelineState> CreateDefault3D(const Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSignature, D3D12_GRAPHICS_PIPELINE_STATE_DESC& RetDesc, D3D12_RASTERIZER_DESC& arg_rasteriserDesc,const List<D3D12_INPUT_ELEMENT_DESC>& arg_list_inputLayout, Microsoft::WRL::ComPtr<ID3DBlob>& arg_vertexShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_pixelShaderBlob, Microsoft::WRL::ComPtr<ID3DBlob>& arg_geometryShaderBlob,const List<ButiRendering::Format>& arg_list_outputformat, const ButiRendering::BlendMode arg_BlendMode, const ButiRendering::TopologyType arg_topologyType, ID3D12Device& arg_device, const bool isDepth = true) {
 
 
-	//ZeroMemory(&RetDesc, sizeof(RetDesc));
-	RetDesc.InputLayout = { vec_inputLayout.data(),static_cast<std::uint32_t>(vec_inputLayout.size()) };
+	memset(&RetDesc,0, sizeof(RetDesc));
+	RetDesc.InputLayout = { arg_list_inputLayout.data(),static_cast<std::uint32_t>(arg_list_inputLayout.GetSize()) };
 	RetDesc.pRootSignature = rootSignature.Get();
 	RetDesc.VS =
 	{
@@ -120,10 +123,9 @@ D3D12_COMPARISON_FUNC_LESS,false, D3D12_DEFAULT_STENCIL_READ_MASK, D3D12_DEFAULT
 	RetDesc.SampleMask = UINT_MAX;
 	RetDesc.PrimitiveTopologyType = (D3D12_PRIMITIVE_TOPOLOGY_TYPE)arg_topologyType;
 
-	auto size = arg_vec_outputformat.size();
-	RetDesc.NumRenderTargets = size;
-	for (std::int32_t i = 0; i < size; i++) {
-		RetDesc.RTVFormats[i] = (DXGI_FORMAT)arg_vec_outputformat[i];
+	RetDesc.NumRenderTargets = arg_list_outputformat.GetSize();
+	for (std::int32_t i = 0; i < RetDesc.NumRenderTargets; i++) {
+		RetDesc.RTVFormats[i] = static_cast<DXGI_FORMAT>(arg_list_outputformat[i]);
 	}
 
 	RetDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
@@ -329,17 +331,17 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateDirect(const D3D
 	Microsoft::WRL::ComPtr<ID3DBlob> signature;
 	Microsoft::WRL::ComPtr<ID3DBlob> error;
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> Ret;
-	D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
+	auto hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
 
-	arg_device.CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&Ret));
+	hr=arg_device.CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&Ret));
 	return Ret;
 }
 
-static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const std::uint32_t materialCount, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc, ID3D12Device& arg_device) {
+static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(const List<ButiRendering::ConstantBufferReflection> arg_list_cBufferReflection, const std::uint32_t srvCount, const std::uint32_t samplerCount, D3D12_ROOT_SIGNATURE_DESC& arg_rootSignatureDesc, ID3D12Device& arg_device) {
 
 
 
-	std::vector< D3D12_DESCRIPTOR_RANGE> ranges;
+	List< D3D12_DESCRIPTOR_RANGE> ranges;
 	for (std::uint32_t i = 0; i < srvCount; i++) {
 		D3D12_DESCRIPTOR_RANGE in;
 		in.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
@@ -347,7 +349,7 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 		in.BaseShaderRegister = i;
 		in.RegisterSpace = 0;
 		in.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-		ranges.push_back(in);
+		ranges.Add(in);
 	}
 	for (std::uint32_t i = 0; i < samplerCount; i++) {
 
@@ -358,36 +360,26 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 		sampler.BaseShaderRegister = i;
 		sampler.RegisterSpace = 0;
 		sampler.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-		ranges.push_back(sampler);
+		ranges.Add(sampler);
 	}
-	D3D12_DESCRIPTOR_RANGE cbv;
-
-	cbv.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-	cbv.NumDescriptors = 1;
-	cbv.BaseShaderRegister = 0;
-	cbv.RegisterSpace = 0;
-	cbv.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
-	ranges.push_back(cbv);
-
-	for (std::uint32_t i = 0; i < materialCount; i++) {
-
+	for (auto& cBufferReflectionData : arg_list_cBufferReflection) {
 		D3D12_DESCRIPTOR_RANGE in;
 		in.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-		in.NumDescriptors = 1;
-		in.BaseShaderRegister = 1 + i;
+		in.NumDescriptors = cBufferReflectionData.m_descCount;
+		in.BaseShaderRegister = cBufferReflectionData.m_slot;
 		in.RegisterSpace = 0;
 		in.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 		ranges.push_back(in);
 	}
 
-	std::vector<D3D12_ROOT_PARAMETER> rootParameters;
+	List<D3D12_ROOT_PARAMETER> rootParameters;
 	for (std::uint32_t i = 0; i < srvCount; i++) {
 		D3D12_ROOT_PARAMETER in;
 		in.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		in.DescriptorTable.NumDescriptorRanges = 1;
 		in.DescriptorTable.pDescriptorRanges = &ranges[i];
-		rootParameters.push_back(in);
+		rootParameters.Add(in);
 	}
 
 	for (std::uint32_t i = 0; i < samplerCount; i++) {
@@ -396,27 +388,20 @@ static inline Microsoft::WRL::ComPtr<ID3D12RootSignature> CreateSrvSmpCbvMat(con
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 		in.DescriptorTable.NumDescriptorRanges = 1;
 		in.DescriptorTable.pDescriptorRanges = &ranges[srvCount + i];
-		rootParameters.push_back(in);
+		rootParameters.Add(in);
 	}
 
-	D3D12_ROOT_PARAMETER cbvParam;
-	cbvParam.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-	cbvParam.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-	cbvParam.DescriptorTable.NumDescriptorRanges = 1;
-	cbvParam.DescriptorTable.pDescriptorRanges = &ranges[srvCount + samplerCount];
-	rootParameters.push_back(cbvParam);
-
-	for (std::uint32_t i = 0; i < materialCount; i++) {
+	for (std::uint32_t i = 0; i < arg_list_cBufferReflection.GetSize(); i++) {
 		D3D12_ROOT_PARAMETER in;
 		in.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
 		in.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
 		in.DescriptorTable.NumDescriptorRanges = 1;
-		in.DescriptorTable.pDescriptorRanges = &ranges[srvCount + samplerCount + 1 + i];
+		in.DescriptorTable.pDescriptorRanges = &ranges[srvCount + samplerCount + i];
 		rootParameters.push_back(in);
 	}
 
 
-	arg_rootSignatureDesc.NumParameters = rootParameters.size();
+	arg_rootSignatureDesc.NumParameters = rootParameters.GetSize();
 	arg_rootSignatureDesc.pParameters = rootParameters.data();
 	arg_rootSignatureDesc.NumStaticSamplers = 0;
 	arg_rootSignatureDesc.pStaticSamplers = nullptr;

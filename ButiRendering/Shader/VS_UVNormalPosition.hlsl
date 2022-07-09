@@ -1,5 +1,5 @@
 #include"DefaultShader.hlsli"
-
+Use_ObjectMatrix(b0)
 Pixel_UV_Normal_VertexPosition VSMain(Vertex_UV_Normal vertex)
 {
 	Pixel_UV_Normal_VertexPosition output;

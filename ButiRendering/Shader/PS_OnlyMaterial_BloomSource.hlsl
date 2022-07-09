@@ -1,4 +1,6 @@
 #include"DefaultShader.hlsli"
+
+Use_Material(b2)
 PixelOutput_BloomSource PSMain(Pixel_UV_Normal_Phong pixel)
 { 
 	PixelOutput_BloomSource output;
