@@ -66,33 +66,32 @@ std::int32_t main() {
 			ButiRendering::DefaultPixelShader::CreateOnlyMaterial(vlp_graphicDevice), nullptr, "OnlyColor");
 		vlp_shader_texture = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUV(vlp_graphicDevice),
 			ButiRendering::DefaultPixelShader::CreateUV(vlp_graphicDevice), nullptr, "TextureMap");
-		vlp_material_onlyColor = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), vlp_graphicDevice);
-		vlp_material_onlyColor->GetMaterialVariable().ambient = ButiColor::Blue();
-		vlp_material_onlyColor->GetMaterialVariable().diffuse = ButiColor::Orange();
-		vlp_material_onlyColor->GetMaterialVariable().emissive = ButiColor::DeepPurple();
-		vlp_material_onlyColor->GetMaterialCBuffer()->Update();
-		list_vlp_texture.Add(ButiRendering::CreateTextureFromPNG("Resource/EngineLogo.png", vlp_graphicDevice));
-		vlp_material_textureMap = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, vlp_graphicDevice);
+		vlp_material_onlyColor = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), ButiRendering::DrawSettings(), vlp_graphicDevice);
+		list_vlp_texture.Add(ButiRendering::CreateTextureFromPNG("Resource/ngineLogo.png", vlp_graphicDevice));
+		vlp_material_textureMap = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, ButiRendering::DrawSettings(),vlp_graphicDevice);
+		vlp_material_textureMap->SetIsAlpha(true);
 	}
 
 	auto drawObject = ButiRendering::CreateMeshDrawObject(vlp_mesh_sphere, vlp_material_textureMap, vlp_renderer, vlp_graphicDevice, nullptr, nullptr);
-	drawObject->GetTransform()->SetLocalPositionZ(10);
+	drawObject->GetTransform()->SetLocalPositionX(2);
 	drawObject->GetTransform()->SetLocalRotation(Vector3(12, 15, 18));
 	vlp_renderer->RegistDrawObject(drawObject, 0);
+
 	auto drawObject_onlyMaterial = ButiRendering::CreateMeshDrawObject(vlp_mesh_cube, vlp_material_onlyColor, vlp_renderer, vlp_graphicDevice, nullptr, nullptr);
-	drawObject_onlyMaterial->GetTransform()->SetLocalPositionX(2);
 	drawObject_onlyMaterial->GetTransform()->SetLocalPositionZ(10);
 	drawObject_onlyMaterial->GetTransform()->SetLocalRotation(Vector3(12, 15, 18));
 	vlp_renderer->RegistDrawObject(drawObject_onlyMaterial, 0);
 	std::int32_t frame = 0;
 	auto stopWatch = ButiEngine::StopWatch();
+
+	drawObject->GetTransform()->SetBaseTransform(drawObject_onlyMaterial->GetTransform(),true);
+	//drawObject->GetCBuffer<ButiRendering::ObjectInformation>()->Get().color = ButiColor::Red();
 	while (vlp_window->Update()) {
 		stopWatch.Start();
 		//•`‰æŠJŽn
 		vlp_renderer->RenderingStart();
 
-		drawObject->GetTransform()->RollWorldRotationY_Degrees(0.1);
-		drawObject->GetCBuffer<ButiRendering::ObjectInformation>()->Get().color.x -= 0.0005;
+		drawObject_onlyMaterial->GetTransform()->RollLocalRotationY_Degrees(1);
 		//•`‰æˆ—
 		mainCameraPath->Execute();
 

@@ -34,7 +34,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> depthStencilDescriptorHeap;
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
 	bool isCleared = false, isCopyCommanded = false;
-
+	D3D12_RESOURCE_STATES m_currentResourceState;
 public:
 	void SetEditorViewed(const bool arg_isViewed)override { isEditorViewed = arg_isViewed; }
 	bool GetEditorViewed()const override { return isEditorViewed; }

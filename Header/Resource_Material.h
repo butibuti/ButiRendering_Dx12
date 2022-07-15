@@ -6,7 +6,7 @@ namespace ButiEngine {
 namespace ButiRendering {
 struct Resource_Material :public IResource_Material
 {
-	BUTIRENDERING_API Resource_Material(const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader,List<Value_ptr<IResource_Texture>> arg_list_vwp_texture);
+	BUTIRENDERING_API Resource_Material(const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader,List<Value_ptr<IResource_Texture>> arg_list_vwp_texture, const DrawSettings& arg_drawSettings);
 	BUTIRENDERING_API const std::string& GetMaterialName();
 	BUTIRENDERING_API void SetMaterialName(const std::string& arg_name);
 	BUTIRENDERING_API const std::string& GetTagName()const override;
@@ -14,6 +14,7 @@ struct Resource_Material :public IResource_Material
 	BUTIRENDERING_API void SetTexture(const std::uint32_t arg_index, Value_ptr<IResource_Texture>  arg_vwp_texture)override;
 	BUTIRENDERING_API void SetTexture(const List<Value_ptr<IResource_Texture>>& arg_list_vwp_textures)override;
 	bool IsAlpha()const override { return m_drawSetting.isAlpha; }
+	void SetIsAlpha(const bool arg_isAlpha) { m_drawSetting.isAlpha = arg_isAlpha; }
 	const List<Value_ptr<IResource_Texture>>& GetTextures()const override {
 		return m_list_vlp_texture;
 	}

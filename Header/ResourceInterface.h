@@ -236,6 +236,7 @@ public:
 	virtual Value_ptr<IResource_Shader> GetShader()const = 0;
 	virtual void SetShader(Value_ptr<IResource_Shader> arg_vlp_shader)= 0;
 	virtual bool IsAlpha()const = 0;
+	virtual void SetIsAlpha(const bool arg_isAlpha)= 0;
 	virtual Value_ptr<ICBuffer> GetMaterialCBuffer()const = 0;
 };
 class IResource_Mesh :public IObject {
@@ -280,11 +281,18 @@ BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, cons
 BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var,Value_weak_ptr<IResource_Shader> arg_vlp_shader, Value_ptr<IResource_Texture> arg_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromPNG(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+namespace MaterialIcon {
+BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_file(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_upArrow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_plus(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+
+}
+Value_ptr<IResource_Texture> GetDebugTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,  Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_inputLayoutfilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -313,6 +321,10 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalPosition(Value
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVPosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 }
 namespace DefaultPixelShader {
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateGrid(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -342,6 +354,9 @@ BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormalColorFog(Value_
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormalColorFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormalFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 }
 namespace DefaultGeometryShader {
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateOutLine(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

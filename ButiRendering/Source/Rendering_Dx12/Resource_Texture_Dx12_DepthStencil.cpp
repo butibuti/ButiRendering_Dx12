@@ -51,15 +51,15 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::Resource_Texture_
 	clearValue.Format = DXGI_FORMAT_D32_FLOAT;
 	clearValue.DepthStencil.Depth = 1.0f;
 	clearValue.DepthStencil.Stencil = 0;
+	m_currentResourceState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 	// リソースを生成.
 	auto hr = vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(
 		&prop,
 		D3D12_HEAP_FLAG_NONE,
 		&desc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		m_currentResourceState,
 		&clearValue,
 		IID_PPV_ARGS(texture.GetAddressOf()));
-
 	// 深度ステンシルビューの設定
 	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -114,7 +114,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::CreateTextur
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&desc,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		m_currentResourceState,
 		nullptr,
 		IID_PPV_ARGS(&resourceUploadHeap));
 }
@@ -141,6 +141,12 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::ResourceUpda
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::Attach(std::int32_t slot)
 {
+	if (m_currentResourceState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+		auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(),
+			m_currentResourceState, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+		m_currentResourceState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
+	}
 	vwp_graphicDevice.lock()->GetCommandList().SetGraphicsRootDescriptorTable(slot, handle);
 }
 
@@ -156,11 +162,13 @@ ButiEngine::Vector2 ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStenci
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::SetDepthStencilView()
 {
-
-	auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(),
-		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-		D3D12_RESOURCE_STATE_DEPTH_WRITE);
-	vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
+	if (m_currentResourceState != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
+		auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(),
+			m_currentResourceState,
+			D3D12_RESOURCE_STATE_DEPTH_WRITE);
+		m_currentResourceState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
+	}
 	if (!isCleared) {
 		isCleared = true;
 		vwp_graphicDevice.lock()->GetCommandList().ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -170,10 +178,6 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::SetDepthSten
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_DepthStencil::DisSetDepthStencil()
 {
-
-	auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(),		
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-	vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
 	vwp_graphicDevice.lock()->DisSetDepthStencil();
 
 	if (isEditorViewed) {

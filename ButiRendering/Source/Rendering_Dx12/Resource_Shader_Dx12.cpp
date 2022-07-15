@@ -25,6 +25,18 @@ namespace UVFog {
 namespace UVNormal {
 #include"../../CompiledShader/VS_UVNormal.fxc"
 }
+namespace Normal {
+#include"../../CompiledShader/VS_Normal.fxc"
+}
+namespace NormalColor {
+#include"../../CompiledShader/VS_NormalColor.fxc"
+}
+namespace Normal_Shadow {
+#include"../../CompiledShader/VS_Normal_Shadow.fxc"
+}
+namespace NormalColorFog {
+#include"../../CompiledShader/VS_NormalColorFog.fxc"
+}
 namespace UVColor {
 #include"../../CompiledShader/VS_UVColor.fxc"
 }
@@ -137,6 +149,15 @@ namespace UVFog {
 }
 namespace UVFog_Shadow {
 #include"../../CompiledShader/PS_UVFog_Shadow.fxc"
+}
+namespace NormalFog {
+#include"../../CompiledShader/PS_NormalFog.fxc"
+}
+namespace NormalColor {
+#include"../../CompiledShader/PS_NormalColor.fxc"
+}
+namespace NormalColorFog {
+#include"../../CompiledShader/PS_NormalColorFog.fxc"
 }
 namespace UVNormal {
 #include"../../CompiledShader/PS_UVNormal.fxc"
@@ -564,6 +585,30 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEng
 	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVPosition::g_VSMain, sizeof(VS::UVPosition::g_VSMain), "UVPosition", arg_vlp_graphicDevice);
 }
 
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal::g_VSMain, sizeof(VS::Normal::g_VSMain), "Normal", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal_Shadow::g_VSMain, sizeof(VS::Normal_Shadow::g_VSMain), "Normal_Shadow", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::NormalColor::g_VSMain, sizeof(VS::NormalColor::g_VSMain), "NormalColor", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::NormalColorFog::g_VSMain, sizeof(VS::NormalColorFog::g_VSMain), "NormalColorFog", arg_vlp_graphicDevice);
+}
+
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
@@ -771,6 +816,25 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngi
  {
 	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
 	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormalFog_Shadow::g_PSMain, sizeof(PS::UVNormalFog_Shadow::g_PSMain), "UVNormalFog_Shadow", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalColorFog::g_PSMain, sizeof(PS::NormalColorFog::g_PSMain), "NormalColorFog", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalColor::g_PSMain, sizeof(PS::NormalColor::g_PSMain), "NormalColor", arg_vlp_graphicDevice);
+
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalFog::g_PSMain, sizeof(PS::NormalFog::g_PSMain), "NormalFog", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreateOutLine(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)

@@ -19,6 +19,10 @@ fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalColorFog.fxc Shader/VS_
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalColorFog_Shadow.fxc Shader/VS_UVNormalColorFog_Shadow.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalColor.fxc Shader/VS_UVNormalColor.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalPhong.fxc Shader/VS_UVNormalPhong.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal.fxc Shader/VS_Normal.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_NormalColor.fxc Shader/VS_NormalColor.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal_Shadow.fxc Shader/VS_Normal_Shadow.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_NormalColorFog.fxc Shader/VS_NormalColorFog.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_ShadowMap.fxc Shader/VS_ShadowMap.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_ShadowMap_UV.fxc Shader/VS_ShadowMap_UV.hlsl
 
@@ -41,6 +45,9 @@ fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVDepth.fxc Shader/PS_UVDepth.h
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UV.fxc Shader/PS_UV.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVFog.fxc Shader/PS_UVFog.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVFog_Shadow.fxc Shader/PS_UVFog_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalFog.fxc Shader/PS_NormalFog.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalColor.fxc Shader/PS_NormalColor.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalColorFog.fxc Shader/PS_NormalColorFog.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormal.fxc Shader/PS_UVNormal.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormal_Shadow.fxc Shader/PS_UVNormal_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalColor.fxc Shader/PS_UVNormalColor.hlsl

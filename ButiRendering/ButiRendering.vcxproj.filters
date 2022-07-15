@@ -159,6 +159,12 @@
     <ClInclude Include="..\Header\Rendering_Dx12\DrawCommand_Dx12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -272,5 +278,27 @@
     <ClCompile Include="Source\Rendering_Dx12\DrawCommand_Dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ButiRendering.rc">
+      <Filter>リソース ファイル</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Texture\EngineLogo.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="Texture\MaterialIcon\file.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="Texture\MaterialIcon\folder.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="Texture\MaterialIcon\folder-arrow-up.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
+    <Image Include="Texture\MaterialIcon\folder-plus.png">
+      <Filter>リソース ファイル</Filter>
+    </Image>
   </ItemGroup>
 </Project>

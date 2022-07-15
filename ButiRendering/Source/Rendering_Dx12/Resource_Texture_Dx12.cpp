@@ -5,6 +5,8 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include "ButiRendering_Dx12/Header/Rendering_Dx12/Resource_Texture_Dx12.h"
 #include"ButiUtil/ButiUtil/ImageFileIO.h"
+#include"resource.h"
+#include"ButiRendering_Dx12/Header/GetDLLInstance.h"
 ButiEngine::ButiRendering::Resource_Texture_Dx12::Resource_Texture_Dx12(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_graphicDevice)
 {
 	vwp_graphicDevice = arg_graphicDevice->GetThis<GraphicDevice_Dx12>();
@@ -355,8 +357,89 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::CreateTextureFromPNG(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
-	auto resourceData=ObjectFactory::Create<ImageFileIO::TextureResourceData>();
-	ImageFileIO::InputPNG(arg_filePath, *resourceData);
-	return CreateTexture(resourceData, arg_vlp_graphicDevice);
+	if (Util::ExistFile(arg_filePath)) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+		ImageFileIO::InputImageFile(arg_filePath, *resourceData);
+		return CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	else {
+		return GetDebugTexture(arg_vlp_graphicDevice);
+	}
+}
+
+const void* GetResource(std::int32_t arg_resourceID, std::int32_t& arg_output_size) {
+
+	LPCTSTR pResourceName = MAKEINTRESOURCE(arg_resourceID);
+	HRSRC hResource = FindResource(GetButiRenderingDLLHInstance(), pResourceName, L"PNG");
+
+	const void* p_ResourceData = LockResource(LoadResource(GetButiRenderingDLLHInstance(), hResource));
+	arg_output_size=SizeofResource(GetButiRenderingDLLHInstance(), hResource);
+
+	return p_ResourceData;
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::MaterialIcon::GetMaterialTexture_file(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	Value_ptr<IResource_Texture> texture = nullptr;
+	if (!texture) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();	
+		std::int32_t dataSize;
+		auto resourcePtr = GetResource(IDB_PNG2,dataSize );
+		ImageFileIO::InputImage(resourcePtr,dataSize, *resourceData);
+		texture = CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	return texture;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::MaterialIcon::GetMaterialTexture_folder(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	Value_ptr<IResource_Texture> texture = nullptr;
+	if (!texture) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+		std::int32_t dataSize;
+		auto resourcePtr = GetResource(IDB_PNG3, dataSize);
+		ImageFileIO::InputImage(resourcePtr, dataSize, *resourceData);
+		texture = CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	return texture;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::MaterialIcon::GetMaterialTexture_folder_upArrow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	Value_ptr<IResource_Texture> texture = nullptr;
+	if (!texture) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+		std::int32_t dataSize;
+		auto resourcePtr = GetResource(IDB_PNG4, dataSize);
+		ImageFileIO::InputImage(resourcePtr, dataSize, *resourceData);
+		texture = CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	return texture;
+}
+
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::MaterialIcon::GetMaterialTexture_folder_plus(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	Value_ptr<IResource_Texture> texture = nullptr;
+	if (!texture) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+		std::int32_t dataSize;
+		auto resourcePtr = GetResource(IDB_PNG5, dataSize);
+		ImageFileIO::InputImage(resourcePtr, dataSize, *resourceData);
+		texture = CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	return texture;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::GetDebugTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	Value_ptr<IResource_Texture> texture = nullptr;
+	if (!texture) {
+		auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+		std::int32_t dataSize;
+		auto resourcePtr = GetResource(IDB_PNG1, dataSize);
+		ImageFileIO::InputImage(resourcePtr, dataSize, *resourceData);
+		texture = CreateTexture(resourceData, arg_vlp_graphicDevice);
+	}
+	return texture;
 }
 

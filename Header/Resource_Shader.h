@@ -34,7 +34,7 @@ class Resource_Shader :public IResource_Shader
 {
 public:
 	BUTIRENDERING_API Resource_Shader(Value_ptr<IResource_VertexShader> arg_vlp_vertexShader, Value_ptr<IResource_PixelShader> arg_vlp_pixelShader, Value_ptr<IResource_GeometryShader> arg_vlp_geometryShader, const std::string& arg_shaderName);
-	void Initialize()override;
+	BUTIRENDERING_API void Initialize()override;
 	BUTIRENDERING_API virtual void Attach()const;
 
 	BUTIRENDERING_API bool GetIsContainGeometryShader()const;

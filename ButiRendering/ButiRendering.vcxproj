@@ -218,6 +218,8 @@
     <ClInclude Include="..\Header\ShaderVariable.h" />
     <ClInclude Include="..\Header\Vertex.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -265,6 +267,16 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdafx.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ButiRendering.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Texture\EngineLogo.png" />
+    <Image Include="Texture\MaterialIcon\file.png" />
+    <Image Include="Texture\MaterialIcon\folder-arrow-up.png" />
+    <Image Include="Texture\MaterialIcon\folder-plus.png" />
+    <Image Include="Texture\MaterialIcon\folder.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

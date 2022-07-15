@@ -47,7 +47,10 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 	clearValue.Format = static_cast<DXGI_FORMAT>(arg_format);
 	clearValue.DepthStencil.Depth = 1.0f;
 	clearValue.DepthStencil.Stencil = 0;
-
+	clearValue.Color[0] = ButiColor::DeepPurple().x;
+	clearValue.Color[1] = ButiColor::DeepPurple().y;
+	clearValue.Color[2] = ButiColor::DeepPurple().z;
+	clearValue.Color[3] = ButiColor::DeepPurple().w;
 	auto rtdhHandle = renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 
@@ -56,7 +59,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE, &desc,
 		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
-		nullptr,
+		&clearValue,
 		IID_PPV_ARGS(texture.GetAddressOf()));
 
 

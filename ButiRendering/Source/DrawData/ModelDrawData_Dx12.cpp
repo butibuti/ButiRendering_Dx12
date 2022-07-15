@@ -5,11 +5,11 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
 #include "ButiRendering_Dx12/Header/DrawData/DrawData_Dx12.h"
 
-ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model,  Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone)
+ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model,  Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<ObjectDrawData> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone)
 :ModelDrawObject_Dx12(arg_vwp_model, arg_vwp_model.lock()->GetMaterial(), arg_vlp_renderer, arg_vwp_graphicDevice, arg_vlp_drawInfo, arg_vlp_transform, arg_vlp_bone) {
 }
 
-ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model,  const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<DrawInformation> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone)
+ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Value_weak_ptr<IResource_Model>& arg_vwp_model,  const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, Value_ptr<ObjectDrawData> arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone)
 	: DrawObject_Dx12(DrawData(arg_vlp_transform))
 {
 	vwp_graphicDevice = arg_vwp_graphicDevice;
@@ -52,9 +52,9 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelUpdate()
 	}
 }
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
 	return ObjectFactory::Create<ModelDrawObject_Dx12>(arg_vwp_model, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform, arg_vlp_bone);
 }
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
 	return ObjectFactory::Create<ModelDrawObject_Dx12>(arg_vwp_model, arg_list_material, arg_vlp_renderer, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>(), arg_vlp_drawInfo, arg_vlp_transform, arg_vlp_bone);
 }

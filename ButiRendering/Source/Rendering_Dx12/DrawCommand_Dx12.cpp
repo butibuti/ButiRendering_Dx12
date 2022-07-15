@@ -40,6 +40,7 @@ void ButiEngine::ButiRendering::DrawCommand_Dx12::Execute()
 
 void ButiEngine::ButiRendering::DrawCommand_Dx12::Execute_afterRendering()
 {
+	m_vwp_material.lock()->GetPipelineState()->GetRootSignature()->Attach();
 	m_vwp_material.lock()->GetPipelineState()->Attach();
 	Execute();
 }

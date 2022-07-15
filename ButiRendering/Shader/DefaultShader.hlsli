@@ -458,6 +458,13 @@ struct Pixel_UV_Normal_Color_Fog
     float4 color:COLOR;
     float fog : COLOR1;
 };
+struct Pixel_Normal_Color_Fog
+{
+    float4 position : SV_POSITION;
+    float3 normal : NORMAL;
+    float4 color:COLOR;
+    float fog : COLOR1;
+};
 
 struct Pixel_UV_Color_Fog {
     float4 position : SV_POSITION;

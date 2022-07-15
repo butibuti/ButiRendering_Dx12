@@ -7,8 +7,8 @@
 namespace ButiEngine {
 
 namespace ButiRendering {
-struct DrawInformation :public IObject {
-	DrawInformation() {}
+struct ObjectDrawData :public IObject {
+	ObjectDrawData() {}
 	std::vector<Value_ptr<ICBuffer>> vec_exCBuffer;
 	DrawFixParam drawFixParam = DrawFixParam::none;
 	BillBoardMode billboardMode = BillBoardMode::none;
@@ -49,8 +49,8 @@ struct DrawInformation :public IObject {
 		return nullptr;
 	}
 
-	Value_ptr< DrawInformation > Clone() {
-		auto output = ObjectFactory::Create<DrawInformation>();
+	Value_ptr< ObjectDrawData > Clone() {
+		auto output = ObjectFactory::Create<ObjectDrawData>();
 		output->billboardMode = billboardMode;
 		output->drawFixParam= drawFixParam;
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); itr++) {
@@ -69,7 +69,7 @@ public:
 	Value_ptr<Transform> vlp_transform;
 	bool m_isAlphaDraw = false;
 	std::vector<std::uint32_t> subset;
-	Value_ptr< DrawInformation >vlp_drawInfo;
+	Value_ptr< ObjectDrawData >vlp_drawInfo;
 	Value_ptr<IRenderer> vlp_renderer;
 	inline float GetMaxZ(const Matrix4x4& arg_viewMatrix) {
 		auto viewPos = transform.GetPosition_Transpose() * arg_viewMatrix;
@@ -175,13 +175,13 @@ public:
 	virtual Value_ptr<IBoneObject>& GetModelBone() = 0;
 	virtual Value_ptr< CBuffer<BoneMatrix>>& GetBoneCBuffer() = 0;
 };
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const Value_weak_ptr<IResource_Material>& arg_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateMeshDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, const List< Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform> arg_vlp_transform);
 
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
-BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< DrawInformation >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
+BUTIRENDERING_API Value_ptr<IDrawObject> CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model,const List<Value_weak_ptr<IResource_Material>>& arg_list_material, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone);
 
 }
 }

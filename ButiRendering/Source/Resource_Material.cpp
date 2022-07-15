@@ -3,8 +3,8 @@
 
 
 
-ButiEngine::ButiRendering::Resource_Material::Resource_Material(const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader,List<Value_ptr<IResource_Texture>> arg_list_vwp_texture)
-:m_list_vlp_texture(arg_list_vwp_texture),materialVar(arg_var),m_vlp_shader(arg_vlp_shader){}
+ButiEngine::ButiRendering::Resource_Material::Resource_Material(const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader,List<Value_ptr<IResource_Texture>> arg_list_vwp_texture, const DrawSettings& arg_drawSettings)
+:m_list_vlp_texture(arg_list_vwp_texture),materialVar(arg_var),m_vlp_shader(arg_vlp_shader),m_drawSetting(arg_drawSettings){}
 
 const std::string& ButiEngine::ButiRendering::Resource_Material::GetMaterialName()
 {

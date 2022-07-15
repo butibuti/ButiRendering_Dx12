@@ -1,0 +1,4 @@
+#ifndef GETDLLINSTANCE_H
+#define GETDLLINSTANCE_H
+HINSTANCE GetButiRenderingDLLHInstance();
+#endif // !GETDLLINSTANCE_H
