@@ -284,7 +284,7 @@ BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& 
 BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromPNG(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromImageFile(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 namespace MaterialIcon {
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_file(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_upArrow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
