@@ -22,21 +22,24 @@ void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& arg_sou
 
 	std::string entryPoint;
 	std::string shaderModel;
-
+	std::string outputFilePath = arg_outputFilePath;
 	if (StringHelper::Contains(source, "VSMain")) {
 		shaderType = vs;
 		entryPoint = "VSMain";
 		shaderModel = "vs_";
+		outputFilePath += StringHelper::Contains(outputFilePath, '.') ? "" : ".cvs";
 	}
 	else if (StringHelper::Contains(source, "PSMain")) {
 		shaderType = ps;
 		entryPoint = "PSMain";
 		shaderModel = "ps_";
+		outputFilePath += StringHelper::Contains(outputFilePath, '.') ? "" : ".cps";
 	}
 	else if (StringHelper::Contains(source, "GSMain")) {
 		shaderType = gs;
 		entryPoint = "GSMain";
 		shaderModel = "gs_";
+		outputFilePath += StringHelper::Contains(outputFilePath, '.') ? "" : ".cgs";
 	}
 	else {
 		std::cout << arg_sourceFilePath << "にはエントリーポイントが見つかりません" << std::endl;
@@ -59,7 +62,7 @@ void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& arg_sou
 		break;
 	}
 
-	Compile(arg_sourceFilePath, arg_outputFilePath, source, entryPoint.c_str(), shaderModel.c_str(), type);
+	Compile(arg_sourceFilePath, outputFilePath, source, entryPoint.c_str(), shaderModel.c_str(), type);
 }
 
 void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath, const std::string& source, const char* entryPoint, const char* shaderModel, const CompileType& type)

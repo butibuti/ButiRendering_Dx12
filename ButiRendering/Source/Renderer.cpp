@@ -39,15 +39,15 @@ public:
 	void UpdateRendererCBuffer(const RendererState& arg_param)override;
 	Value_ptr<CBuffer<RendererState>> GetRendererCBuffer()override;
 	Value_ptr<GraphicDevice> GetGraphicDevice() const;
-	Value_ptr<IDrawLayer> GetDrawLayer(const std::int32_t arg_index)const override { return m_vec_drawLayers[arg_index]; }
-	void RemoveDrawLayer(const std::int32_t arg_index) override { m_vec_drawLayers.erase(m_vec_drawLayers.begin() + arg_index); }
+	Value_ptr<IDrawLayer> GetDrawLayer(const std::int32_t arg_index)const override { return m_list_drawLayers[arg_index]; }
+	void RemoveDrawLayer(const std::int32_t arg_index) override { m_list_drawLayers.erase(m_list_drawLayers.begin() + arg_index); }
 	void PushDrawFunction(std::function<void()> arg_drawFunction) override { m_list_drawFunctions.Add(arg_drawFunction); }
 	virtual void PopDrawFunction() override { m_list_drawFunctions.RemoveLast(); }
 private:
 
 
 	Value_weak_ptr<GraphicDevice> m_vwp_graphicDevice;
-	std::vector<Value_ptr< IDrawLayer>> m_vec_drawLayers;
+	List<Value_ptr< IDrawLayer>> m_list_drawLayers;
 	Value_ptr<CBuffer<RendererState>> m_CBuffer_Renderer;
 	List<std::function<void()>> m_list_drawFunctions;
 };
@@ -152,31 +152,37 @@ void ButiEngine::ButiRendering::Renderer::RenderingStart()
 	m_vwp_graphicDevice.lock()->ClearWindow();
 	m_vwp_graphicDevice.lock()->ResourceUpload();
 	//GetRendererCBuffer()->Get().Time +=GameDevice::WorldSpeed* 0.01f;
-	for (auto itr = m_vec_drawLayers.begin(); itr != m_vec_drawLayers.end(); itr++) {
-		(*itr)->CreateCommandBundle();
+	for (auto itr: m_list_drawLayers) {
+		itr->CreateCommandBundle();
 	}
 }
 
 void ButiEngine::ButiRendering::Renderer::Rendering(const std::uint32_t arg_layer)
 {
+#ifdef DEBUG
+	if (m_list_drawLayers.GetSize() <= arg_layer) {
+		return;
+	}
+#endif // DEBUG
+
 	m_CBuffer_Renderer->Update();
 
-	m_vec_drawLayers[arg_layer]->Rendering();
+	m_list_drawLayers[arg_layer]->Rendering();
 	
 	
 }
 
 void ButiEngine::ButiRendering::Renderer::ShadowRendering(const std::uint32_t arg_layer)
 {
-	if (m_vec_drawLayers.at(arg_layer)->GetShadowCamera()) {
-		m_CBuffer_Renderer->Get().shadowVP = m_vec_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewProjectionMatrix();
-		m_CBuffer_Renderer->Get().shadowV = m_vec_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewMatrix();
-		m_CBuffer_Renderer->Get().shadowCameraPos = m_vec_drawLayers.at(arg_layer)->GetShadowCamera()->GetPosition();
+	if (m_list_drawLayers.at(arg_layer)->GetShadowCamera()) {
+		m_CBuffer_Renderer->Get().shadowVP = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewProjectionMatrix();
+		m_CBuffer_Renderer->Get().shadowV = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewMatrix();
+		m_CBuffer_Renderer->Get().shadowCameraPos = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetPosition();
 	}
 
 
 	m_CBuffer_Renderer->Update();
-	m_vec_drawLayers[arg_layer]->ShadowRendering();
+	m_list_drawLayers[arg_layer]->ShadowRendering();
 }
 
 
@@ -194,7 +200,7 @@ void ButiEngine::ButiRendering::Renderer::RenderingEnd()
 
 void ButiEngine::ButiRendering::Renderer::BefRendering()
 {
-	for (auto layerItr = m_vec_drawLayers.begin(); layerItr != m_vec_drawLayers.end(); layerItr++) {
+	for (auto layerItr = m_list_drawLayers.begin(); layerItr != m_list_drawLayers.end(); layerItr++) {
 		(*layerItr)->BefRendering();
 
 	}
@@ -203,38 +209,38 @@ void ButiEngine::ButiRendering::Renderer::BefRendering()
 void ButiEngine::ButiRendering::Renderer::AddLayer()
 {
 	auto layer = ObjectFactory::Create<DrawLayer>(GetThis<IRenderer>());
-	m_vec_drawLayers.push_back(layer);
+	m_list_drawLayers.push_back(layer);
 }
 
 std::uint32_t ButiEngine::ButiRendering::Renderer::GetLayerCount()
 {
-	return m_vec_drawLayers.size();
+	return m_list_drawLayers.GetSize();
 }
 
 
 void ButiEngine::ButiRendering::Renderer::ClearDrawObjects()
 {
-	for (auto layerItr = m_vec_drawLayers.begin(); layerItr != m_vec_drawLayers.end(); layerItr++) {
-		(*layerItr)->Clear();
+	for (auto layerItr :m_list_drawLayers) {
+		(layerItr)->Clear();
 	}
-	m_vec_drawLayers.clear();
+	m_list_drawLayers.Clear();
 }
 
 void ButiEngine::ButiRendering::Renderer::RegistDrawObject(Value_ptr<IDrawObject> arg_vwp_drawObject,   const std::uint32_t arg_layer, const bool isShadow)
 {
-	if (arg_layer >= m_vec_drawLayers.size()) {
+	if (arg_layer >= m_list_drawLayers.GetSize()) {
 		return ;
 	}
 
-	m_vec_drawLayers.at(arg_layer)->Regist(arg_vwp_drawObject,isShadow);
+	m_list_drawLayers.at(arg_layer)->Regist(arg_vwp_drawObject,isShadow);
 }
 
 void ButiEngine::ButiRendering::Renderer::UnRegistDrawObject(Value_ptr< IDrawObject> arg_vlp_drawObject, const std::uint32_t arg_layer, const bool isShadow )
 {
-	if (arg_layer >= m_vec_drawLayers.size()) {
+	if (arg_layer >= m_list_drawLayers.GetSize()) {
 		return;
 	}
-	m_vec_drawLayers.at(arg_layer)->UnRegist(arg_vlp_drawObject, isShadow);
+	m_list_drawLayers.at(arg_layer)->UnRegist(arg_vlp_drawObject, isShadow);
 }
 
 
@@ -243,35 +249,33 @@ void ButiEngine::ButiRendering::Renderer::UnRegistDrawObject(Value_ptr< IDrawObj
 
 void ButiEngine::ButiRendering::Renderer::SetShadowCamera(const std::uint32_t arg_layer, Value_ptr<ICamera> arg_vlp_camera)
 {
-	if (m_vec_drawLayers.size() > arg_layer) {
-		m_vec_drawLayers.at(arg_layer)->SetShadowCamera( arg_vlp_camera);
+	if (m_list_drawLayers.GetSize() > arg_layer) {
+		m_list_drawLayers.at(arg_layer)->SetShadowCamera( arg_vlp_camera);
 	}
 }
 
 void ButiEngine::ButiRendering::Renderer::SetShadowTexture(const std::uint32_t arg_layer, Value_weak_ptr<IResource_Texture> arg_shadowTex)
 {
-	if (m_vec_drawLayers.size() > arg_layer) {
-		m_vec_drawLayers.at(arg_layer)->SetShadowTexture( arg_shadowTex);
+	if (m_list_drawLayers.GetSize() > arg_layer) {
+		m_list_drawLayers.at(arg_layer)->SetShadowTexture( arg_shadowTex);
 	}
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::Renderer::GetShadowTexture(const std::uint32_t arg_layer)
 {
 
-	if (m_vec_drawLayers.size() <= arg_layer) {
+	if (m_list_drawLayers.GetSize() <= arg_layer) {
 		return nullptr;
 	}
-	return m_vec_drawLayers[arg_layer]->GetShadowTexture();
+	return m_list_drawLayers[arg_layer]->GetShadowTexture();
 }
 ButiEngine::Value_ptr< ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRendering::Renderer::GetShadowCamera(const std::uint32_t arg_layer)
 {
-	if (m_vec_drawLayers.size() <= arg_layer) {
+	if (m_list_drawLayers.GetSize() <= arg_layer) {
 		return nullptr;
 	}
-	return m_vec_drawLayers.at(arg_layer)->GetShadowCamera();
+	return m_list_drawLayers.at(arg_layer)->GetShadowCamera();
 }
-
-
 void ButiEngine::ButiRendering::Renderer::Release()
 {
 	ReleaseRendererCBuffer();

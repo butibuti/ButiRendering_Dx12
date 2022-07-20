@@ -208,7 +208,7 @@ ButiEngine::ButiRendering::Resource_PixelShader_Dx12::Resource_PixelShader_Dx12(
 	auto file = BinaryReader(arg_filePath);
 	auto size = file.GetReamainSize();
 	auto source = file.ReadCharactor();
-	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,false);
+	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,true);
 	delete source;
 }
 
@@ -269,7 +269,7 @@ ButiEngine::ButiRendering::Resource_VertexShader_Dx12::Resource_VertexShader_Dx1
 	auto file = BinaryReader(arg_filePath);
 	auto size = file.GetReamainSize();
 	auto source = file.ReadCharactor();
-	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,false);
+	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,true);
 	delete source;
 }
 
@@ -418,7 +418,7 @@ ButiEngine::ButiRendering::Resource_GeometryShader_Dx12::Resource_GeometryShader
 	auto file = BinaryReader(arg_shaderPath);
 	auto size = file.GetReamainSize();
 	auto source = file.ReadCharactor();
-	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,false);
+	CreateShaderData(reinterpret_cast<unsigned char*> (source), size,true);
 	delete source;
 }
 ButiEngine::ButiRendering::Resource_GeometryShader_Dx12::Resource_GeometryShader_Dx12(const std::string& arg_shaderName, const std::stringstream& arg_source, Value_ptr<GraphicDevice> arg_graphicDevice)

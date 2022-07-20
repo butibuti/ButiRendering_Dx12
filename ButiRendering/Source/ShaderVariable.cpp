@@ -6,11 +6,11 @@ float ButiEngine::ButiRendering::GausParameter::GaussianDistribution(const Vecto
 {
 	return exp(-(pos.x * pos.x + pos.y * pos.y) / (2.0f * rho * rho));
 }
-void ButiEngine::ButiRendering::GausParameter::CalcGaus(const std::int32_t width, const std::int32_t height, const Vector2& dir, const float deviation)
+void ButiEngine::ButiRendering::GausParameter::CalcGaus(const std::int32_t arg_width, const std::int32_t arg_height, const Vector2& arg_dir, const float arg_deviation)
 {
-	auto tu = 1.0f / float(width);
-	auto tv = 1.0f / float(height);
-	gausOffset[0].z = GaussianDistribution(Vector2(0.0f, 0.0f), deviation);
+	auto tu = 1.0f / static_cast<float>(arg_width);
+	auto tv = 1.0f / static_cast<float>(arg_height);
+	gausOffset[0].z = GaussianDistribution(Vector2(0.0f, 0.0f), arg_deviation);
 	auto total_weight = gausOffset[0].z;
 	
 	gausOffset[0].x = 0.0f;
@@ -18,9 +18,9 @@ void ButiEngine::ButiRendering::GausParameter::CalcGaus(const std::int32_t width
 	
 	for (auto i = 1; i < 8; ++i)
 		{
-		  gausOffset[i].x = dir.x * i *tu;
-	      gausOffset[i].y = dir.y * i *tv;
-	      gausOffset[i].z = GaussianDistribution(dir * float(i), deviation);
+		  gausOffset[i].x = arg_dir.x * i *tu;
+	      gausOffset[i].y = arg_dir.y * i *tv;
+	      gausOffset[i].z = GaussianDistribution(arg_dir * float(i), arg_deviation);
 	      total_weight += gausOffset[i].z * 2.0f;
 	  }
 	
