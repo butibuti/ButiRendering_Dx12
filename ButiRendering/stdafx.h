@@ -34,7 +34,7 @@
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiUtil/ButiUtil/ObjectFactory.h"
 #include"ButiUtil/ButiUtil/Helper/StringHelper.h"
-#include"ButiUtil/ButiUtil/BinaryReader.h"
+#include"ButiUtil/ButiUtil/BinaryObject.h"
 #include"ButiRendering_Dx12/Header/RenderingStatus.h"
 #include"ButiRendering_Dx12/Header/ResourceInterface.h"
 #include"ButiRendering_Dx12/Header/GraphicDevice.h"
