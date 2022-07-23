@@ -285,6 +285,7 @@ BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialVal
 BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromImageFile(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromMemory(const char* arg_data,const std::int64_t arg_dataSize, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 namespace MaterialIcon {
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_file(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_upArrow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -295,9 +296,12 @@ BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_plus(Va
 Value_ptr<IResource_Texture> GetDebugTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,  Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_inputLayoutfilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_outputFormatFilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath,Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateGeometryShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateGeometryShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size,Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 namespace DefaultVertexShader {
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap_UV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

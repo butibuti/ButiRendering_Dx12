@@ -78,10 +78,8 @@ void ButiEngine::ButiRendering::ShaderHelper::Compile(const std::string& arg_sou
 		std::cout << arg_sourceFilePath << "‚ÌƒRƒ“ƒpƒCƒ‹¬Œ÷" << std::endl;
 	}
 	auto dirRes = _mkdir(StringHelper::GetDirectory(arg_outputFilePath).c_str());
-	BinaryWriter_File shaderWriter;
-	shaderWriter.WriteStart(arg_outputFilePath);
+	BinaryWriter_File shaderWriter(arg_outputFilePath);
 	shaderWriter.WriteCharactor(static_cast<char*>(buffer->GetBufferPointer()), buffer->GetBufferSize());
-	shaderWriter.WriteEnd();
 }
 namespace ButiEngine {
 namespace ButiRendering {

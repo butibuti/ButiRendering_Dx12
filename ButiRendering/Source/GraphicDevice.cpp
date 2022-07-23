@@ -99,6 +99,8 @@ void ButiEngine::ButiRendering::GraphicDevice::SetTexture(Value_ptr<IResource_Te
 			
 			if (m_list_currentTexture.GetSize() == arg_textureRegisterIndex) {
 				m_list_currentTexture.Add(arg_vlp_texture);
+				arg_vlp_texture->Attach(arg_textureRegisterIndex);
+				return;
 			}
 			else {
 				m_list_currentTexture.Add(nullptr);
@@ -111,6 +113,7 @@ void ButiEngine::ButiRendering::GraphicDevice::SetTexture(Value_ptr<IResource_Te
 		}
 	}
 	arg_vlp_texture->Attach(arg_textureRegisterIndex);
+	m_list_currentTexture[arg_textureRegisterIndex] = arg_vlp_texture;
 }
 
 void ButiEngine::ButiRendering::GraphicDevice::SetConstantBuffer(Value_ptr<ICBuffer> arg_vlp_cBuffer, const std::int32_t arg_cBufferRegisterIndex)

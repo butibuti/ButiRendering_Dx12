@@ -566,6 +566,9 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::UnSetCommandList()
 {
 	m_uqp_impl->p_currentCommandList = nullptr;
 	m_uqp_impl->currentPipelineState = nullptr;
+	m_vlp_currentMaterial = nullptr;
+	m_vlp_currentMesh = nullptr;
+	m_list_currentTexture.Clear();
 }
 
 ID3D12Fence& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFence()

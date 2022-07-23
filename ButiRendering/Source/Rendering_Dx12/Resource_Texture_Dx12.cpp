@@ -367,6 +367,13 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::
 	}
 }
 
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture> ButiEngine::ButiRendering::CreateTextureFromMemory( const char* arg_data, const std::int64_t arg_dataSize, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	auto resourceData = ObjectFactory::Create<ImageFileIO::TextureResourceData>();
+	ImageFileIO::InputImage(arg_data,arg_dataSize , *resourceData);
+	return CreateTexture(resourceData, arg_vlp_graphicDevice);
+}
+
 const void* GetResource(std::int32_t arg_resourceID, std::int32_t& arg_output_size) {
 
 	LPCTSTR pResourceName = MAKEINTRESOURCE(arg_resourceID);

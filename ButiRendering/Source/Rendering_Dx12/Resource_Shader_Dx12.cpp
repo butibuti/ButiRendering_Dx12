@@ -467,17 +467,29 @@ void ButiEngine::ButiRendering::Resource_GeometryShader_Dx12::CreateShaderData(c
 
 
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_inputLayoutfilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	return ObjectFactory::Create<Resource_VertexShader_Dx12>(arg_shaderName, arg_filePath, arg_vlp_graphicDevice);
 }
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, const std::string& arg_outputFormatFilePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	return ObjectFactory::Create<Resource_PixelShader_Dx12>(arg_shaderName, arg_filePath,arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::CreateGeometryShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	return ObjectFactory::Create<Resource_GeometryShader_Dx12>(arg_shaderName,arg_filePath, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_VertexShader_Dx12>(arg_data, arg_size, arg_shaderName, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::CreatePixelShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_PixelShader_Dx12>(arg_data, arg_size, arg_shaderName, arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::CreateGeometryShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	return ObjectFactory::Create<Resource_GeometryShader_Dx12>(arg_data, arg_size, arg_shaderName, arg_vlp_graphicDevice);
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::CreateVertexShaderFromSource(const std::string& arg_shaderName, const std::string& arg_source, Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {

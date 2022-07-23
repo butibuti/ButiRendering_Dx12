@@ -35,9 +35,7 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 		);
 	}
 	else {
-
 		auto angle = cameraProp.angle * cameraProp.scaleAdjusment;
-
 		projectionMatrix =
 			Matrix4x4::PersepectiveFovLH(
 				MathHelper::ToRadian(angle),
