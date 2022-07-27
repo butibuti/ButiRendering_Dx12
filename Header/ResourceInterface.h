@@ -101,11 +101,12 @@ class MeshPrimitiveBase;
 class GraphicDevice;
 class IRenderTarget {
 public:
-	virtual void SetRenderTarget(Vector4& arg_clearColor) = 0;
+	virtual void SetRenderTarget() = 0;
 	virtual void DisSetRenderTarget() = 0;
 	virtual void SetIsCleared(bool arg_isClear) = 0;
 	virtual Vector2 GetSize() = 0;
 	virtual std::string GetName()const = 0;
+	virtual const Vector4& GetClearColor()const=0;
 };
 class IDepthStencil {
 public:
@@ -294,7 +295,7 @@ BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_plus(Va
 
 }
 Value_ptr<IResource_Texture> GetDebugTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Texture> CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, const Vector4& arg_clearColor,  Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateDepthStencil(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,  Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShader(const std::string& arg_shaderName, const std::string& arg_filePath,Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShader(const std::string& arg_shaderName, const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

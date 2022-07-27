@@ -8,9 +8,8 @@ class GraphicDevice_Dx12;
 class Resource_Texture_Dx12_RenderTarget :public Resource_Texture_Dx12, public IRenderTarget
 {
 public:
-	BUTIRENDERING_API static Value_ptr<Resource_Texture_Dx12_RenderTarget>Create(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
-	BUTIRENDERING_API Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
-	BUTIRENDERING_API void SetRenderTarget(Vector4& arg_clearColor)override;
+	BUTIRENDERING_API Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t format, const Vector4& arg_clearColor,Value_ptr<GraphicDevice> arg_vwp_graphicDevice);
+	BUTIRENDERING_API void SetRenderTarget()override;
 	BUTIRENDERING_API void CreateTextureUploadHeap()override;
 	BUTIRENDERING_API void Initialize()override;
 	BUTIRENDERING_API void DisSetRenderTarget()override;
@@ -30,6 +29,7 @@ public:
 	BUTIRENDERING_API void DataLock()override;
 	BUTIRENDERING_API void DataUnlock()override;
 	BUTIRENDERING_API std::string GetName()const override;
+	const Vector4& GetClearColor()const override { return m_clearColor; }
 private:
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> renderTargetDescriptorHeap;
@@ -40,7 +40,7 @@ private:
 	//void ResourceUpdate() override;
 	bool isCleared = false, isCopyCommanded = false;
 	bool isFileOutput = false;
-
+	Vector4 m_clearColor;
 public:
 	void SetEditorViewed(const bool arg_isViewed)override;
 	bool GetEditorViewed()const override { return isEditorViewed; }

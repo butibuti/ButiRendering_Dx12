@@ -76,7 +76,7 @@ void ButiEngine::ButiRendering::ForwardCameraRenderingPath_Dx12::Execute()
 	if (m_list_vlp_renderTarget.GetSize()) {
 		vwp_renderer.lock()->GetRendererCBuffer()->Get().pixelScale = Vector2(1.0 / scissorRect.right, 1.0 / scissorRect.bottom);
 		for (auto renderTarget : m_list_vlp_renderTarget) {
-			renderTarget->SetRenderTarget(vlp_camera->GetCameraProperty().clearColor);
+			renderTarget->SetRenderTarget();
 		}
 	}
 	else {

@@ -3,11 +3,8 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/Resource_Texture_Dx12_RenderTarget.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiUtil/ButiUtil/ImageFileIO.h"
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget> ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Create(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
-{
-	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData,arg_format,arg_vwp_graphicDevice);
-}
-ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,const std::int32_t arg_format ,Value_ptr<GraphicDevice> arg_graphicDevice)
+
+ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_Dx12_RenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData,const std::int32_t arg_format, const Vector4& arg_clearColor,Value_ptr<GraphicDevice> arg_graphicDevice)
 	//:Resource_Texture_Dx12(std::vector<BYTE>(width*height*4,255),width,height,arg_graphicDevice)
 {
 	vwp_graphicDevice = arg_graphicDevice->GetThis<GraphicDevice_Dx12>();
@@ -26,7 +23,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 		}
 
 	}
-
+	m_clearColor = arg_clearColor;
 
 	// ÉäÉ\Å[ÉXÇÃê›íË.
 	D3D12_RESOURCE_DESC desc;
@@ -47,10 +44,10 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 	clearValue.Format = static_cast<DXGI_FORMAT>(arg_format);
 	clearValue.DepthStencil.Depth = 1.0f;
 	clearValue.DepthStencil.Stencil = 0;
-	clearValue.Color[0] = ButiColor::DeepPurple().x;
-	clearValue.Color[1] = ButiColor::DeepPurple().y;
-	clearValue.Color[2] = ButiColor::DeepPurple().z;
-	clearValue.Color[3] = ButiColor::DeepPurple().w;
+	clearValue.Color[0] = m_clearColor.x;
+	clearValue.Color[1] = m_clearColor.y;
+	clearValue.Color[2] = m_clearColor.z;
+	clearValue.Color[3] = m_clearColor.w;
 	auto rtdhHandle = renderTargetDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 
@@ -96,7 +93,7 @@ ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Resource_Texture_
 	textureDataSize = image.vlp_imageData->pixSize * image.vlp_imageData->width * image.vlp_imageData->height;
 }
 
-void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetRenderTarget(Vector4& arg_clearColor)
+void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetRenderTarget()
 {
 	auto trans = CD3DX12_RESOURCE_BARRIER::Transition(texture.Get(),
 		currentState,
@@ -105,7 +102,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::SetRenderTar
 	vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
 	if (!isCleared) {
 		isCleared = true;
-		vwp_graphicDevice.lock()->GetCommandList().ClearRenderTargetView(rtvHandle, arg_clearColor.GetData(), 0, nullptr);
+		vwp_graphicDevice.lock()->GetCommandList().ClearRenderTargetView(rtvHandle, m_clearColor.GetData(), 0, nullptr);
 	}
 	vwp_graphicDevice.lock()->PushRenderTarget(rtvHandle,GetThis<IRenderTarget>());
 
@@ -313,7 +310,7 @@ std::int32_t ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::GetD
 }
 
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture>  ButiEngine::ButiRendering::CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Texture>  ButiEngine::ButiRendering::CreateRenderTarget(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, const std::int32_t arg_format,const Vector4& arg_clearColor, Value_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
-	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData, arg_format,arg_vwp_graphicDevice);
+	return ObjectFactory::Create<Resource_Texture_Dx12_RenderTarget>(arg_vlp_imageData, arg_format,arg_clearColor,arg_vwp_graphicDevice);
 }
