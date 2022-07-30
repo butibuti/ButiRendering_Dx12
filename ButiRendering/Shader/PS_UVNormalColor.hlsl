@@ -10,5 +10,6 @@ float4 PSMain(Pixel_UV_Normal_Color pixel) : SV_TARGET
 
 	float4 Color = pixel.color;
 	float4 Tex = (mainTexture.Sample(mainSampler,pixel.uv).rgba);
+	clip(Tex.a < 0.1f ? -1 : 1);
 	return  Color+Light;
 }
