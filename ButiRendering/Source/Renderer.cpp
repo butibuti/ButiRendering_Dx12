@@ -75,7 +75,7 @@ public:
 protected:
 	void SortAfterCommands();
 	bool m_changed = false, m_sorted = false;
-	Matrix4x4 m_vp;
+	Matrix4x4 m_viewMatrix;
 	Value_weak_ptr<IRenderer> m_vwp_renderer;
 	Value_ptr<DrawLayer_Shadow> m_vlp_shadowLayer;
 
@@ -483,7 +483,7 @@ void ButiEngine::ButiRendering::DrawLayer::Rendering()
 		itr->BufferUpdate();
 	}
 	m_vwp_graphicDevice.lock()->GetCommandList().ExecuteBundle(m_commandList.Get());
-	m_vp = m_vwp_graphicDevice.lock()->GetProjectionMatrix() * m_vwp_graphicDevice.lock()->GetCameraViewMatrix();
+	m_viewMatrix = m_vwp_graphicDevice.lock()->GetProjectionMatrix() * m_vwp_graphicDevice.lock()->GetCameraViewMatrix();
 	SortAfterCommands();
 	for (auto itr : m_list_sortedAfterCommand) {
 		itr->Execute_afterRendering();
@@ -522,7 +522,10 @@ void ButiEngine::ButiRendering::DrawLayer::SortAfterCommands()
 	m_sorted = true;*/
 	m_list_sortedAfterCommand = m_list_afterCommand;
 	std::sort(m_list_sortedAfterCommand.begin(), m_list_sortedAfterCommand.end(), [this](const Value_ptr< IDrawCommand> pmX, const Value_ptr<IDrawCommand> pmY)
-		{return pmX->GetDrawObject().lock()->GetZ(m_vp) > pmY->GetDrawObject().lock()->GetZ(m_vp); });
+		{
+			auto x = pmX->GetDrawObject().lock()->GetZ(m_viewMatrix), y = pmY->GetDrawObject().lock()->GetZ(m_viewMatrix);
+			return x> y; 
+		});
 }
 
 void ButiEngine::ButiRendering::DrawLayer_Shadow::BefRendering()

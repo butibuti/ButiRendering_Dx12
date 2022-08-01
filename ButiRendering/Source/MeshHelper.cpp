@@ -45,7 +45,7 @@ ButiEngine::Vector3 ButiEngine::ButiRendering::MeshHelper::GetCircleVector(std::
 
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(const Vector3& arg_point1, const Vector3& arg_point2, const Vector3& arg_point3, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(const Vector3& arg_point1, const Vector3& arg_point2, const Vector3& arg_point3, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	std::vector<Vertex::Vertex_UV_Normal_Tangent_Color> vertices{
 
@@ -60,7 +60,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateTriangle(const Vector3& arg_po
 	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	enum class ColorAttachType {
 		SingleColor, AllColor, FourColor, SixColor
@@ -148,9 +148,18 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSameTextureCube(Vector3 arg_si
 
 	arg_ref_outputMeshData.vertices = vertices;
 	arg_ref_outputMeshData.SetIndex(indices);
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
+
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, const bool arg_flat)
+void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner, const bool arg_flat)
 {
 	enum class ColorAttachType {
 	SingleColor,AllColor,FourColor,SixColor
@@ -234,15 +243,15 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const s
 
 	}
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
 	if (colorType == ColorAttachType::SingleColor)
 		VertexAttachColor(arg_colors, vertices);
@@ -251,25 +260,25 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const s
 }
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	if (arg_tessellation < 3) {
-		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData, true);
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData,arg_ref_eightCorner, true);
 		return;
 	}
 	arg_size = arg_size * 0.5f;
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x,  arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3( arg_size.x, arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x,  arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_right_back = Vector3( arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	arg_ref_outputMeshData.eightCorner.down_left_back =  Vector3(-arg_size.x,-arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x,-arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_front =Vector3(arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_left_back =  Vector3(-arg_size.x,-arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x,-arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_right_front =Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
 	size_t verticalSegments = arg_tessellation;
 	size_t horizontalSegments = arg_tessellation * 2;
@@ -331,25 +340,25 @@ void ButiEngine::ButiRendering::MeshHelper::CreateSphere(Vector3 arg_size, const
 	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateSphereForParticle(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	if (arg_tessellation < 3) {
-		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData, true);
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData,arg_ref_eightCorner, true);
 		return;
 	}
 	arg_size = arg_size * 0.5f;
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z);
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z);
 
-	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z);
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z);
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z);
 
 	size_t verticalSegments = arg_tessellation;
 	size_t horizontalSegments = arg_tessellation * 2;
@@ -443,7 +452,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCylinderCap(const std::vector<
 	}
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	arg_size.y /= 2;
 	std::vector<std::uint32_t> vec_index;
@@ -484,25 +493,25 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCone(Vector3 arg_size, const s
 	arg_ref_outputMeshData.SetIndex(vec_index);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, const Vector3& arg_pointA, const Vector3& arg_pointB, const std::int32_t arg_tessellation, const bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, const Vector3& arg_pointA, const Vector3& arg_pointB, const std::int32_t arg_tessellation, const bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	if (arg_tessellation < 3) {
-		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData,true);
+		CreateCube(arg_size, arg_colors, arg_ref_outputMeshData,arg_ref_eightCorner,true);
 		return;
 	}
 	arg_size = arg_size * 0.5f;
 
 
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z)+arg_pointA;
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z) + arg_pointA;
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, -arg_size.z)+arg_pointA;
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, -arg_size.z) + arg_pointA;
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, arg_size.z) + arg_pointA;
 
-	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, -arg_size.z) + arg_pointB;
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, arg_size.z) + arg_pointB;
 
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
 	std::vector<std::uint32_t> indices;
@@ -591,7 +600,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, cons
 	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 arg_size, const const Vector3& offset, const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 arg_size, const const Vector3& offset, const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	ButiRendering::BoxSurface surface;
 	surface.up = arg_size.y * 0.5f+tilt;
@@ -609,15 +618,15 @@ void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 arg_size, 
 
 
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0)*0.5f;
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0)*0.5f;
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
 
-	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0, 0, -1.0f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
@@ -650,7 +659,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreatePlane(const Vector2 arg_size, 
 
 
 
-void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 arg_size, const const Vector3& offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 arg_size, const const Vector3& offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	ButiRendering::BoxSurface surface;
 	surface.up = arg_size.y * 0.5f + tilt;
@@ -668,15 +677,15 @@ void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 
 
 
 
-	arg_ref_outputMeshData.eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_left_back = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_left_front = Vector3(-arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_right_back = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.up_right_front = Vector3(arg_size.x, arg_size.y, 0) * 0.5f;
 
-	arg_ref_outputMeshData.eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_left_back = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_left_front = Vector3(-arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_right_back = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
+	arg_ref_eightCorner.down_right_front = Vector3(arg_size.x, -arg_size.y, 0) * 0.5f;
 
 	Vector3 normal = Vector3(0,0,-1.0f);
 	Vector3 tangent = normal != Vector3Const::YAxis ? tangent = normal.GetCross(Vector3Const::YAxis) : tangent = Vector3Const::XAxis;
@@ -714,7 +723,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateReversiblePlane(const Vector2 
 	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateHexergon(Vector2 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	arg_size.x *= 0.5f;
 	arg_size.y *= 0.5f;
@@ -767,11 +776,11 @@ void ButiEngine::ButiRendering::MeshHelper::VertexAttachColor(const std::vector<
 	return;
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float arg_radius, const std::uint32_t	arg_tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float arg_radius, const std::uint32_t	arg_tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	arg_ref_outputMeshData.Clear();
 	if (arg_tessellation < 3) {
-		CreateCube(Vector3(arg_radius, arg_radius, arg_radius), std::vector<Vector4>{}, arg_ref_outputMeshData, true);
+		CreateCube(Vector3(arg_radius, arg_radius, arg_radius), std::vector<Vector4>{}, arg_ref_outputMeshData,arg_ref_eightCorner, true);
 		return;
 	}
 	std::vector< Vertex::Vertex_UV_Normal_Tangent_Color> vertices;
@@ -837,7 +846,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCirclePolygon(const float arg_
 	arg_ref_outputMeshData.SetIndex(indices);
 }
 
-void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float arg_angle, const float arg_width, const float arg_height, const float arg_nearClip, const float arg_farClip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)
+void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float arg_angle, const float arg_width, const float arg_height, const float arg_nearClip, const float arg_farClip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner)
 {
 	arg_ref_outputMeshData.Clear();
 	std::vector<std::uint32_t> vec_index;
@@ -888,14 +897,14 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCameraFrustum(const float arg_
 	vec_index.push_back(4);
 	vec_index.push_back(3);
 	arg_ref_outputMeshData.SetIndex(vec_index);
-	arg_ref_outputMeshData.eightCorner.up_left_front = Vector3(leftup);
-	arg_ref_outputMeshData.eightCorner.up_right_front = Vector3(rightup);
-	arg_ref_outputMeshData.eightCorner.down_left_front = Vector3(leftbottom);
-	arg_ref_outputMeshData.eightCorner.down_right_front = Vector3(rightbottom);
-	arg_ref_outputMeshData.eightCorner.up_left_back  =	Vector3();
-	arg_ref_outputMeshData.eightCorner.up_right_back =	Vector3();
-	arg_ref_outputMeshData.eightCorner.down_left_back =Vector3();
-	arg_ref_outputMeshData.eightCorner.down_right_back=Vector3();
+	arg_ref_eightCorner.up_left_front = Vector3(leftup);
+	arg_ref_eightCorner.up_right_front = Vector3(rightup);
+	arg_ref_eightCorner.down_left_front = Vector3(leftbottom);
+	arg_ref_eightCorner.down_right_front = Vector3(rightbottom);
+	arg_ref_eightCorner.up_left_back  =	Vector3();
+	arg_ref_eightCorner.up_right_back =	Vector3();
+	arg_ref_eightCorner.down_left_back =Vector3();
+	arg_ref_eightCorner.down_right_back=Vector3();
 }
 
 void ButiEngine::ButiRendering::MeshHelper::CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData)

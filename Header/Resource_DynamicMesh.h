@@ -22,6 +22,16 @@ public:
 	BUTIRENDERING_API bool GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line);
 	BUTIRENDERING_API const std::string& GetTagName()const override;
 	BUTIRENDERING_API void SetTagName(const std::string& arg_tagName);
+
+	const BoxEightCorner& GetBoxEightCorner()const override {
+		return eightCorner;
+	}
+	void SetBoxSurfaces(const BoxSurface& arg_boxSurface)override {
+		eightCorner = BoxEightCorner(arg_boxSurface);
+	}
+	void SetBoxEightCorner(const BoxEightCorner& arg_boxcorner)override {
+		eightCorner = arg_boxcorner;
+	}
 protected:
 	std::uint32_t verticesCount;
 	std::uint32_t indexCount;
@@ -31,7 +41,7 @@ protected:
 	std::uint32_t vertexType;
 	Value_ptr<ButiRendering::MeshPrimitiveBase> vlp_meshPrimitive;
 	std::string tagName;
-
+	BoxEightCorner eightCorner;
 };
 }
 }

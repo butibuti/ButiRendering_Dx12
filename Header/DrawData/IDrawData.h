@@ -72,8 +72,16 @@ public:
 	Value_ptr< ObjectDrawData >vlp_drawInfo;
 	Value_ptr<IRenderer> vlp_renderer;
 	inline float GetMaxZ(const Matrix4x4& arg_viewMatrix) {
-		auto viewPos = transform.GetPosition_Transpose() * arg_viewMatrix;
-		return viewPos.z;
+		auto viewPos_dlb = vwp_mesh.lock()->GetBoxEightCorner().down_left_back * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_drb = vwp_mesh.lock()->GetBoxEightCorner().down_right_back * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_dlf = vwp_mesh.lock()->GetBoxEightCorner().down_left_front * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_drf = vwp_mesh.lock()->GetBoxEightCorner().down_right_front * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_ulb = vwp_mesh.lock()->GetBoxEightCorner().up_left_back * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_urb = vwp_mesh.lock()->GetBoxEightCorner().up_right_back * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_ulf = vwp_mesh.lock()->GetBoxEightCorner().up_left_front * (arg_viewMatrix*transform).Transpose();
+		auto viewPos_urf = vwp_mesh.lock()->GetBoxEightCorner().up_right_front * (arg_viewMatrix*transform).Transpose();
+		return max(max(max(viewPos_dlb.z, viewPos_drb.z), max(viewPos_dlf.z, viewPos_drf.z)),
+			max(max(viewPos_ulb.z, viewPos_urb.z), max(viewPos_ulf.z, viewPos_urf.z)));
 	}
 	inline Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer) {
 		vlp_drawInfo->vec_exCBuffer.push_back(arg_cbuffer);

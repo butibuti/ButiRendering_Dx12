@@ -28,6 +28,31 @@ class RenderingPathData;
 class IRenderTarget;
 class IDepthStencil;
 class IResource_Shader;
+
+struct BoxSurface {
+	float up, down, left, right, front, back;
+};
+struct BoxEightCorner {
+	BoxEightCorner() {}
+	BoxEightCorner(const BoxSurface& arg_boxSurface) {
+		up_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.front);
+		up_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.front);
+		up_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.back);
+		up_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.back);
+		down_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.front);
+		down_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.front);
+		down_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.back);
+		down_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.back);
+	}
+	Vector3 up_left_front;
+	Vector3 up_right_front;
+	Vector3 up_left_back;
+	Vector3 up_right_back;
+	Vector3 down_left_front;
+	Vector3 down_right_front;
+	Vector3 down_left_back;
+	Vector3 down_right_back;
+};
 /// <summary>
 /// 描画パスのインターフェース
 /// </summary>
@@ -250,6 +275,9 @@ public:
 	virtual bool GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line) = 0;
 	virtual const MeshPrimitiveBase* GetBackUpdata(std::uint32_t arg_vertexType)const = 0;
 	virtual const std::string& GetTagName()const = 0;
+	virtual const BoxEightCorner& GetBoxEightCorner()const = 0;
+	virtual void SetBoxSurfaces(const BoxSurface& arg_boxSurface) = 0;
+	virtual void SetBoxEightCorner(const BoxEightCorner& arg_boxcorner) = 0;
 };
 class IResource_Model :public IObject {
 public:
@@ -281,6 +309,7 @@ public:
 BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath);
 BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData,const BoxEightCorner & arg_boxEightCorner ,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);

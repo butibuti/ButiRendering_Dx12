@@ -11,34 +11,34 @@ public:
 	BUTIRENDERING_API static Vector3 GetCircleVector(std::int32_t arg_size, std::int32_t arg_tessellation);
 
 	//
-	BUTIRENDERING_API static void CreateTriangle(const Vector3& arg_point1, const Vector3& arg_point2, const Vector3& arg_point3, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData);
+	BUTIRENDERING_API static void CreateTriangle(const Vector3& arg_point1, const Vector3& arg_point2, const Vector3& arg_point3, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateSameTextureCube(Vector3 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData);
+	BUTIRENDERING_API static void CreateSameTextureCube(Vector3 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData,BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateCube(Vector3 arg_size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_outputMeshData, const bool arg_flat);
+	BUTIRENDERING_API static void CreateCube(Vector3 arg_size, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner, const bool arg_flat);
 
-	BUTIRENDERING_API static void CreateSphere(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateSphere(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateSphereForParticle(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateSphereForParticle(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
 	BUTIRENDERING_API static void CreateCylinderCap(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& ref_vertices, std::vector<std::uint32_t>& ref_indices, Vector3 arg_size, const std::int32_t arg_tessellation, const bool arg_isTop);
 
-	BUTIRENDERING_API static void CreateCone(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateCone(Vector3 arg_size, const std::int32_t arg_tessellation, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateCapsule(Vector3 arg_size, const Vector3& arg_pointA, const Vector3& arg_pointB, const std::int32_t arg_tessellation, const bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateCapsule(Vector3 arg_size, const Vector3& arg_pointA, const Vector3& arg_pointB, const std::int32_t arg_tessellation, const bool isLie, const std::vector<Color>& arg_colors, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API  static void CreatePlane(const Vector2 arg_size, const const Vector3& offset, const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
-	BUTIRENDERING_API  static void CreateReversiblePlane(const Vector2 arg_size, const const Vector3& offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API  static void CreatePlane(const Vector2 arg_size, const const Vector3& offset, const float tilt, const float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
+	BUTIRENDERING_API  static void CreateReversiblePlane(const Vector2 arg_size, const const Vector3& offset, float tilt, float UVMax, const std::uint32_t arg_verticalSeparate, const std::uint32_t arg_horizontalSeparate, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateHexergon(Vector2 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateHexergon(Vector2 arg_size, const std::vector<Color>& arg_colors, const bool arg_flat, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
 	BUTIRENDERING_API static void VertexFlatConverter(std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& outputVertecies);
 
 	BUTIRENDERING_API static void VertexAttachColor(const std::vector<Color>& arg_colors, std::vector<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_vertecies);
 
-	BUTIRENDERING_API static void CreateCirclePolygon(const float arg_radius, const std::uint32_t	arg_tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateCirclePolygon(const float arg_radius, const std::uint32_t	arg_tessellation, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
-	BUTIRENDERING_API static void CreateCameraFrustum(const float arg_angle, const float arg_width, const float arg_height, const float arg_nearClip, const float arg_farClip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
+	BUTIRENDERING_API static void CreateCameraFrustum(const float arg_angle, const float arg_width, const float arg_height, const float arg_nearClip, const float arg_farClip, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData, BoxEightCorner& arg_ref_eightCorner);
 
 	BUTIRENDERING_API static void CreateImmediateMeshForParticle(const std::uint32_t arg_particleCount, ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal_Tangent_Color>& arg_ref_outputMeshData);
 
@@ -129,7 +129,6 @@ public:
 			}
 			arg_ref_outputMeshData.vertices.push_back(outVertex);
 		}
-		arg_ref_outputMeshData.eightCorner = inputMeshData.eightCorner;
 	}
 
 private:

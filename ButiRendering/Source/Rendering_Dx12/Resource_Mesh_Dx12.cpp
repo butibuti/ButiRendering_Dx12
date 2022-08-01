@@ -201,3 +201,10 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Mesh> ButiEngine::But
 	return output;
 }
 
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Mesh>  ButiEngine::ButiRendering::CreateMesh(const std::string& arg_meshName, const List<ButiEngine::Value_ptr<ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, const BoxEightCorner& arg_boxEightCorner, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+{
+	auto mesh= CreateMesh(arg_meshName, arg_list_vlp_inputMeshData, arg_vwp_graphicDevice);
+	mesh->SetBoxEightCorner(arg_boxEightCorner);
+	return mesh;
+}
+

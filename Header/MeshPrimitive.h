@@ -245,23 +245,8 @@ enum class InterleavedVertexGroup
 };
 
 
-struct BoxSurface {
-	float up, down, left, right, front, back;
-};
-struct BoxEightCorner {
-	BoxEightCorner() {}
-	Vector3 up_left_front;
-	Vector3 up_right_front;
-	Vector3 up_left_back;
-	Vector3 up_right_back;
-	Vector3 down_left_front;
-	Vector3 down_right_front;
-	Vector3 down_left_back;
-	Vector3 down_right_back;
-};
 class MeshPrimitiveBase:public enable_value_from_this<MeshPrimitiveBase> {
 public:
-	BoxEightCorner eightCorner = BoxEightCorner();
 	MeshPrimitiveBase() {}
 	virtual ~MeshPrimitiveBase() {
 	}
@@ -276,16 +261,6 @@ public:
 	virtual void SetIndex(const std::vector<std::uint32_t>& arg_vec_index) = 0;
 	virtual std::vector<std::uint32_t>& GetIndex() = 0;
 	virtual Value_ptr< std::vector<std::uint32_t>> GetIndexValuePtr()const = 0;
-	inline void SetBoxSurfaces(const BoxSurface& arg_boxSurface) {
-		eightCorner.up_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.front);
-		eightCorner.up_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.front);
-		eightCorner.up_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.back);
-		eightCorner.up_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.back);
-		eightCorner.down_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.front);
-		eightCorner.down_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.front);
-		eightCorner.down_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.back);
-		eightCorner.down_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.back);
-	}
 	template<typename T>
 	inline Value_ptr<T> GetThis() {
 		auto Ptr = dynamic_value_ptr_cast<T>(value_from_this ());
@@ -297,9 +272,6 @@ public:
 		}
 		return nullptr;
 
-	}
-	inline const BoxEightCorner& GetBoxEightCorner()const {
-		return eightCorner;
 	}
 };
 template<typename T>
