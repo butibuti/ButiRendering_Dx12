@@ -9,5 +9,7 @@ float4 PSMain(Pixel_UV_Normal pixel) : SV_TARGET
 
 	Light.rgb += specular.rgb * specular.a;
 	Light.a = diffuse.a;
-	return  Light* color;//,0.5f);
+	Light *= color;
+	clip(Light.a < 0.1f ? -1 : 1);
+	return  Light;
 }

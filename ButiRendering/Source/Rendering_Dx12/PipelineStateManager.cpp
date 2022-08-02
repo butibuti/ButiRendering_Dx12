@@ -30,7 +30,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPipelineState> ButiEngine::But
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IPipelineState> ButiEngine::ButiRendering::PipelineStateManager::GetPipelineState(const DrawSettings& arg_drawSettings, Value_ptr<IRootSignature> arg_vlp_rootSignature, Value_weak_ptr<IResource_Shader> arg_vwp_shader)
 {
-	auto rasterStr = std::to_string(static_cast<std::int32_t>(arg_drawSettings.cullMode)) + std::to_string(static_cast<std::int32_t>(arg_drawSettings.isFill));
+	auto rasterStr = std::to_string(static_cast<std::int32_t>(arg_drawSettings.cullMode)) + std::to_string(static_cast<std::int32_t>(arg_drawSettings.isFill)) + std::to_string(arg_drawSettings.isDepth);
 	auto rootStr = std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().Flags) + std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().NumParameters) + std::to_string(arg_vlp_rootSignature->GetThis<RootSignature_Dx12>()->GetRootSignatureDesc().NumStaticSamplers);
 	auto blendStr = std::to_string(static_cast<std::int32_t>(arg_drawSettings.blendMode));
 	std::string key = arg_vwp_shader.lock()->GetShaderName() + "/" + rasterStr + "/" + rootStr + "/" + blendStr;
