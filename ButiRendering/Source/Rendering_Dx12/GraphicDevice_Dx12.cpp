@@ -516,6 +516,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetPipeLine(const Microsoft:
 	}
 	m_uqp_impl->currentPipelineState = arg_pipelineState.Get();
 	CommandListHelper::BundleSetPipeLine(arg_pipelineState, GetCommandList());
+	ResetDrawStatus();
 }
 ButiEngine::Value_weak_ptr< ButiEngine::ButiRendering::DescriptorHeapManager> ButiEngine::ButiRendering::GraphicDevice_Dx12::GetDescriptorHeapManager()
 {
@@ -566,9 +567,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::UnSetCommandList()
 {
 	m_uqp_impl->p_currentCommandList = nullptr;
 	m_uqp_impl->currentPipelineState = nullptr;
-	m_vlp_currentMaterial = nullptr;
-	m_vlp_currentMesh = nullptr;
-	m_list_currentTexture.Clear();
+	ResetDrawStatus();
 }
 
 ID3D12Fence& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFence()
@@ -692,13 +691,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList(ID3D12Graphic
 		throw ButiException(L"commandList is already seted.", L"if (!currentCommandList)", L"ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList");
 	}
 	m_uqp_impl->p_currentCommandList = arg_currentCommandList;
-	m_current_topologyType = TopologyType::none;
-	m_vlp_currentMesh = nullptr;
-	m_vlp_currentMaterial = nullptr;
-	m_map_currentConstancBuffer.clear();
-	m_map_currentSamplerState.clear();
-	m_list_currentTexture.Clear();
-	m_currentMeshVertexType =  -1 ;
+	ResetDrawStatus();
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetDefaultRenderTarget()
@@ -742,12 +735,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::InsertCommandList()
 	}
 	m_uqp_impl->vec_drawCommandLists.push_back(m_uqp_impl->p_currentCommandList);
 	m_uqp_impl->p_currentCommandList = nullptr;
-
-	m_vlp_currentMesh = nullptr;
-	m_vlp_currentMaterial = nullptr;
-	m_map_currentConstancBuffer.clear();
-	m_map_currentSamplerState.clear();
-	m_list_currentTexture.Clear();
+	ResetDrawStatus();
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResourceUpload()
@@ -849,6 +837,17 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetSamplerState(SamplerState
 		m_map_currentSamplerState.emplace(arg_index, arg_samplerState);
 	}
 	GetCommandList().SetGraphicsRootDescriptorTable(arg_index, GetDescriptorHeapManager().lock()->GetSamplerHandle(static_cast<std::int32_t>(arg_samplerState)).GPUHandle);
+}
+
+void ButiEngine::ButiRendering::GraphicDevice_Dx12::ResetDrawStatus()
+{
+	m_current_topologyType = TopologyType::none;
+	m_vlp_currentMesh = nullptr;
+	m_vlp_currentMaterial = nullptr;
+	m_map_currentConstancBuffer.clear();
+	m_map_currentSamplerState.clear();
+	m_list_currentTexture.Clear();
+	m_currentMeshVertexType = -1;
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::GraphicDevice_Dx12> ButiEngine::ButiRendering::CreateGraphicDeviceDx12(const bool arg_isWindowApp)

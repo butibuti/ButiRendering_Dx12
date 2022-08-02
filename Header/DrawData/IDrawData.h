@@ -80,8 +80,10 @@ public:
 		auto viewPos_urb = vwp_mesh.lock()->GetBoxEightCorner().up_right_back * (arg_viewMatrix*transform).Transpose();
 		auto viewPos_ulf = vwp_mesh.lock()->GetBoxEightCorner().up_left_front * (arg_viewMatrix*transform).Transpose();
 		auto viewPos_urf = vwp_mesh.lock()->GetBoxEightCorner().up_right_front * (arg_viewMatrix*transform).Transpose();
-		return max(max(max(viewPos_dlb.z, viewPos_drb.z), max(viewPos_dlf.z, viewPos_drf.z)),
-			max(max(viewPos_ulb.z, viewPos_urb.z), max(viewPos_ulf.z, viewPos_urf.z)));
+		return max(max(max(viewPos_dlb.z/ viewPos_dlb.w, viewPos_drb.z/ viewPos_drb.w), 
+			max(viewPos_dlf.z/ viewPos_dlf.w, viewPos_drf.z/ viewPos_drf.w)),
+			max(max(viewPos_ulb.z/ viewPos_ulb.w, viewPos_urb.z/ viewPos_urb.w), 
+			max(viewPos_ulf.z/ viewPos_ulf.w, viewPos_urf.z/ viewPos_urf.w)));
 	}
 	inline Value_ptr<ICBuffer> AddICBuffer(Value_ptr<ICBuffer> arg_cbuffer) {
 		vlp_drawInfo->vec_exCBuffer.push_back(arg_cbuffer);

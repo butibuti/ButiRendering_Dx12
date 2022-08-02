@@ -100,6 +100,7 @@ public:
 	BUTIRENDERING_API void ResetPipeLine()override;
 	void SetSamplerState(SamplerState arg_samplerState, const std::int32_t arg_index)override;
 protected:
+	void ResetDrawStatus();
 	class Impl;
 	std::unique_ptr<Impl> m_uqp_impl;
 };

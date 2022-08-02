@@ -35,23 +35,23 @@ struct BoxSurface {
 struct BoxEightCorner {
 	BoxEightCorner() {}
 	BoxEightCorner(const BoxSurface& arg_boxSurface) {
-		up_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.front);
-		up_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.front);
-		up_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.back);
-		up_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.back);
-		down_left_front = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.front);
-		down_right_front = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.front);
-		down_left_back = Vector3(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.back);
-		down_right_back = Vector3(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.back);
+		up_left_front = Vector4(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.front,1.0f);
+		up_right_front = Vector4(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.front, 1.0f);
+		up_left_back = Vector4(arg_boxSurface.left, arg_boxSurface.up, arg_boxSurface.back, 1.0f);
+		up_right_back = Vector4(arg_boxSurface.right, arg_boxSurface.up, arg_boxSurface.back, 1.0f);
+		down_left_front = Vector4(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.front, 1.0f);
+		down_right_front = Vector4(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.front, 1.0f);
+		down_left_back = Vector4(arg_boxSurface.left, arg_boxSurface.down, arg_boxSurface.back, 1.0f);
+		down_right_back = Vector4(arg_boxSurface.right, arg_boxSurface.down, arg_boxSurface.back, 1.0f);
 	}
-	Vector3 up_left_front;
-	Vector3 up_right_front;
-	Vector3 up_left_back;
-	Vector3 up_right_back;
-	Vector3 down_left_front;
-	Vector3 down_right_front;
-	Vector3 down_left_back;
-	Vector3 down_right_back;
+	Vector4 up_left_front=Vector4(0,0,0,1.0f);
+	Vector4 up_right_front = Vector4(0, 0, 0, 1.0f);
+	Vector4 up_left_back = Vector4(0, 0, 0, 1.0f);
+	Vector4 up_right_back = Vector4(0, 0, 0, 1.0f);
+	Vector4 down_left_front = Vector4(0, 0, 0, 1.0f);
+	Vector4 down_right_front = Vector4(0, 0, 0, 1.0f);
+	Vector4 down_left_back = Vector4(0, 0, 0, 1.0f);
+	Vector4 down_right_back = Vector4(0, 0, 0, 1.0f);
 };
 /// <summary>
 /// 描画パスのインターフェース
