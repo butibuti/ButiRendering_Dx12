@@ -135,7 +135,6 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 		std::lock_guard lock(m_mtx_memory);
 		if (vec_space.size()) {
-
 			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end; itr++) {
 				if (itr->size >= numRequired) {
 					isUseSpace = true;
@@ -144,7 +143,8 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 					itr->index + numRequired;
 					itr->size -= numRequired;
 					if (itr->size == 0) {
-						vec_space.erase(itr);
+						itr=vec_space.erase(itr);
+						end = vec_space.end();
 					}
 
 					break;
