@@ -44,11 +44,16 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 
 		switch (arg_blend) {
 		case ButiRendering::BlendMode::AlphaBlend:
-			defaultRenderTargetBlendDesc = { TRUE, FALSE,
-			D3D12_BLEND_SRC_ALPHA, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
-			D3D12_BLEND_ONE, D3D12_BLEND_INV_SRC_ALPHA, D3D12_BLEND_OP_ADD,
-			D3D12_LOGIC_OP_AND_REVERSE,
-			D3D12_COLOR_WRITE_ENABLE_ALL, };
+			defaultRenderTargetBlendDesc.BlendEnable = TRUE;
+			defaultRenderTargetBlendDesc.LogicOpEnable = FALSE;
+			defaultRenderTargetBlendDesc.SrcBlend= D3D12_BLEND_SRC_ALPHA;
+			defaultRenderTargetBlendDesc.DestBlend= D3D12_BLEND_INV_SRC_ALPHA;
+			defaultRenderTargetBlendDesc.BlendOp= D3D12_BLEND_OP_ADD;
+			defaultRenderTargetBlendDesc.SrcBlendAlpha= D3D12_BLEND_SRC_ALPHA;
+			defaultRenderTargetBlendDesc.DestBlendAlpha= D3D12_BLEND_INV_SRC_ALPHA;
+			defaultRenderTargetBlendDesc.BlendOpAlpha= D3D12_BLEND_OP_ADD;
+			defaultRenderTargetBlendDesc.LogicOp= D3D12_LOGIC_OP_AND_REVERSE;
+			defaultRenderTargetBlendDesc.RenderTargetWriteMask= D3D12_COLOR_WRITE_ENABLE_ALL;
 			break;
 		case ButiRendering::BlendMode::Addition:
 			defaultRenderTargetBlendDesc = { TRUE, FALSE,

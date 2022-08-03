@@ -68,6 +68,7 @@ private:
 	std::vector<BackUpConstantBufferData*> vec_cbBackUpData;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 	List<Value_ptr<IDescriptorHeapUpdateListner>> m_list_descriptorHeapUpdateListner;
+	std::mutex m_mtx_memory;
 };
 
 }

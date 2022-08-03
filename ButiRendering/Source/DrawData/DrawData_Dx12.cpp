@@ -64,10 +64,14 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 	drawData.SetCbuffer( cbuffer_Dx12);
 
 	List<ConstantBufferReflection> list_cbRef;
+	bool isUseRenderState = false;
 	for (auto material : drawData.GetMaterial()) {
 		list_cbRef.Add_noDuplicate(material.lock()->GetShader()->GetConstantBufferReflectionDatas());
 	}
 	for (auto cbRef : list_cbRef) {
+		if (cbRef.m_bufferName == "RendererState") {
+			isUseRenderState = true;
+		}
 		if (GetICBuffer(cbRef.m_bufferName)) {
 			continue;
 		}
@@ -88,6 +92,10 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 	for (auto itr : drawData.vlp_drawInfo->vec_exCBuffer) {
 		itr->SetGraphicDevice(vwp_graphicDevice.lock());
 		itr->CreateBuffer();
+	}
+	if (isUseRenderState) {
+		drawData.RemoveCBuffer<RendererState>();
+		drawData.vlp_drawInfo->vec_exCBuffer.push_back(IRenderer::GetRendererStateCBuffer());
 	}
 	switch (drawData.vlp_drawInfo->billboardMode)
 	{

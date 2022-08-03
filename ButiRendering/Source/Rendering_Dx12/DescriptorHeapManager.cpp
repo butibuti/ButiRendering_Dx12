@@ -129,23 +129,27 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::DescriptorHeapManager::GetCurrentHandle(std::uint32_t& ref_top, const std::int32_t arg_size)
 {
-	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100,top;
+	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top;
 	bool isUseSpace = false;
-	if (vec_space.size()) {
-		
-		for (auto itr = vec_space.begin(),end=vec_space.end(); itr != end; itr++) {
-			if (itr->size >= numRequired) {
-				isUseSpace = true;
+	{
 
-				top = itr->index;
-				itr->index + numRequired;
-				itr->size -= numRequired;
-				if (itr->size == 0) {
-					vec_space.erase(itr);
+		std::lock_guard lock(m_mtx_memory);
+		if (vec_space.size()) {
+
+			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end; itr++) {
+				if (itr->size >= numRequired) {
+					isUseSpace = true;
+
+					top = itr->index;
+					itr->index + numRequired;
+					itr->size -= numRequired;
+					if (itr->size == 0) {
+						vec_space.erase(itr);
+					}
+
+					break;
+
 				}
-
-				break;
-
 			}
 		}
 	}
@@ -189,10 +193,9 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::Release(const BlankSpace&
 void ButiEngine::ButiRendering::DescriptorHeapManager::Release()
 {
 	m_list_descriptorHeapUpdateListner.Clear();
-	for (auto itr = vec_cbBackUpData.begin(), endItr = vec_cbBackUpData.end(); itr != endItr; itr++) {
-		delete	*itr;
+	for (auto itr : vec_cbBackUpData) {
+		delete	itr;
 	}
-
 }
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::RegistUpdateListner(Value_ptr<IDescriptorHeapUpdateListner> arg_listner)
@@ -203,36 +206,36 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::RegistUpdateListner(Value
 void ButiEngine::ButiRendering::DescriptorHeapManager::ReCreateConstantBuffer()
 {
 	std::reverse(vec_cbBackUpData.begin(), vec_cbBackUpData.end());
-	auto endItr = vec_cbBackUpData.end();
-	for (auto itr = vec_cbBackUpData.begin();itr!= endItr;itr++ ) {
-		if (!(*itr)) {
+	for (auto itr : vec_cbBackUpData) {
+		if (!itr) {
 			continue;
 		}
 
 		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
 
 
-		cbvDesc.BufferLocation = constantBufferUploadHeap->GetGPUVirtualAddress() + ((UINT64)(*itr)->top * 0x100);
+		cbvDesc.BufferLocation = constantBufferUploadHeap->GetGPUVirtualAddress() + ((UINT64)itr->top * 0x100);
 
-		cbvDesc.SizeInBytes = (*itr)->sizeAligned;
+		cbvDesc.SizeInBytes = itr->sizeAligned;
 
 
 		assert((cbvDesc.SizeInBytes & 0xff) == 0);
 
 		vwp_graphicDevice.lock()
-			->GetDevice().CreateConstantBufferView(&cbvDesc, (*itr)->cpuHandle);
+			->GetDevice().CreateConstantBufferView(&cbvDesc, itr->cpuHandle);
 	}
 	std::reverse(vec_cbBackUpData.begin(), vec_cbBackUpData.end());
 }
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::AddHeapRange()
 {
+	std::lock_guard lock(m_mtx_memory);
 	std::cout << "AddHeapRange" << std::endl;
 	maxCbv *= 2;
 	if (maxCbv > DescriptorHeapSize)
 		throw ButiException(L"", L"", L"");
 
-	UINT64 expandSize = ((UINT64)maxCbv) * 0x100;
+	std::uint64_t expandSize = static_cast<std::uint64_t>(maxCbv) * 0x100;
 
 	vec_cbBackUpData.resize(maxCbv);
 	

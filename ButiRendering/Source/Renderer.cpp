@@ -14,6 +14,7 @@ struct DrawObjectRegistCommand {
 	bool isRegist = false;
 };
 
+Value_ptr<CBuffer<RendererState>> g_CBuffer_Renderer;
 class Renderer :public IRenderer
 {
 public:
@@ -48,7 +49,6 @@ private:
 
 	Value_weak_ptr<GraphicDevice> m_vwp_graphicDevice;
 	List<Value_ptr< IDrawLayer>> m_list_drawLayers;
-	Value_ptr<CBuffer<RendererState>> m_CBuffer_Renderer;
 	List<std::function<void()>> m_list_drawFunctions;
 };
 class DrawLayer_Shadow;
@@ -115,6 +115,11 @@ private:
 	bool m_isShadowDrawed = false;
 };
 
+Value_ptr<CBuffer<RendererState>> IRenderer::GetRendererStateCBuffer()
+{
+	return g_CBuffer_Renderer;
+}
+
 }
 }
 
@@ -132,11 +137,11 @@ ButiEngine::ButiRendering::Renderer::Renderer(Value_weak_ptr<GraphicDevice> arg_
 }
 void ButiEngine::ButiRendering::Renderer::Initialize()
 {	
-	m_CBuffer_Renderer = CreateCBuffer<RendererState>();
-	m_CBuffer_Renderer->Get().fogColor = Vector4(100.0f/256.0f,149.0f/256.0f , 247.0f/256.0f, 0.0f);
-	m_CBuffer_Renderer->Get().fogCoord = ComputeFogCoord(50,100.0f);
-	m_CBuffer_Renderer->SetGraphicDevice(m_vwp_graphicDevice.lock());
-	m_CBuffer_Renderer->CreateBuffer();
+	g_CBuffer_Renderer = CreateCBuffer<RendererState>();
+	g_CBuffer_Renderer->Get().fogColor = Vector4(100.0f/256.0f,149.0f/256.0f , 247.0f/256.0f, 0.0f);
+	g_CBuffer_Renderer->Get().fogCoord = ComputeFogCoord(50,100.0f);
+	g_CBuffer_Renderer->SetGraphicDevice(m_vwp_graphicDevice.lock());
+	g_CBuffer_Renderer->CreateBuffer();
 
 }
 void ButiEngine::ButiRendering::Renderer::Update()
@@ -165,7 +170,7 @@ void ButiEngine::ButiRendering::Renderer::Rendering(const std::uint32_t arg_laye
 	}
 #endif // DEBUG
 
-	m_CBuffer_Renderer->Update();
+	g_CBuffer_Renderer->Update();
 
 	m_list_drawLayers[arg_layer]->Rendering();
 	
@@ -175,13 +180,13 @@ void ButiEngine::ButiRendering::Renderer::Rendering(const std::uint32_t arg_laye
 void ButiEngine::ButiRendering::Renderer::ShadowRendering(const std::uint32_t arg_layer)
 {
 	if (m_list_drawLayers.at(arg_layer)->GetShadowCamera()) {
-		m_CBuffer_Renderer->Get().shadowVP = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewProjectionMatrix();
-		m_CBuffer_Renderer->Get().shadowV = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewMatrix();
-		m_CBuffer_Renderer->Get().shadowCameraPos = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetPosition();
+		g_CBuffer_Renderer->Get().shadowVP = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewProjectionMatrix();
+		g_CBuffer_Renderer->Get().shadowV = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetViewMatrix();
+		g_CBuffer_Renderer->Get().shadowCameraPos = m_list_drawLayers.at(arg_layer)->GetShadowCamera()->GetPosition();
 	}
 
 
-	m_CBuffer_Renderer->Update();
+	g_CBuffer_Renderer->Update();
 	m_list_drawLayers[arg_layer]->ShadowRendering();
 }
 
@@ -284,19 +289,19 @@ void ButiEngine::ButiRendering::Renderer::Release()
 
 void ButiEngine::ButiRendering::Renderer::ReleaseRendererCBuffer()
 {
-	m_CBuffer_Renderer = nullptr;
+	g_CBuffer_Renderer = nullptr;
 }
 
 void ButiEngine::ButiRendering::Renderer::UpdateRendererCBuffer(const RendererState &arg_param)
 {
-	m_CBuffer_Renderer->Get().fogColor = arg_param.fogColor;
-	m_CBuffer_Renderer->Get().fogCoord = arg_param.fogCoord;
+	g_CBuffer_Renderer->Get().fogColor = arg_param.fogColor;
+	g_CBuffer_Renderer->Get().fogCoord = arg_param.fogCoord;
 
 }
 
 ButiEngine::Value_ptr< ButiEngine::ButiRendering::CBuffer< ButiEngine::ButiRendering::RendererState>> ButiEngine::ButiRendering::Renderer::GetRendererCBuffer()
 {
-	return m_CBuffer_Renderer;
+	return g_CBuffer_Renderer;
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::GraphicDevice> ButiEngine::ButiRendering::Renderer::GetGraphicDevice() const

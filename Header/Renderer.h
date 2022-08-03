@@ -116,6 +116,7 @@ public:
 	virtual Value_ptr<GraphicDevice> GetGraphicDevice() const= 0;
 	virtual void PushDrawFunction(std::function<void()> arg_drawFunction) = 0;
 	virtual void PopDrawFunction() = 0;
+	static Value_ptr<CBuffer<RendererState>> GetRendererStateCBuffer();
 };
 
 /// <summary>

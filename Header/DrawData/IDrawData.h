@@ -91,9 +91,9 @@ public:
 	}
 	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const {
 
-		for (auto itr = vlp_drawInfo->vec_exCBuffer.begin(); itr != vlp_drawInfo->vec_exCBuffer.end(); itr++) {
-			if ((*itr)->GetBufferName() == arg_bufferName) {
-				return *itr;
+		for (auto itr : vlp_drawInfo->vec_exCBuffer) {
+			if ((itr)->GetBufferName() == arg_bufferName) {
+				return itr;
 			}
 		}
 
@@ -102,13 +102,24 @@ public:
 
 	template <class T>
 	inline Value_ptr<CBuffer<T>> GetCBuffer()const {
-
 		auto out = GetICBuffer(T::GetConstantBufferName());
 		if (out && out->IsThis<CBuffer<T>>()) {
 			return out->GetThis<CBuffer<T>>();
 		}
 
 		return nullptr;
+	}
+	inline void RemoveCBuffer(const std::string& arg_bufferName) {
+		for (auto itr = vlp_drawInfo->vec_exCBuffer.begin(); itr != vlp_drawInfo->vec_exCBuffer.end(); itr++) {
+			if ((*itr)->GetBufferName() == arg_bufferName) {
+				vlp_drawInfo->vec_exCBuffer.erase(itr);
+				return;
+			}
+		}
+	}
+	template <class T>
+	inline void RemoveCBuffer(){
+		RemoveCBuffer(T::GetConstantBufferName());
 	}
 	Value_ptr < CBuffer<Matrices>>& GetCBuffer() { return cbuffer; }
 	void SetCbuffer(const Value_ptr < CBuffer<Matrices>>& arg_cBuffer) { cbuffer = arg_cBuffer; }
