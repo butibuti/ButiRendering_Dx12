@@ -180,8 +180,6 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::CopyForOutpu
 		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
 		currentState = D3D12_RESOURCE_STATE_COPY_SOURCE;
 
-		auto uploadTrans = CD3DX12_RESOURCE_BARRIER::Transition(resourceUploadHeap[currentWritingOutputBuffer].Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_DEST);
-		vwp_graphicDevice.lock()->GetCommandList().ResourceBarrier(1, &trans);
 	}
 
 	vwp_graphicDevice.lock()->GetCommandList().CopyTextureRegion(&destLocation[currentWritingOutputBuffer], 0, 0, 0, &srcLocation, nullptr);
@@ -210,14 +208,10 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::Attach(std::
 
 void ButiEngine::ButiRendering::Resource_Texture_Dx12_RenderTarget::ToPNG(const std::string& arg_textureFilePath)
 {
-
-	if (!resourceUploadHeap[0]) {
-		return;
-	}
 	outputFileName = arg_textureFilePath;
 	isFileOutput = true;
 	resourceUploadHeap[0] = nullptr;
-	//vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::PNG, outputFileName);
+	vwp_graphicDevice.lock()->AddOutputResource(GetThis<GPUResource>().get(), FileFormat::PNG, outputFileName);
 
 	
 }

@@ -69,7 +69,8 @@ public:
 	}
 	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) { m_p_updater->SetGraphicDevice(arg_graphicDevice); }
 	void SetValueControlFunction(std::function<bool(T&)> arg_func_control) { m_func_control = arg_func_control; }
-	bool OnControl() override{return m_func_control(Get()); }
+	bool OnControl() override{
+		return m_func_control? m_func_control(Get()):false; }
 	const std::string& GetBufferName()const {
 		return T::GetConstantBufferName();
 	}

@@ -604,8 +604,8 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Present()
 	m_uqp_impl->currentPipelineState = nullptr;
 	auto hr = m_uqp_impl->cmp_presentCommandList->Reset(m_uqp_impl->cmp_commandAllocator[GetFrameIndex()].Get(), nullptr);
 	SetCommandList(m_uqp_impl->cmp_presentCommandList.Get());
-	for (auto itr = m_uqp_impl->vec_outputInfo.begin(), end = m_uqp_impl->vec_outputInfo.end(); itr != end; itr++) {
-		itr->p_outputResource->CopyForOutput();
+	for (auto itr : m_uqp_impl->vec_outputInfo) {
+		itr.p_outputResource->CopyForOutput();
 	}
 	hr = m_uqp_impl->cmp_presentCommandList->Close();
 	InsertCommandList();
