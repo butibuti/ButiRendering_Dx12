@@ -85,6 +85,7 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 	auto handle = GetCurrentHandle(top, sizeAligned);
 
+	std::lock_guard lock(m_mtx_memory);
 
 	memcpy(mappedConstantBuffer + top, arg_p_value, arg_size);
 
@@ -208,7 +209,6 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::RegistUpdateListner(Value
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::ReCreateConstantBuffer()
 {
-	std::lock_guard lock(m_mtx_memory);
 	std::reverse(vec_cbBackUpData.begin(), vec_cbBackUpData.end());
 	for (auto itr : vec_cbBackUpData) {
 		if (!itr) {
