@@ -129,13 +129,12 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::DescriptorHeapManager::GetCurrentHandle(std::uint32_t& ref_top, const std::int32_t arg_size)
 {
+	std::lock_guard lock(m_mtx_memory);
 	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top;
 	bool isUseSpace = false;
 	{
-
-		std::lock_guard lock(m_mtx_memory);
 		if (vec_space.size()) {
-			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end; itr++) {
+			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
 				if (itr->size >= numRequired) {
 					isUseSpace = true;
 
@@ -145,10 +144,14 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 					if (itr->size == 0) {
 						itr=vec_space.erase(itr);
 						end = vec_space.end();
+						break;
 					}
-
-					break;
-
+					else {
+						itr++;
+					}
+				}
+				else {
+					itr++;
 				}
 			}
 		}
@@ -205,6 +208,7 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::RegistUpdateListner(Value
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::ReCreateConstantBuffer()
 {
+	std::lock_guard lock(m_mtx_memory);
 	std::reverse(vec_cbBackUpData.begin(), vec_cbBackUpData.end());
 	for (auto itr : vec_cbBackUpData) {
 		if (!itr) {
