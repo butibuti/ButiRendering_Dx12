@@ -233,7 +233,6 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::ReCreateConstantBuffer()
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::AddHeapRange()
 {
-	std::lock_guard lock(m_mtx_memory);
 	std::cout << "AddHeapRange" << std::endl;
 	maxCbv *= 2;
 	if (maxCbv > DescriptorHeapSize)
