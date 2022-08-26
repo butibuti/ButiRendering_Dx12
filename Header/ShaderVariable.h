@@ -70,7 +70,16 @@ struct ObjectInformation {
 	~ObjectInformation() {
 
 	}
-
+	void SetLightDir(const Vector4& arg_lightDir) { lightDir = arg_lightDir; }
+	void SetColor(const Vector4& arg_color) { color = arg_color; }
+	void SetExInfo(const Vector4& arg_exInfo) { ExInfo = arg_exInfo; }
+	void SetTiling(const Vector2& arg_tiling) { Tiling = arg_tiling; }
+	void SetOffSet(const Vector2& arg_offset) { OffSet= arg_offset; }
+	Vector4 GetLightDir()const { return lightDir; }
+	Vector4 GetColor()const { return color; }
+	Vector4 GetExInfo()const { return ExInfo; }
+	Vector2 GetTiling()const { return Tiling; }
+	Vector2 GetOffSet()const { return OffSet; }
 	template<class Archive>
 	void serialize(Archive& archive)
 	{

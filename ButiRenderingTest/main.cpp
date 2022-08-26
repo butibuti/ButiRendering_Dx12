@@ -43,7 +43,8 @@ std::int32_t main() {
 			auto cubePrim_normal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>>();
 			auto cubePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 
-			ButiRendering::MeshHelper::CreateCube(Vector3(1, 1, 1), std::vector<Vector4>(), *cubePrim, true);
+			ButiRendering::BoxEightCorner boxEightCorner;
+			ButiRendering::MeshHelper::CreateCube(Vector3(1, 1, 1), std::vector<Vector4>(), *cubePrim, boxEightCorner,true);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uvNormal);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_normal);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uv);
@@ -56,7 +57,8 @@ std::int32_t main() {
 			auto spherePrim_normal = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>>();
 			auto spherePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 
-			ButiRendering::MeshHelper::CreateSphere(Vector3(1, 1, 1),24,std::vector<Vector4>(),*spherePrim);
+			ButiRendering::BoxEightCorner boxEightCorner;
+			ButiRendering::MeshHelper::CreateSphere(Vector3(1, 1, 1),24,std::vector<Vector4>(),*spherePrim,boxEightCorner);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uvNormal);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_normal);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uv);
@@ -66,9 +68,9 @@ std::int32_t main() {
 			ButiRendering::DefaultPixelShader::CreateOnlyMaterial(vlp_graphicDevice), nullptr, "OnlyColor");
 		vlp_shader_texture = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUV(vlp_graphicDevice),
 			ButiRendering::DefaultPixelShader::CreateUV(vlp_graphicDevice), nullptr, "TextureMap");
-		vlp_material_onlyColor = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), ButiRendering::DrawSettings(), vlp_graphicDevice);
-		list_vlp_texture.Add(ButiRendering::CreateTextureFromPNG("Resource/ngineLogo.png", vlp_graphicDevice));
-		vlp_material_textureMap = ButiRendering::CreateMaterial(ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, ButiRendering::DrawSettings(),vlp_graphicDevice);
+		vlp_material_onlyColor = ButiRendering::CreateMaterial("", ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), ButiRendering::DrawSettings(), vlp_graphicDevice);
+		list_vlp_texture.Add(ButiRendering::CreateTextureFromImageFile("Resource/ngineLogo.png", vlp_graphicDevice));
+		vlp_material_textureMap = ButiRendering::CreateMaterial("", ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, ButiRendering::DrawSettings(), vlp_graphicDevice);
 		vlp_material_textureMap->SetIsAlpha(true);
 	}
 
