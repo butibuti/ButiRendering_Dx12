@@ -1,7 +1,7 @@
 #include"DefaultShader.hlsli"
 Use_Material(b2)
 Use_ObjectInformation(b1)
-float4 PSMain(Pixel_UV_Normal pixel) : SV_TARGET
+float4 PSMain(Pixel_Normal pixel) : SV_TARGET
 { 
 	float3 lightdir = normalize(lightDir.xyz);
 	float3 N1 = normalize(pixel.normal);
