@@ -131,6 +131,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,6 +159,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)..\..\;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -251,6 +253,7 @@
     <ClCompile Include="Source\Rendering_Dx12\Resource_Texture_Dx12_RenderTarget.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\RootSignatureManager.cpp" />
     <ClCompile Include="Source\Rendering_Dx12\ShaderHelper_Dx12.cpp" />
+    <ClCompile Include="Source\Resource_Font.cpp" />
     <ClCompile Include="Source\Resource_Material.cpp" />
     <ClCompile Include="Source\Resource_Mesh.cpp" />
     <ClCompile Include="Source\Resource_Model.cpp" />

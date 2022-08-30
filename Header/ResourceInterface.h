@@ -9,6 +9,9 @@
 #include"ShaderVariable.h"
 #include "DrawSettings.h"
 #include"ShaderReflection.h"
+namespace ButiFont {
+class IFontInformation;
+}
 namespace ButiEngine {
 
 namespace ImageFileIO {
@@ -306,6 +309,13 @@ public:
 	virtual const List<Value_weak_ptr<IResource_Material>>& GetMaterial()const = 0;
 	virtual List<Value_weak_ptr<IResource_Material>>& GetMaterial() = 0;
 };
+class IResource_Font:public IObject {
+public:
+	virtual const std::string& GetFontName()const = 0;
+	virtual Value_ptr<IResource_Texture> GetTexture()const = 0;
+	virtual Value_ptr<IResource_Material>GetMaterial()const = 0;
+	virtual ButiFont::IFontInformation* GetFontInformation() const = 0;
+};
 BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath);
 BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
@@ -316,6 +326,11 @@ BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const std::st
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromImageFile(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromMemory(const char* arg_data,const std::int64_t arg_dataSize, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+
+
+BUTIRENDERING_API Value_ptr<IResource_Font> CreateFontFromFile(const std::string& arg_trueTypeFontFilePath, const std::int32_t arg_size,Value_ptr<IResource_Shader> arg_vlp_shader, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Font> CreateFontFromMemory(const std::string& arg_trueTypeFontFilePath, const char* arg_data, const std::int64_t arg_dataSize, const std::int32_t arg_size, Value_ptr<IResource_Shader> arg_vlp_shader, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+
 namespace MaterialIcon {
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_file(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> GetMaterialTexture_folder_upArrow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -378,6 +393,8 @@ BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVColorFog(Value_ptr<Gr
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVColorFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVDepth(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUV_floatTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVColor_floatTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

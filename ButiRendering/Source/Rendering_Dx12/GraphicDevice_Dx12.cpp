@@ -536,7 +536,9 @@ ButiEngine::ButiRendering::RootSignatureManager& ButiEngine::ButiRendering::Grap
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::AddUploadResource(GPUResource* arg_resource)
 {
 	std::lock_guard<std::mutex> lock(m_uqp_impl->mtx_uploadResource);
-	m_uqp_impl->list_uploadResourcesBuffer.push_back(arg_resource);
+	if (!m_uqp_impl->list_uploadResourcesBuffer.Contains(arg_resource)) {
+		m_uqp_impl->list_uploadResourcesBuffer.push_back(arg_resource);
+	}
 }
 
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::UploadResourceBufferMerge()

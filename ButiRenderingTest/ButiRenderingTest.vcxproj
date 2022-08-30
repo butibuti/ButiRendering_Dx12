@@ -127,7 +127,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)\..\..\dll\$(Configuration)\ButiMemorySystem.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ZDll.lib;$(SolutionDir)\..\..\lib\$(Configuration)\ButiUtil.lib;$(SolutionDir)Libs\dll\$(Configuration)\ButiRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\..\..\dll\$(Configuration)\ButiMemorySystem.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ButiFont.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ZDll.lib;$(SolutionDir)\..\..\lib\$(Configuration)\ButiUtil.lib;$(SolutionDir)Libs\dll\$(Configuration)\ButiRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)\..\..\dll\$(Configuration)\ButiMemorySystem.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ZDll.lib;$(SolutionDir)\..\..\lib\$(Configuration)\ButiUtil.lib;$(SolutionDir)Libs\dll\$(Configuration)\ButiRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)\..\..\dll\$(Configuration)\ButiMemorySystem.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ButiFont.lib;$(SolutionDir)\..\..\dll\$(Configuration)\ZDll.lib;$(SolutionDir)\..\..\lib\$(Configuration)\ButiUtil.lib;$(SolutionDir)Libs\dll\$(Configuration)\ButiRendering.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

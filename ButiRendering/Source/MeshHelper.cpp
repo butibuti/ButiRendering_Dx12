@@ -228,7 +228,7 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCube(Vector3 arg_size, const s
 				//フラット表示しない場合は、法線は面の向き
 				Data.normal = FaceNormalVec[i];
 			}
-			Data.color = TangentVec.at(i);
+			Data.tangent = TangentVec.at(i);
 			vertices.push_back(Data);
 		}
 

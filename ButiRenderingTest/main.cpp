@@ -64,7 +64,7 @@ std::int32_t main() {
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uv);
 			vlp_mesh_sphere = ButiRendering::CreateMesh("Sphere", { spherePrim,spherePrim_uv,spherePrim_normal,spherePrim_uvNormal }, vlp_graphicDevice);
 		}
-		vlp_shader_onlyMaterial = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUVNormal(vlp_graphicDevice),
+		vlp_shader_onlyMaterial = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateNormal(vlp_graphicDevice),
 			ButiRendering::DefaultPixelShader::CreateOnlyMaterial(vlp_graphicDevice), nullptr, "OnlyColor");
 		vlp_shader_texture = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUV(vlp_graphicDevice),
 			ButiRendering::DefaultPixelShader::CreateUV(vlp_graphicDevice), nullptr, "TextureMap");

@@ -43,6 +43,8 @@ fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVColorFog.fxc Shader/PS_UVColo
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVColorFog_Shadow.fxc Shader/PS_UVColorFog_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVDepth.fxc Shader/PS_UVDepth.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UV.fxc Shader/PS_UV.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVColor_floatTexture.fxc Shader/PS_UVColor_floatTexture.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UV_floatTexture.fxc Shader/PS_UV_floatTexture.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVFog.fxc Shader/PS_UVFog.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVFog_Shadow.fxc Shader/PS_UVFog_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalFog.fxc Shader/PS_NormalFog.hlsl
@@ -56,6 +58,17 @@ fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalColorFog.fxc Shader/PS_
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalColorFog_Shadow.fxc Shader/PS_UVNormalColorFog_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalFog.fxc Shader/PS_UVNormalFog.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalFog_Shadow.fxc Shader/PS_UVNormalFog_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_DeferredShading.fxc Shader/PS_DeferredShading.hlsl
+
+
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_Glid_MRT_Shadow.fxc Shader/PS_Glid_MRT_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalMap_MRT.fxc Shader/PS_NormalMap_MRT.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalMap_MRT_Shadow.fxc Shader/PS_NormalMap_MRT_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_OnlyMaterial_MRT.fxc Shader/PS_OnlyMaterial_MRT.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_OnlyMaterial_MRT_Shadow.fxc Shader/PS_OnlyMaterial_MRT_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormal_MRT.fxc Shader/PS_UVNormal_MRT.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormal_MRT_Alpha.fxc Shader/PS_UVNormal_MRT_Alpha.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormal_MRT_Shadow.fxc Shader/PS_UVNormal_MRT_Shadow.hlsl
 
 fxc.exe/T gs_5_1 /E GSMain /Fh CompiledShader/GS_OutLine.fxc Shader/GS_OutLine.hlsl
 fxc.exe/T gs_5_1 /E GSMain /Fh CompiledShader/GS_PointToCube.fxc Shader/GS_PointToCube.hlsl

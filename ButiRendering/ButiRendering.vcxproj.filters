@@ -278,6 +278,9 @@
     <ClCompile Include="Source\Rendering_Dx12\DrawCommand_Dx12.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Resource_Font.cpp">
+      <Filter>ソース ファイル\Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ButiRendering.rc">

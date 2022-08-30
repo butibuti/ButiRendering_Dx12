@@ -1,5 +1,4 @@
 #include"stdafx.h"
-
 #include"ButiRendering_Dx12/Header/Resource_Texture.h"
 
 

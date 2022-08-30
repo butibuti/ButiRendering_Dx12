@@ -84,7 +84,7 @@ struct Tangent {
 	inline const Vector3& GetTangent() { return tangent; }
 };
 struct Color {
-	Vector4 color = Vector4(0.5f, 0, 0, 1.0f);
+	Vector4 color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	Color(const Vector4& arg_color) :color(arg_color) {}
 	Color() {}
 	inline void SetColor(const Vector4& arg_color) { color = arg_color; }

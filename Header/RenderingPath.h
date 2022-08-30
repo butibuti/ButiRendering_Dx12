@@ -52,7 +52,6 @@ protected:
 class DeferredCameraRenderingPath :public CameraRenderingPath {
 public:
 	BUTIRENDERING_API DeferredCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath);
-	BUTIRENDERING_API void Execute() override;
 	void SetForwardPath(Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath) {
 		vwp_forwardPath = arg_vwp_forwardPath;
 	}

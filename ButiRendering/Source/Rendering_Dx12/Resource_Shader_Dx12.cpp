@@ -144,6 +144,12 @@ namespace UVDepth {
 namespace UV {
 #include"../../CompiledShader/PS_UV.fxc"
 }
+namespace UVColor_floatTexture {
+#include"../../CompiledShader/PS_UVColor_floatTexture.fxc"
+}
+namespace UV_floatTexture {
+#include"../../CompiledShader/PS_UV_floatTexture.fxc"
+}
 namespace UVFog {
 #include"../../CompiledShader/PS_UVFog.fxc"
 }
@@ -768,6 +774,17 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngi
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
 	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UV::g_PSMain, sizeof(PS::UV::g_PSMain), "UV", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUV_floatTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UV_floatTexture::g_PSMain, sizeof(PS::UV_floatTexture::g_PSMain), "UV_floatTexture", arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVColor_floatTexture(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVColor_floatTexture::g_PSMain, sizeof(PS::UVColor_floatTexture::g_PSMain), "UVColor_floatTexture", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
