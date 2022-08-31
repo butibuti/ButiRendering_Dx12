@@ -140,11 +140,11 @@ void ButiEngine::ButiRendering::DeferredCameraRenderingPath_Dx12::Execute()
 	if (!m_isCurrentActive) {
 		return;
 	}
-	vlp_camera->Start();
 	vwp_renderer.lock()->GetRendererCBuffer()->Get().cameraPos = vlp_forwardCamera->vlp_transform->GetWorldPosition();
 	vwp_renderer.lock()->GetRendererCBuffer()->Get().forwordCameraMatrix = vlp_forwardCamera->vlp_transform->ToMatrix();
+	vwp_renderer.lock()->GetRendererCBuffer()->Update();
 
-
+	vlp_camera->Start();
 	if (!drawCommandList) {
 		drawCommandList = CommandListHelper::CreateDefault(nullptr, vwp_graphicDevice.lock()->GetDevice(), vwp_graphicDevice.lock()->GetCommandAllocator());
 		CommandListHelper::Close(drawCommandList);
@@ -175,8 +175,6 @@ void ButiEngine::ButiRendering::DeferredCameraRenderingPath_Dx12::Execute()
 	}
 	vwp_graphicDevice.lock()->CommandList_SetRenderTargetView();
 	vwp_graphicDevice.lock()->GetCommandList().RSSetViewports(1, &viewport);
-
-	vwp_renderer.lock()->GetRendererCBuffer()->Get().cameraPos = Vector4(vlp_camera->vlp_transform->GetWorldPosition());
 
 	vwp_renderer.lock()->Rendering(m_layer);
 
@@ -215,6 +213,8 @@ ButiEngine::ButiRendering::DeferredCameraRenderingPath::DeferredCameraRenderingP
 {
 	vlp_camera = arg_vlp_camera;
 	vwp_renderer = arg_vwp_renderer;
+	vlp_forwardCamera = arg_vwp_forwardPath.lock()->GetCamera();
+	vwp_forwardPath = arg_vwp_forwardPath;
 }
 
 
@@ -227,4 +227,32 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::ForwardCameraRenderingPath> But
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::DeferredCameraRenderingPath> ButiEngine::ButiRendering::CreateDeferredRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath)
 {
 	return ObjectFactory::Create<DeferredCameraRenderingPath_Dx12>(arg_vlp_camera,arg_vwp_renderer,arg_vwp_forwardPath);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::ForwardCameraRenderingPath> ButiEngine::ButiRendering::CreateForwardRenderingPath(Value_ptr<DeferredCameraRenderingPath> arg_path)
+{
+	auto output = ObjectFactory::Create<ForwardCameraRenderingPath_Dx12>(arg_path->GetCamera(), arg_path->GetRenderer());
+	output->SetLayer(arg_path->GetLayer());
+	output->SetIsEditActive(arg_path->IsEditActive());
+	output->SetIsPlayActive(arg_path->IsPlayActive());
+	for (auto rt : arg_path->GetRenderTargets()) {
+		output->PushRenderTarget(rt);
+	}
+
+	output->SetDepthStencil(arg_path->GetDepthStencil());
+	return output;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::DeferredCameraRenderingPath> ButiEngine::ButiRendering::CreateDeferredRenderingPath(Value_ptr<ForwardCameraRenderingPath> arg_path, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath)
+{
+	auto output= ObjectFactory::Create<DeferredCameraRenderingPath_Dx12>(arg_path->GetCamera(), arg_path->GetRenderer(), arg_vwp_forwardPath);
+	output->SetLayer(arg_path->GetLayer());
+	output->SetIsEditActive(arg_path->IsEditActive());
+	output->SetIsPlayActive(arg_path->IsPlayActive());
+	for (auto rt : arg_path->GetRenderTargets()) {
+		output->PushRenderTarget(rt);
+	}
+
+	output->SetDepthStencil(arg_path->GetDepthStencil());
+	return output;
 }

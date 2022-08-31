@@ -25,7 +25,7 @@ struct BackUpConstantBufferData {
 };
 class DescriptorHeapManager
 {
-	const std::uint32_t DescriptorHeapSize = 8192;
+	const std::uint32_t DescriptorHeapSize =16384;
 public:
 	BUTIRENDERING_API DescriptorHeapManager(Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, const std::uint32_t arg_max = 512);
 	BUTIRENDERING_API ~DescriptorHeapManager();

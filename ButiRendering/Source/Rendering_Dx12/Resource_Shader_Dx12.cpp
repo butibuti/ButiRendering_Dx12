@@ -34,6 +34,9 @@ namespace NormalColor {
 namespace Normal_Shadow {
 #include"../../CompiledShader/VS_Normal_Shadow.fxc"
 }
+namespace Normal_Phong {
+#include"../../CompiledShader/VS_Normal_Phong.fxc"
+}
 namespace NormalColorFog {
 #include"../../CompiledShader/VS_NormalColorFog.fxc"
 }
@@ -93,6 +96,10 @@ namespace UVNormalColorFog_Shadow {
 }
 }
 namespace PS {
+namespace DeferredShading {
+#include"../../CompiledShader/PS_DeferredShading.fxc"
+}
+
 namespace Grid {
 #include"../../CompiledShader/PS_Grid.fxc"
 }
@@ -189,6 +196,31 @@ namespace UVNormalFog {
 namespace UVNormalFog_Shadow {
 #include"../../CompiledShader/PS_UVNormalFog_Shadow.fxc"
 }
+namespace Grid_Shadow_MRT {
+#include"../../CompiledShader/PS_Grid_MRT_Shadow.fxc"
+}
+namespace NormalMap_MRT {
+#include"../../CompiledShader/PS_NormalMap_MRT.fxc"
+}
+namespace NormalMap_MRT_Shadow {
+#include"../../CompiledShader/PS_NormalMap_MRT_Shadow.fxc"
+}
+namespace OnlyMaterial_MRT {
+#include"../../CompiledShader/PS_OnlyMaterial_MRT.fxc"
+}
+namespace OnlyMaterial_MRT_Shadow {
+#include"../../CompiledShader/PS_OnlyMaterial_MRT_Shadow.fxc"
+}
+namespace UVNormal_MRT {
+#include"../../CompiledShader/PS_UVNormal_MRT.fxc"
+}
+namespace UVNormal_MRT_Alpha {
+#include"../../CompiledShader/PS_UVNormal_MRT_Alpha.fxc"
+}
+namespace UVNormal_MRT_Shadow {
+#include"../../CompiledShader/PS_UVNormal_MRT_Shadow.fxc"
+}
+
 }
 namespace GS {
 namespace OutLine {
@@ -609,6 +641,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEng
 	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal::g_VSMain, sizeof(VS::Normal::g_VSMain), "Normal", arg_vlp_graphicDevice);
 }
 
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormalPhong(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal_Phong::g_VSMain, sizeof(VS::Normal_Phong::g_VSMain), "NormalPhong", arg_vlp_graphicDevice);
+}
+
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
@@ -864,6 +902,60 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngi
  {
 	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
 	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalFog::g_PSMain, sizeof(PS::NormalFog::g_PSMain), "NormalFog", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader>ButiEngine::ButiRendering::DefaultPixelShader::CreateDeferredShading(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::DeferredShading::g_PSMain, sizeof(PS::DeferredShading::g_PSMain), "DeferredShading", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateGrid_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::Grid_Shadow_MRT::g_PSMain, sizeof(PS::Grid_Shadow_MRT::g_PSMain), "Grid_MRT_Shadow", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateNormalMap_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalMap_MRT::g_PSMain, sizeof(PS::NormalMap_MRT::g_PSMain), "NormalMap_MRT", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateNormalMap_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::NormalMap_MRT_Shadow::g_PSMain, sizeof(PS::NormalMap_MRT_Shadow::g_PSMain), "NormalMap_MRT_Shadow", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateOnlyMaterial_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial_MRT::g_PSMain, sizeof(PS::OnlyMaterial_MRT::g_PSMain), "OnlyMaterial_MRT", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateOnlyMaterial_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::OnlyMaterial_MRT_Shadow::g_PSMain, sizeof(PS::OnlyMaterial_MRT_Shadow::g_PSMain), "OnlyMaterial_MRT_Shadow", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal_MRT::g_PSMain, sizeof(PS::UVNormal_MRT::g_PSMain), "UVNormal_MRT", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal_MRT_Alpha(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal_MRT_Alpha::g_PSMain, sizeof(PS::UVNormal_MRT_Alpha::g_PSMain), "UVNormal_MRT_Alpha", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngine::ButiRendering::DefaultPixelShader::CreateUVNormal_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_PixelShader_Dx12>(PS::UVNormal_MRT_Shadow::g_PSMain, sizeof(PS::UVNormal_MRT_Shadow::g_PSMain), "UVNormal_MRT_Shadow", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreateOutLine(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)

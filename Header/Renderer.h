@@ -177,6 +177,8 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	virtual Value_ptr<IResource_Texture> GetShadowTexture() = 0;
+
+	virtual std::int32_t GetRenderTargetSize()const = 0;
 };
 /// <summary>
 /// ‰e—p‚Ì•`‰æƒŒƒCƒ„[

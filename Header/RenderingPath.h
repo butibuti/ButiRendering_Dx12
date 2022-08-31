@@ -45,6 +45,7 @@ protected:
 class ForwardCameraRenderingPath :public CameraRenderingPath {
 public:
 	BUTIRENDERING_API ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera,Value_weak_ptr<IRenderer> arg_vwp_renderer);
+	Value_weak_ptr<IRenderer> GetRenderer()const { return vwp_renderer; }
 protected:
 	Value_weak_ptr<IRenderer> vwp_renderer;
 };
@@ -56,6 +57,7 @@ public:
 		vwp_forwardPath = arg_vwp_forwardPath;
 	}
 	Value_weak_ptr<ForwardCameraRenderingPath> GetForwardPath() { return vwp_forwardPath; }
+	Value_weak_ptr<IRenderer> GetRenderer()const { return vwp_renderer; }
 protected:
 	Value_ptr<ICamera> vlp_forwardCamera;
 	Value_weak_ptr<IRenderer> vwp_renderer;
@@ -63,6 +65,8 @@ protected:
 };
 BUTIRENDERING_API Value_ptr<ForwardCameraRenderingPath> CreateForwardRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer);
 BUTIRENDERING_API Value_ptr<DeferredCameraRenderingPath> CreateDeferredRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath);
+BUTIRENDERING_API Value_ptr<ForwardCameraRenderingPath> CreateForwardRenderingPath(Value_ptr<DeferredCameraRenderingPath> arg_path);
+BUTIRENDERING_API Value_ptr<DeferredCameraRenderingPath> CreateDeferredRenderingPath(Value_ptr<ForwardCameraRenderingPath> arg_path, Value_weak_ptr<ForwardCameraRenderingPath> arg_vwp_forwardPath);
 }
 }
 

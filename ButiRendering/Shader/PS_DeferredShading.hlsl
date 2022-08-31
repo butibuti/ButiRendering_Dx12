@@ -1,10 +1,9 @@
 #include"DefaultShader.hlsli"
 Use_ObjectInformation(b1)
-Use_MaterialList(b2)
+Use_Material(b2)
 Use_RendererStatus(b3)
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
-{
-    
+{   
     float4 base = mainTexture.Sample(mainSampler, pixel.uv);
     float3 normal = subTexture_1.Sample(mainSampler, pixel.uv).xyz*2-float3(1.0,1.0,1.0);
     float3 worldPos = subTexture_2.Sample(mainSampler, pixel.uv).xyz*2 - float3(1.0, 1.0, 1.0);
@@ -16,11 +15,11 @@ float4 PSMain(Pixel_UV pixel) : SV_TARGET
     float t = max(0.0f, dot( lightDir.xyz, normal) );
     float specularPower = pow(max(dot(halfLE, normal), 0.0f), 20);
 
-    float4 Light = saturate(t * Material_DeferredList[materialInfo.x].diffuse + Material_DeferredList[materialInfo.x].emissive);
+    float4 Light = saturate(t *diffuse + emissive);
 
-    Light.rgb += Material_DeferredList[materialInfo.x].specular.rgb * specularPower;
+    Light.rgb += specular.rgb * specularPower;
 
-    float4 destColor = base;
-    destColor.xyz *= Light.rgb;
+    float4 destColor = float4(base.rgb * Light.rgb, 1.0);
+    destColor = destColor * (1 - step(pixel.uv.x, 0.5)) + step(pixel.uv.x, 0.5) * base* materialInfo.y;
     return destColor;
 }

@@ -59,7 +59,7 @@ public:
 	BUTIRENDERING_API ID3D12Fence& GetFence();
 	BUTIRENDERING_API virtual IDXGISwapChain& GetSwapChain();
 
-
+	const List<Value_ptr<IRenderTarget>>& GetRenderTargets()const override;
 
 	BUTIRENDERING_API virtual void WaitGPU();
 

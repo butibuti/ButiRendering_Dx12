@@ -60,6 +60,7 @@ public:
 	BUTIRENDERING_API void SetViewMatrix_billBoardZ(const Matrix4x4& arg_viewMatrix);
 	virtual void ResetPipeLine() = 0;
 	virtual void PipelineClear() = 0;
+	virtual const List<Value_ptr<IRenderTarget>>& GetRenderTargets()const = 0;
 
 	const Matrix4x4& GetViewMatrixBillBoard() {
 		return viewMatrix_billBoard;

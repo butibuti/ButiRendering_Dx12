@@ -49,6 +49,8 @@ struct Material_Deferred {
     float4 diffuse;
     float4 ambient;
     float4 specular;
+    float id;
+    float roughness;
 };
 #define Use_MaterialList(registerIndex)cbuffer MaterialList:register(registerIndex) {Material_Deferred Material_DeferredList[256]:packoffset(c0);};
 #define Use_GausParameter(registerIndex)cbuffer GausParameter : register(registerIndex){float4 gausOffset[16]: packoffset(c0);};
@@ -411,6 +413,21 @@ struct Pixel_UV_Normal_Fog
     float2 uv:TEXCOORD;
     float3 normal :  NORMAL;
     float fog : COLOR0;
+};
+struct Pixel_Normal_Phong
+{
+    float4 position : SV_POSITION;
+    float3 normal :  NORMAL;
+    float4 modelPosition : MODEL_POSITION;
+    float4 cameraPosition : CAMERA_POSITION;
+};
+struct Pixel_Normal_Phong_Shadow
+{
+    float4 position : SV_POSITION;
+    float3 shadowPos : SHADOWPOS;
+    float3 normal :  NORMAL;
+    float4 modelPosition : MODEL_POSITION;
+    float4 cameraPosition : CAMERA_POSITION;
 };
 struct Pixel_UV_Normal_Phong
 {

@@ -11,7 +11,6 @@ ButiEngine::ButiRendering::DescriptorHeapManager::DescriptorHeapManager( Value_w
 
 ButiEngine::ButiRendering::DescriptorHeapManager::~DescriptorHeapManager()
 {
-	std::int32_t i = 0;
 }
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::Initialize(ID3D12Device& device)
@@ -66,16 +65,19 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> ButiEngine::ButiRendering::DescriptorHeapManager::GetDescriptorHeap()
 {
+	std::lock_guard lock(m_mtx_memory);
 	return cbvSrvUavDescriptorHeap;
 }
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> ButiEngine::ButiRendering::DescriptorHeapManager::GetSamplerHeap()
 {
+	std::lock_guard lock(m_mtx_memory);
 	return samplerDescriptorHeap;
 }
 
 Microsoft::WRL::ComPtr<ID3D12Resource> ButiEngine::ButiRendering::DescriptorHeapManager::GetConstantBuffer()
 {
+	std::lock_guard lock(m_mtx_memory);
 	return constantBufferUploadHeap;
 }
 
@@ -118,6 +120,7 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::ConstantBufferUpdate(void* arg_p_value, const std::uint32_t arg_index, const std::int32_t arg_size)
 {
+	std::lock_guard lock(m_mtx_memory);
 	memcpy(mappedConstantBuffer + arg_index, arg_p_value, arg_size);
 }
 
@@ -133,27 +136,25 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 	std::lock_guard lock(m_mtx_memory);
 	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top;
 	bool isUseSpace = false;
-	{
-		if (vec_space.size()) {
-			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
-				if (itr->size >= numRequired) {
-					isUseSpace = true;
+	if (vec_space.size()) {
+		for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
+			if (itr->size >= numRequired) {
+				isUseSpace = true;
 
-					top = itr->index;
-					itr->index + numRequired;
-					itr->size -= numRequired;
-					if (itr->size == 0) {
-						itr=vec_space.erase(itr);
-						end = vec_space.end();
-						break;
-					}
-					else {
-						itr++;
-					}
+				top = itr->index;
+				itr->index + numRequired;
+				itr->size -= numRequired;
+				if (itr->size == 0) {
+					itr = vec_space.erase(itr);
+					end = vec_space.end();
+					break;
 				}
 				else {
 					itr++;
 				}
+			}
+			else {
+				itr++;
 			}
 		}
 	}

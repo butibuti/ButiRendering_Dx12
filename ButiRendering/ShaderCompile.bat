@@ -20,6 +20,7 @@ fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalColorFog_Shadow.fxc Sha
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalColor.fxc Shader/VS_UVNormalColor.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalPhong.fxc Shader/VS_UVNormalPhong.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal.fxc Shader/VS_Normal.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal_Phong.fxc Shader/VS_Normal_Phong.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_NormalColor.fxc Shader/VS_NormalColor.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal_Shadow.fxc Shader/VS_Normal_Shadow.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_NormalColorFog.fxc Shader/VS_NormalColorFog.hlsl
@@ -60,8 +61,7 @@ fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalFog.fxc Shader/PS_UVNor
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_UVNormalFog_Shadow.fxc Shader/PS_UVNormalFog_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_DeferredShading.fxc Shader/PS_DeferredShading.hlsl
 
-
-fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_Glid_MRT_Shadow.fxc Shader/PS_Glid_MRT_Shadow.hlsl
+fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_Grid_MRT_Shadow.fxc Shader/PS_Grid_MRT_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalMap_MRT.fxc Shader/PS_NormalMap_MRT.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_NormalMap_MRT_Shadow.fxc Shader/PS_NormalMap_MRT_Shadow.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_OnlyMaterial_MRT.fxc Shader/PS_OnlyMaterial_MRT.hlsl

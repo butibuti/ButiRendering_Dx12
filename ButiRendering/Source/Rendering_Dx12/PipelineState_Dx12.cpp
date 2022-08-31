@@ -36,10 +36,19 @@ void ButiEngine::ButiRendering::PipelineState_Dx12::Initialize()
 		gemetryBlob = m_vwp_shader.lock()->GetGeometryShader()->GetThis<Resource_GeometryShader_Dx12>()->GetGeometryShaderBlob();
 	}
 	List<Format> list_format;
-	list_format.Add(Format::R8G8B8A8_UNORM);
-	/*for (auto outputElem : m_vwp_shader.lock()->GetPixelShader()->GetThis<Resource_PixelShader_Dx12>()->GetOutputLayout().m_list_element) {
-		list_format.Add(outputElem.format);
-	}*/
+	for (auto outputElem : m_vwp_shader.lock()->GetPixelShader()->GetThis<Resource_PixelShader_Dx12>()->GetOutputLayout().m_list_element) {
+		if (m_vwp_shader.lock()->GetPixelShader()->GetThis<Resource_PixelShader_Dx12>()->GetOutputLayout().m_list_element.GetSize() == 1
+			&& outputElem.format == Format::R32G32B32A32_FLOAT) {
+			list_format.Add(Format::R8G8B8A8_UNORM);
+		}
+		else if (outputElem.format == Format::R32G32B32A32_FLOAT&&
+			(outputElem.semanticIndex== 0 || outputElem.semanticIndex == 1)) {
+			list_format.Add(Format::R8G8B8A8_UNORM);
+		}
+		else {
+			list_format.Add(outputElem.format);
+		}
+	}
 	m_pipelineState = PipelineStateHelper::CreateDefault3D(m_vlp_rootSignature->GetRootSignature(),m_pipeLineDesc, m_rasterizerStateDesc,
 		m_vwp_shader.lock()->GetVertexShader()->GetThis<Resource_VertexShader_Dx12>()->GetInputLayoutList(),
 		m_vwp_shader.lock()->GetVertexShader()->GetThis<Resource_VertexShader_Dx12>()->GetVertexShaderBlob(),

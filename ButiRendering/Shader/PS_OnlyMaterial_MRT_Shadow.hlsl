@@ -4,7 +4,7 @@ Use_Material(b2)
 Use_ObjectInformation(b1)
 Use_ObjectMatrix(b0)
 
-PixelOutput_Default PSMain(Pixel_UV_Normal_Phong_Shadow pixel)
+PixelOutput_Default PSMain(Pixel_Normal_Phong_Shadow pixel)
 {
 	PixelOutput_Default output;
 

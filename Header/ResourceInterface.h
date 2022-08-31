@@ -258,13 +258,15 @@ public:
 	virtual void SetMaterialVariable(const MaterialValue& arg_var) = 0;
 	virtual const List<Value_ptr<IResource_Texture>>& GetTextures()const = 0;
 	virtual const std::string& GetTagName()const = 0;
-	virtual void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material){}
+	virtual void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material) {}
+	virtual void ClearMaterialList(){}
 	virtual Value_ptr<IPipelineState> GetPipelineState()const=0;
 	virtual const DrawSettings& GetDrawSettings()const = 0;
 	virtual DrawSettings& GetDrawSettings() = 0;
 	virtual Value_ptr<IResource_Shader> GetShader()const = 0;
 	virtual void SetShader(Value_ptr<IResource_Shader> arg_vlp_shader)= 0;
 	virtual bool IsAlpha()const = 0;
+	virtual bool IsList()const = 0;
 	virtual void SetIsAlpha(const bool arg_isAlpha)= 0;
 	virtual Value_ptr<ICBuffer> GetMaterialCBuffer()const = 0;
 };
@@ -371,6 +373,7 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent(Value_
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVPosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalPhong(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -408,6 +411,16 @@ BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormalFog_Shadow(Valu
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalColorFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateDeferredShading(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateGrid_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalMap_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateNormalMap_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateOnlyMaterial_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateOnlyMaterial_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormal_MRT(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormal_MRT_Alpha(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreateUVNormal_MRT_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 }
 namespace DefaultGeometryShader {
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateOutLine(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

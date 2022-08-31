@@ -14,10 +14,7 @@ void ButiEngine::ButiRendering::Resource_Material_Dx12::Initialize()
 {
 	auto materialBuffer_Dx12 = CreateCBuffer <MaterialValue>();
 	materialBuffer_Dx12->SetGraphicDevice(m_vwp_graphicDevice.lock());
-	materialBuffer_Dx12->Get().ambient = GetMaterialVariable().ambient;
-	materialBuffer_Dx12->Get().emissive = GetMaterialVariable().emissive;
-	materialBuffer_Dx12->Get().diffuse = GetMaterialVariable().diffuse;
-	materialBuffer_Dx12->Get().specular = GetMaterialVariable().specular;
+	materialBuffer_Dx12->Get()= materialVar;
 	materialBuffer_Dx12->CreateBuffer();
 	m_materialBuffer = materialBuffer_Dx12;
 	m_vwp_graphicDevice.lock()->GetDescriptorHeapManager().lock()->RegistUpdateListner(GetThis<IDescriptorHeapUpdateListner>());

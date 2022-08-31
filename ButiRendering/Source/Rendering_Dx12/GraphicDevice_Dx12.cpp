@@ -584,6 +584,11 @@ IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 	return *p_d;
 }
 
+const ButiEngine::List<ButiEngine::Value_ptr<ButiEngine::ButiRendering::IRenderTarget>>& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetRenderTargets() const
+{
+	return m_uqp_impl->list_vlp_usedRenderTargets;
+}
+
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 {
 	if (m_uqp_impl->cmp_fence->GetCompletedValue() < m_uqp_impl->fenceValue)

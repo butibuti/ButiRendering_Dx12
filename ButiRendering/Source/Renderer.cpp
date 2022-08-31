@@ -72,6 +72,7 @@ public:
 	void ShadowRendering() override;
 	Value_ptr<ICamera> GetShadowCamera()override;
 	Value_ptr<IResource_Texture> GetShadowTexture()override;
+	std::int32_t GetRenderTargetSize()const override { return m_renderTargetSize; }
 protected:
 	void SortAfterCommands();
 	bool m_changed = false, m_sorted = false;
@@ -89,6 +90,7 @@ protected:
 
 	Value_weak_ptr<GraphicDevice_Dx12> m_vwp_graphicDevice;
 	std::mutex m_mtx_commandBuffer;
+	std::int32_t m_renderTargetSize = -1;
 };
 class DrawLayer_Shadow : public DrawLayer, public IDrawLayer_Shadow {
 public:
@@ -466,6 +468,7 @@ void ButiEngine::ButiRendering::DrawLayer::CreateCommandBundle()
 		return;
 	}
 	m_changed = false;
+	m_renderTargetSize = -1;
 	CommandListHelper::BundleReset(nullptr, m_commandList, m_vwp_graphicDevice.lock()->GetBundleCommandAllocator());
 	ID3D12DescriptorHeap* ppHeaps[] = { m_vwp_graphicDevice.lock()->GetDescriptorHeapManager().lock()->GetDescriptorHeap().Get() ,m_vwp_graphicDevice.lock()->GetDescriptorHeapManager().lock()->GetSamplerHeap().Get() };
 	auto heapCount = _countof(ppHeaps);
@@ -475,6 +478,10 @@ void ButiEngine::ButiRendering::DrawLayer::CreateCommandBundle()
 
 	for (auto& pipelineAndList : m_map_pipelineState_command) {
 		if (!pipelineAndList.second.GetSize()) {
+			continue;
+		}
+		m_renderTargetSize =m_renderTargetSize==-1? pipelineAndList.first->GetShader()->GetOutputLayout().m_list_element.GetSize():m_renderTargetSize;
+		if (pipelineAndList.first->GetShader()->GetOutputLayout().m_list_element.GetSize()!=m_renderTargetSize) {
 			continue;
 		}
 		pipelineAndList.first->Attach();

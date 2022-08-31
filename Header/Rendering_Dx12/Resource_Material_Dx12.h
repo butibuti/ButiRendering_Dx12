@@ -20,6 +20,7 @@ public:
 	BUTIRENDERING_API void SetMaterialIndex(const std::int32_t arg_index)override;
 	BUTIRENDERING_API void OnDescriptorHeapUpdate()override; 
 	Value_ptr<ICBuffer> GetMaterialCBuffer()const override { return m_materialBuffer; }
+	bool IsList()const { return false; }
 private:
 	Value_weak_ptr<GraphicDevice_Dx12> m_vwp_graphicDevice;
 	Value_ptr< CBuffer<MaterialValue>> m_materialBuffer;
@@ -37,7 +38,9 @@ public:
 	BUTIRENDERING_API const MaterialValue& GetMaterialVariable()const override;
 	BUTIRENDERING_API void SetMaterialIndex(const std::int32_t arg_index)override;
 	BUTIRENDERING_API void SetMaterialList(const List<Value_ptr<IResource_Material>>& arg_list_material)override;
+	void ClearMaterialList()override { m_list_material.Clear(); }
 	bool IsAlpha()const override { return false; }
+	bool IsList()const { return true; }
 	Value_ptr<ICBuffer> GetMaterialCBuffer()const override { return m_materialBuffer; }
 private:
 	Value_weak_ptr<GraphicDevice_Dx12> m_vwp_graphicDevice;
