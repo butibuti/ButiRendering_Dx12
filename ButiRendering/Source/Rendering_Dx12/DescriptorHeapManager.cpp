@@ -133,28 +133,30 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::DescriptorHeapManager::GetCurrentHandle(std::uint32_t& ref_top, const std::int32_t arg_size)
 {
-	std::lock_guard lock(m_mtx_memory);
 	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top;
 	bool isUseSpace = false;
-	if (vec_space.size()) {
-		for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
-			if (itr->size >= numRequired) {
-				isUseSpace = true;
+	{
+		std::lock_guard lock(m_mtx_memory);
+		if (vec_space.size()) {
+			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
+				if (itr->size >= numRequired) {
+					isUseSpace = true;
 
-				top = itr->index;
-				itr->index + numRequired;
-				itr->size -= numRequired;
-				if (itr->size == 0) {
-					itr = vec_space.erase(itr);
-					end = vec_space.end();
-					break;
+					top = itr->index;
+					itr->index + numRequired;
+					itr->size -= numRequired;
+					if (itr->size == 0) {
+						itr = vec_space.erase(itr);
+						end = vec_space.end();
+						break;
+					}
+					else {
+						itr++;
+					}
 				}
 				else {
 					itr++;
 				}
-			}
-			else {
-				itr++;
 			}
 		}
 	}
@@ -169,14 +171,17 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 		top = index;
 		index += numRequired;
 	}
+	HandleInformation out;
+	{
+		std::lock_guard lock(m_mtx_memory);
+		D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = cbvSrvUavDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
+		gpuHandle.ptr += top * cbvSrvDescriptorHandleIncrementSize;
+		D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = cbvSrvUavDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+		cpuHandle.ptr += top * cbvSrvDescriptorHandleIncrementSize;
+		out={ gpuHandle,cpuHandle,top };
+		ref_top = top;
+	}
 
-
-	D3D12_GPU_DESCRIPTOR_HANDLE gpuHandle = cbvSrvUavDescriptorHeap->GetGPUDescriptorHandleForHeapStart();
-	gpuHandle.ptr += top * cbvSrvDescriptorHandleIncrementSize;
-	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = cbvSrvUavDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	cpuHandle.ptr += top * cbvSrvDescriptorHandleIncrementSize;
-	HandleInformation out{ gpuHandle,cpuHandle,top };
-	ref_top = top;
 	return out;
 }
 
@@ -234,35 +239,43 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::ReCreateConstantBuffer()
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::AddHeapRange()
 {
-	std::cout << "AddHeapRange" << std::endl;
-	maxCbv *= 2;
-	if (maxCbv > DescriptorHeapSize)
-		throw ButiException(L"", L"", L"");
+	std::uint64_t expandSize;
+	{
 
-	std::uint64_t expandSize = static_cast<std::uint64_t>(maxCbv) * 0x100;
+		std::lock_guard lock(m_mtx_memory);
+		std::cout << "AddHeapRange" << std::endl;
+		maxCbv *= 2;
+		if (maxCbv > DescriptorHeapSize)
+			throw ButiException(L"", L"", L"");
 
-	vec_cbBackUpData.resize(maxCbv);
-	
-	D3D12_HEAP_PROPERTIES prop = { D3D12_HEAP_TYPE_UPLOAD, D3D12_CPU_PAGE_PROPERTY_UNKNOWN, D3D12_MEMORY_POOL_UNKNOWN, 1, 1 };
-	D3D12_RESOURCE_DESC desc = constantBufferUploadHeap->GetDesc();
-	desc.Width = expandSize;
+		expandSize = static_cast<std::uint64_t>(maxCbv) * 0x100;
 
-	vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(&prop, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constantBufferUploadHeap));
-	buffer* mapped ;
-	D3D12_RANGE readRange = {};
-	HRESULT hr = constantBufferUploadHeap->Map(0, &readRange, (void**)&mapped);
+		vec_cbBackUpData.resize(maxCbv);
 
-	//memcpy(mapped, mappedConstantBuffer, cbvSize);
+		D3D12_HEAP_PROPERTIES prop = { D3D12_HEAP_TYPE_UPLOAD, D3D12_CPU_PAGE_PROPERTY_UNKNOWN, D3D12_MEMORY_POOL_UNKNOWN, 1, 1 };
+		D3D12_RESOURCE_DESC desc = constantBufferUploadHeap->GetDesc();
+		desc.Width = expandSize;
 
-	 
+		vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(&prop, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&constantBufferUploadHeap));
+		buffer* mapped;
+		D3D12_RANGE readRange = {};
+		HRESULT hr = constantBufferUploadHeap->Map(0, &readRange, (void**)&mapped);
 
-	mappedConstantBuffer = mapped;
+		//memcpy(mapped, mappedConstantBuffer, cbvSize);
+
+
+
+		mappedConstantBuffer = mapped;
+
+	}
 
 	for (auto& listner : m_list_descriptorHeapUpdateListner) {
 		listner->OnDescriptorHeapUpdate();
 	}
-
-	ReCreateConstantBuffer();
-	cbvSize =static_cast<std::uint32_t>(expandSize);
+	{
+		std::lock_guard lock(m_mtx_memory);
+		ReCreateConstantBuffer();
+		cbvSize = static_cast<std::uint32_t>(expandSize);
+	}
 
 }
