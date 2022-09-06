@@ -21,8 +21,8 @@ public:
 		m_index = out.index;
 		gpuDescriptorHandle = out.GPUHandle;
 	}
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) override {
-		vwp_graphicDevice = arg_graphicDevice->GetThis<GraphicDevice_Dx12>();
+	void SetGraphicDevice( Value_weak_ptr<GraphicDevice> arg_graphicDevice) override {
+		vwp_graphicDevice = arg_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>();
 		vwp_heapManager = vwp_graphicDevice.lock()->GetDescriptorHeapManager();
 	}
 	void PreInitialize() {

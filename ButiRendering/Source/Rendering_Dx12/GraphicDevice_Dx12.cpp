@@ -404,8 +404,8 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 	{
 		throw ButiException(L"フェンスイベントの生成失敗");
 	}
-
 	m_uqp_impl->vlp_DescriptorManager = make_value<DescriptorHeapManager>(GetThis<GraphicDevice_Dx12>());
+
 	m_uqp_impl->vlp_DescriptorManager->Initialize(*m_uqp_impl->cmp_device.Get());
 
 	m_uqp_impl->vlp_pipelineStateManager = ObjectFactory::Create<PipelineStateManager>(GetThis<GraphicDevice_Dx12>());

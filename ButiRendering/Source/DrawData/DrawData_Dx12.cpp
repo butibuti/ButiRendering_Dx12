@@ -59,7 +59,7 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 	}
 
 	auto cbuffer_Dx12 = CreateCBuffer<Matrices>();
-	cbuffer_Dx12->SetGraphicDevice(vwp_graphicDevice.lock());
+	cbuffer_Dx12->SetGraphicDevice(Value_weak_ptr<GraphicDevice>( vwp_graphicDevice));
 	cbuffer_Dx12->CreateBuffer();
 	drawData.SetCbuffer( cbuffer_Dx12);
 

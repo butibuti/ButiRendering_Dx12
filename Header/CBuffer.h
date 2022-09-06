@@ -20,7 +20,7 @@ public:
 	virtual void Attach(const std::uint32_t slotOffset) const = 0;
 	virtual void Update() = 0;
 	virtual void CreateBuffer(const bool arg_mapKeep = true) = 0;
-	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
+	virtual void SetGraphicDevice(Value_weak_ptr<GraphicDevice> arg_graphicDevice) = 0;
 
 	virtual bool OnControl() = 0;
 	virtual Value_ptr<ICBuffer> Clone() = 0;
@@ -29,11 +29,12 @@ protected:
 namespace CbufferDetail {
 class ICBufferUpdater {
 public:
+	virtual ~ICBufferUpdater(){}
 	virtual void Attach(const std::uint32_t arg_slotOffset)const = 0;
 	virtual void Update(void* arg_p_data) = 0;
 	virtual void Release() = 0;
 	virtual void CreateBuffer(void* arg_p_data, const bool arg_mapKeep = true) = 0;
-	virtual void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) = 0;
+	virtual void SetGraphicDevice(Value_weak_ptr<GraphicDevice> arg_graphicDevice) = 0;
 private:
 };
 BUTIRENDERING_API ICBufferUpdater* CreateCBufferUpdater(const std::int32_t arg_size);
@@ -45,7 +46,7 @@ public:
 	CBuffer(){
 		CreateCBufferUpdater();
 	}
-	~CBuffer() {
+	virtual ~CBuffer() {
 		if (m_p_updater) {
 			m_p_updater->Release();
 			ButiMemorySystem::Allocator::deallocate(m_p_updater);
@@ -67,7 +68,7 @@ public:
 		m_mapKeep = arg_mapKeep;
 		m_p_updater->CreateBuffer(&m_instance,arg_mapKeep);
 	}
-	void SetGraphicDevice(Value_ptr<GraphicDevice> arg_graphicDevice) { m_p_updater->SetGraphicDevice(arg_graphicDevice); }
+	void SetGraphicDevice(Value_weak_ptr<GraphicDevice> arg_graphicDevice) { m_p_updater->SetGraphicDevice(arg_graphicDevice); }
 	void SetValueControlFunction(std::function<bool(T&)> arg_func_control) { m_func_control = arg_func_control; }
 	bool OnControl() override{
 		return m_func_control? m_func_control(Get()):false; }

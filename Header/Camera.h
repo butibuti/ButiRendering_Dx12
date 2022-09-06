@@ -11,6 +11,7 @@ class  Camera :public ICamera
 {
 public:
 	Camera(const CameraProperty& arg_cameraProp, const std::string& arg_cameraName, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+	~Camera(){}
 	const std::string& GetName() const override;
 	void Initialize()override;
 	void Start()override;

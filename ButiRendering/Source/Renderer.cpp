@@ -19,6 +19,9 @@ class Renderer :public IRenderer
 {
 public:
 	Renderer(Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+	~Renderer()
+	{
+	}
 	void Initialize()override;
 	void Update()override;
 	void RenderingStart()override;
@@ -143,7 +146,7 @@ void ButiEngine::ButiRendering::Renderer::Initialize()
 		g_CBuffer_Renderer = CreateCBuffer<RendererState>();
 		g_CBuffer_Renderer->Get().fogColor = Vector4(100.0f / 256.0f, 149.0f / 256.0f, 247.0f / 256.0f, 0.0f);
 		g_CBuffer_Renderer->Get().fogCoord = ComputeFogCoord(50, 100.0f);
-		g_CBuffer_Renderer->SetGraphicDevice(m_vwp_graphicDevice.lock());
+		g_CBuffer_Renderer->SetGraphicDevice(m_vwp_graphicDevice);
 		g_CBuffer_Renderer->CreateBuffer();
 	}
 
