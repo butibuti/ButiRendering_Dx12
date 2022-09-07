@@ -22,8 +22,8 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 	}
 
 
-	cameraProp.currentWidth = cameraProp.width * cameraProp.scaleAdjusment;
-	cameraProp.currentHeight = cameraProp.height * cameraProp.scaleAdjusment;
+	cameraProp.currentWidth = cameraProp.width;
+	cameraProp.currentHeight = cameraProp.height;
 
 	if (cameraProp.isPararell) {
 
@@ -35,7 +35,7 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 		);
 	}
 	else {
-		auto angle = cameraProp.angle * cameraProp.scaleAdjusment;
+		auto angle = cameraProp.angle;
 		projectionMatrix =
 			Matrix4x4::PersepectiveFovLH(
 				MathHelper::ToRadian(angle),
@@ -51,7 +51,7 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 void ButiEngine::ButiRendering::Camera::Start()
 {
 	cameraPos = vlp_transform->GetWorldPosition();
-	viewMatrix = Matrix4x4::Scale(Vector3{ cameraProp.scaleAdjusment,cameraProp.scaleAdjusment, cameraProp.scaleAdjusment }) * vlp_transform->GetMatrix().GetInverse();
+	viewMatrix =  vlp_transform->GetMatrix().GetInverse();
 	vwp_graphicDevice.lock()->SetCameraPos(cameraPos);
 	vwp_graphicDevice.lock()->SetProjectionMatrix(projectionMatrix);
 	vwp_graphicDevice.lock()->SetRawViewMatrix(viewMatrix);

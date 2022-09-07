@@ -66,7 +66,7 @@ public:
 	void UnRegist(Value_ptr< IDrawObject> arg_vlp_drawObject, const bool arg_isShadow = false)override;
 	void Regist(List< Value_ptr< IDrawCommand>> arg_list_vwp_drawCommand);
 	void UnRegist(List< Value_ptr<IDrawCommand>> arg_list_vwp_drawCommand);
-	void DeleteDrawObj(Value_ptr< IDrawObject> arg_vlp_drawObject);
+	bool DeleteDrawObj(Value_ptr< IDrawObject> arg_vlp_drawObject);
 	void CreateCommandBundle()override;
 	void SetShadowCamera(Value_ptr<ICamera> arg_shadowCamera)override;
 	void SetShadowTexture(Value_weak_ptr<IResource_Texture> arg_textureTag)override;
@@ -375,6 +375,7 @@ void ButiEngine::ButiRendering::DrawLayer::BefRendering()
 void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 {
 	std::lock_guard lock(m_mtx_commandBuffer);
+	List<DrawObjectRegistCommand> list_vlp_delay;
 	//•`‰æƒIƒuƒWƒFƒNƒg‚Ì“o˜^,‰ðœ
 	if (m_list_registCommandBuff.GetSize())
 	{
@@ -387,11 +388,20 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 			}
 			else {
 				UnRegist(itr.vlp_obj->GetCommands());
-				DeleteDrawObj(itr.vlp_obj);
+				if (!DeleteDrawObj(itr.vlp_obj)) {
+					list_vlp_delay.Add(itr);
+				}
 			}
 		}
 		m_list_registCommandBuff.Clear();
-
+		for (auto itr : list_vlp_delay) {
+			if (itr.isRegist) {
+			}
+			else {
+				UnRegist(itr.vlp_obj->GetCommands());
+				DeleteDrawObj(itr.vlp_obj);
+			}
+		}
 	}
 
 
@@ -457,9 +467,9 @@ void ButiEngine::ButiRendering::DrawLayer::UnRegist(List<Value_ptr<IDrawCommand>
 	}
 }
 
-void ButiEngine::ButiRendering::DrawLayer::DeleteDrawObj(Value_ptr< IDrawObject> arg_vlp_drawObject)
+bool ButiEngine::ButiRendering::DrawLayer::DeleteDrawObj(Value_ptr< IDrawObject> arg_vlp_drawObject)
 {
-	m_list_drawObj.Remove(arg_vlp_drawObject);
+	return m_list_drawObj.Remove(arg_vlp_drawObject);
 }
 
 void ButiEngine::ButiRendering::DrawLayer::CreateCommandBundle()

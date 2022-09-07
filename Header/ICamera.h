@@ -17,7 +17,7 @@ struct CameraProperty {
 	BUTIRENDERING_API CameraProperty(const std::uint32_t arg_widthScale, const std::uint32_t arg_heightScale, const std::uint32_t arg_x, const std::uint32_t arg_y, const bool arg_isPararell = false);
 
 	std::int32_t currentWidth = 0, currentHeight = 0, width=0, height=0, left = 0, top = 0;
-	float front = 0.0f, angle = 60.0f, farClip = 50.0f, nearClip = 0.1f,scaleAdjusment=1.0f;
+	float front = 0.0f, angle = 60.0f, farClip = 50.0f, nearClip = 0.1f;
 	bool isPararell = false;
 	std::int32_t renderingInfo = 0;
 	std::string cameraName;
