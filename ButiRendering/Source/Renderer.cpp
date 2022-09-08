@@ -375,7 +375,6 @@ void ButiEngine::ButiRendering::DrawLayer::BefRendering()
 void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 {
 	std::lock_guard lock(m_mtx_commandBuffer);
-	List<DrawObjectRegistCommand> list_vlp_delay;
 	//•`‰æƒIƒuƒWƒFƒNƒg‚Ì“o˜^,‰ðœ
 	if (m_list_registCommandBuff.GetSize())
 	{
@@ -388,20 +387,10 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 			}
 			else {
 				UnRegist(itr.vlp_obj->GetCommands());
-				if (!DeleteDrawObj(itr.vlp_obj)) {
-					list_vlp_delay.Add(itr);
-				}
-			}
-		}
-		m_list_registCommandBuff.Clear();
-		for (auto itr : list_vlp_delay) {
-			if (itr.isRegist) {
-			}
-			else {
-				UnRegist(itr.vlp_obj->GetCommands());
 				DeleteDrawObj(itr.vlp_obj);
 			}
 		}
+		m_list_registCommandBuff.Clear();
 	}
 
 
