@@ -547,6 +547,17 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Shader> ButiEngine::B
 		arg_vlp_vertexShader->GetOutputLayout() == arg_vlp_pixelShader->GetInputLayout())?		
 		ObjectFactory::Create<Resource_Shader>(arg_vlp_vertexShader, arg_vlp_pixelShader, arg_vlp_geometryShader, arg_shaderName):nullptr;
 }
+
+float g_speed = 1.0f;
+
+void ButiEngine::ButiRendering::SetGlobalSpeed(const float arg_speed)
+{
+	g_speed=arg_speed;
+}
+float ButiEngine::ButiRendering::GetGlobalSpeed()
+{
+	return g_speed;
+}
 void ButiEngine::ButiRendering::ShaderCompile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath)
 {
 	return ShaderHelper::Compile(arg_sourceFilePath, arg_outputFilePath, ShaderHelper::CompileType::Dx12);

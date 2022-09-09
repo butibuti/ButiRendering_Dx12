@@ -163,7 +163,7 @@ void ButiEngine::ButiRendering::Renderer::RenderingStart()
 	m_vwp_graphicDevice.lock()->Reset();
 	m_vwp_graphicDevice.lock()->ClearWindow();
 	m_vwp_graphicDevice.lock()->ResourceUpload();
-	//GetRendererCBuffer()->Get().Time +=GameDevice::WorldSpeed* 0.01f;
+	GetRendererCBuffer()->Get().Time +=GetGlobalSpeed()* 0.01f;
 	for (auto itr: m_list_drawLayers) {
 		itr->CreateCommandBundle();
 	}

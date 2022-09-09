@@ -318,6 +318,10 @@ public:
 	virtual Value_ptr<IResource_Material>GetMaterial()const = 0;
 	virtual ButiFont::IFontInformation* GetFontInformation() const = 0;
 };
+
+BUTIRENDERING_API void SetGlobalSpeed(const float arg_speed);
+BUTIRENDERING_API float GetGlobalSpeed();
+
 BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath);
 BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
