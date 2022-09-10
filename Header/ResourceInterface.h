@@ -354,6 +354,7 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShaderFromBinary
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateGeometryShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size,Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 namespace DefaultVertexShader {
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreatePosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap_UV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

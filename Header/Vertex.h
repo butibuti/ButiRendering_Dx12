@@ -130,9 +130,14 @@ struct PMX {
 	Vector3 SDEF_R1;
 };
 }
+struct Vertex :public VertexInformation::Vertex
+{
+	Vertex(const Vector3& arg_position) :VertexInformation::Vertex(arg_position){}
+	Vertex() {}
+};
 struct Vertex_UV :public VertexInformation::Vertex, public VertexInformation::UV
 {
-	
+
 	Vertex_UV(const Vector3& arg_position, const Vector2& arg_uv) :Vertex(arg_position), UV(arg_uv) {}
 	Vertex_UV() {}
 };

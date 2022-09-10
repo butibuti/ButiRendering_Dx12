@@ -65,7 +65,10 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::ICamera> ButiEngine::ButiRender
 {
 	return vlp_camera;
 }
-
+void ButiEngine::ButiRendering::CameraRenderingPath::SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil)
+{ 
+	m_depthStencilTexture = arg_depthStencil? arg_depthStencil :vwp_renderer.lock()->GetGraphicDevice()->GetDefaultDepthStencil() ;
+}
 ButiEngine::ButiRendering::ForwardCameraRenderingPath::ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer)
 {
 	vlp_camera = arg_vlp_camera;

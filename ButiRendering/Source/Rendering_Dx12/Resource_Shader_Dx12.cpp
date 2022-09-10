@@ -10,6 +10,9 @@
 #include<direct.h>
 
 namespace VS {
+namespace Pos {
+#include"../../CompiledShader/VS_Position.fxc"
+}
 namespace UV {
 #include"../../CompiledShader/VS_UV.fxc"
 }
@@ -674,6 +677,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEng
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
 	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::NormalColorFog::g_VSMain, sizeof(VS::NormalColorFog::g_VSMain), "NormalColorFog", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreatePosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Pos::g_VSMain, sizeof(VS::Pos::g_VSMain), "Position", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)

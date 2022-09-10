@@ -26,6 +26,7 @@ fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal_Shadow.fxc Shader/VS_Nor
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_NormalColorFog.fxc Shader/VS_NormalColorFog.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_ShadowMap.fxc Shader/VS_ShadowMap.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_ShadowMap_UV.fxc Shader/VS_ShadowMap_UV.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Position.fxc Shader/VS_Position.hlsl
 
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_Grid.fxc Shader/PS_Grid.hlsl
 fxc.exe/T ps_5_1 /E PSMain /Fh CompiledShader/PS_Grid_Shadow.fxc Shader/PS_Grid_Shadow.hlsl

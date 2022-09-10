@@ -27,7 +27,7 @@ public:
 
 	void PushRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget) override{ m_list_vlp_renderTarget.Add(arg_renderTarget); }
 	void RemoveRenderTarget(Value_ptr<IRenderTarget> arg_renderTarget)override { m_list_vlp_renderTarget.Remove(arg_renderTarget); }
-	void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) override{ m_depthStencilTexture = arg_depthStencil; }
+	void SetDepthStencil(Value_ptr<IDepthStencil> arg_depthStencil) override;
 
 	Value_ptr<IDepthStencil> GetDepthStencil()const { return m_depthStencilTexture; }
 	List<Value_ptr<IRenderTarget>>&GetRenderTargets() { return m_list_vlp_renderTarget; }
@@ -38,6 +38,7 @@ protected:
 	bool m_isPlayActive = true, m_isEditActive = false, m_isShadowRendering = false,m_isCurrentActive=true;
 	List<Value_ptr<IRenderTarget>> m_list_vlp_renderTarget;
 	Value_ptr<IDepthStencil> m_depthStencilTexture;
+	Value_weak_ptr<IRenderer> vwp_renderer;
 	List<Value_ptr<IResource_Texture>> m_list_vlp_shadowTexture;
 	List<Value_ptr<IResource_Texture>> m_list_vlp_staticShadowTexture;
 };
@@ -47,7 +48,6 @@ public:
 	BUTIRENDERING_API ForwardCameraRenderingPath(Value_ptr<ICamera> arg_vlp_camera,Value_weak_ptr<IRenderer> arg_vwp_renderer);
 	Value_weak_ptr<IRenderer> GetRenderer()const { return vwp_renderer; }
 protected:
-	Value_weak_ptr<IRenderer> vwp_renderer;
 };
 
 class DeferredCameraRenderingPath :public CameraRenderingPath {
@@ -60,7 +60,6 @@ public:
 	Value_weak_ptr<IRenderer> GetRenderer()const { return vwp_renderer; }
 protected:
 	Value_ptr<ICamera> vlp_forwardCamera;
-	Value_weak_ptr<IRenderer> vwp_renderer;
 	Value_weak_ptr<ForwardCameraRenderingPath> vwp_forwardPath;
 };
 BUTIRENDERING_API Value_ptr<ForwardCameraRenderingPath> CreateForwardRenderingPath(Value_ptr<ICamera> arg_vlp_camera, Value_weak_ptr<IRenderer> arg_vwp_renderer);
