@@ -101,15 +101,24 @@ float3x3 QuaternionToMatrix(float4 axis) {
         a.x * a.z * r + a.y * s, a.y * a.z * r - a.x * s, a.z * a.z * r + c
         );
 }
+float3x3 RollY(float angle) {
+    angle *= 3.14159265;
+    float s = sin(angle);
+    float c = cos(angle);
+    return float3x3(
+        c, 0, -s,
+        0, 1, 0,
+        s, 0,c
+        );
+}
 float3x3 RollZ(float angle) {
     angle *= 3.14159265;
     float s = sin(angle);
     float c = cos(angle);
-    float r = 1.0 - c;
     return float3x3(
-       c,s, 0,
-       -s, c, 0,
-       0,0,r + c
+        c, s, 0,
+        -s, c, 0,
+        0, 0, 1
         );
 }
 

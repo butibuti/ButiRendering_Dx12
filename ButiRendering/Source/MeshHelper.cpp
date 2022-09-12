@@ -500,9 +500,6 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, cons
 		return;
 	}
 	arg_size = arg_size * 0.5f;
-
-
-
 	arg_ref_eightCorner.up_left_back = Vector4(-arg_size.x, arg_size.y, -arg_size.z,1.0f)+arg_pointA;
 	arg_ref_eightCorner.up_left_front = Vector4(-arg_size.x, arg_size.y, arg_size.z,1.0f) + arg_pointA;
 	arg_ref_eightCorner.up_right_back = Vector4(arg_size.x, arg_size.y, -arg_size.z,1.0f) + arg_pointA;
@@ -520,8 +517,6 @@ void ButiEngine::ButiRendering::MeshHelper::CreateCapsule(Vector3 arg_size, cons
 	size_t horizontalSegments = arg_tessellation * 2;
 	for (size_t i = 0; i <= verticalSegments; i++)
 	{
-
-
 		float v = 1 - (float)i / verticalSegments;
 
 		float latitude = (i * BM_PI / verticalSegments) - BM_PIDIV2;
