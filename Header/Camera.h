@@ -26,6 +26,7 @@ public:
 	Vector3 WorldToScreen(const Vector3& arg_pos)const override;
 	Value_weak_ptr<IRenderer> GetRenderer()const override;
 	Value_ptr<GraphicDevice> GetGraphicDevice()const override;
+	Value_ptr<Transform> GetTransform()const override {return vlp_transform;}
 protected:
 	Matrix4x4 projectionMatrix;
 	Matrix4x4 viewMatrix;
