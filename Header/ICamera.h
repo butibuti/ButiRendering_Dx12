@@ -57,8 +57,7 @@ public:
 	/// </summary>
 	virtual void Start() = 0;
 
-	virtual void Initialize()override {}
-	virtual void PreInitialize()override {}
+	virtual void UpdateMatrix() = 0;
 	/// <summary>
 	/// –¼‘O‚ÌŽæ“¾
 	/// </summary>

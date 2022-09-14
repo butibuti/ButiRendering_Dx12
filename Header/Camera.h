@@ -15,6 +15,7 @@ public:
 	const std::string& GetName() const override;
 	void Initialize()override;
 	void Start()override;
+	void UpdateMatrix()override;
 	void SetName(const std::string& arg_name) override;
 	CameraProperty& GetCameraProperty()override;
 	const CameraProperty& GetCameraProperty()const override;
@@ -28,13 +29,13 @@ public:
 	Value_ptr<GraphicDevice> GetGraphicDevice()const override;
 	Value_ptr<Transform> GetTransform()const override {return vlp_transform;}
 protected:
-	Matrix4x4 projectionMatrix;
-	Matrix4x4 viewMatrix;
+	Matrix4x4 projectionMatrix,viewMatrix;
 	Vector3 cameraPos;
 	CameraProperty cameraProp;
 	Value_ptr<IRenderer> vlp_renderer;
 	std::string cameraName;
 	Value_weak_ptr<GraphicDevice> vwp_graphicDevice;
+	bool isMatrixUpdate=false;
 private:
 
 };

@@ -50,8 +50,9 @@ void ButiEngine::ButiRendering::Camera::Initialize()
 
 void ButiEngine::ButiRendering::Camera::Start()
 {
-	cameraPos = vlp_transform->GetWorldPosition();
-	viewMatrix =  vlp_transform->GetMatrix().GetInverse();
+	if (!isMatrixUpdate) {
+		UpdateMatrix();
+	}
 	vwp_graphicDevice.lock()->SetCameraPos(cameraPos);
 	vwp_graphicDevice.lock()->SetProjectionMatrix(projectionMatrix);
 	vwp_graphicDevice.lock()->SetRawViewMatrix(viewMatrix);
@@ -71,6 +72,14 @@ void ButiEngine::ButiRendering::Camera::Start()
 	vwp_graphicDevice.lock()->SetViewMatrix_billBoardX(billboard.GetInValidYZ());
 	vwp_graphicDevice.lock()->SetViewMatrix_billBoardY(billboard.GetInValidXZ());
 	vwp_graphicDevice.lock()->SetViewMatrix_billBoardZ(billboard.GetInValidXY());
+	isMatrixUpdate = false;
+}
+
+void ButiEngine::ButiRendering::Camera::UpdateMatrix()
+{
+	cameraPos = vlp_transform->GetWorldPosition();
+	viewMatrix = vlp_transform->GetMatrix().GetInverse();
+	isMatrixUpdate = true;
 }
 
 void ButiEngine::ButiRendering::Camera::SetName(const std::string& arg_name)

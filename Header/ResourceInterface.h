@@ -56,6 +56,7 @@ struct BoxEightCorner {
 	Vector4 down_left_back = Vector4(0, 0, 0, 1.0f);
 	Vector4 down_right_back = Vector4(0, 0, 0, 1.0f);
 };
+class ICamera;
 /// <summary>
 /// 描画パスのインターフェース
 /// </summary>
@@ -115,7 +116,7 @@ public:
 	virtual bool IsEditActive()const = 0;
 	virtual void SetIsCurrentActive(const bool arg_isActive) = 0;
 	virtual bool IsCurrentActive()const = 0;
-
+	virtual Value_ptr<ICamera> GetCamera()const { return nullptr; }
 };
 class ModelAnimation;
 struct MotionKeyFrameData;

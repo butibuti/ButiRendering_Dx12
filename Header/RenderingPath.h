@@ -32,6 +32,7 @@ public:
 	Value_ptr<IDepthStencil> GetDepthStencil()const { return m_depthStencilTexture; }
 	List<Value_ptr<IRenderTarget>>&GetRenderTargets() { return m_list_vlp_renderTarget; }
 	const List<Value_ptr<IRenderTarget>>& GetRenderTargets()const override { return m_list_vlp_renderTarget; }
+	Value_ptr<ICamera> GetCamera()const { return vlp_camera; }
 protected:
 	Value_ptr<ICamera> vlp_camera;
 	std::int32_t m_order=0,m_layer=0;
