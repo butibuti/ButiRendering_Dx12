@@ -16,11 +16,27 @@ enum class VertexType:std::uint8_t {
 	Vertex_UV_Normal_Tangent_Color ,
 	Vertex_UV_Normal_Color ,
 	Vertex_Model_SingleBone,
+	Vertex_Model_SingleBone_UVEx01,
+	Vertex_Model_SingleBone_UVEx02,
+	Vertex_Model_SingleBone_UVEx03,
+	Vertex_Model_SingleBone_UVEx04,
 	Vertex_Model_SingleBone_Tangent,
 	Vertex_Model_DoubleBone,
+	Vertex_Model_DoubleBone_UVEx01,
+	Vertex_Model_DoubleBone_UVEx02,
+	Vertex_Model_DoubleBone_UVEx03,
+	Vertex_Model_DoubleBone_UVEx04,
 	Vertex_Model_QuadBone,
+	Vertex_Model_QuadBone_UVEx01,
+	Vertex_Model_QuadBone_UVEx02,
+	Vertex_Model_QuadBone_UVEx03,
+	Vertex_Model_QuadBone_UVEx04,
 	Vertex_Model_QuadBone_Tangent ,
-	Vertex_Model_SDEFBone ,
+	Vertex_Model_SDEFBone,
+	Vertex_Model_SDEFBone_UVEX01,
+	Vertex_Model_SDEFBone_UVEX02,
+	Vertex_Model_SDEFBone_UVEX03,
+	Vertex_Model_SDEFBone_UVEX04 ,
 	Vertex_Model_Mix ,
 };
 using namespace ButiEngine;
@@ -206,19 +222,28 @@ struct Vertex_Model_SingleBone_Tangent :public VertexInformation::Vertex, public
 	}
 };
 struct Vertex_Model_SingleBone_UVex01 :public Vertex_Model_SingleBone, public VertexInformation::UV_ex1
-{	
+{
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SingleBone_UVEx01;
+	}
 };
 struct Vertex_Model_SingleBone_UVex02 :public Vertex_Model_SingleBone_UVex01, public VertexInformation::UV_ex2
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SingleBone_UVEx02;
+	}
 };
 struct Vertex_Model_SingleBone_UVex03 :public Vertex_Model_SingleBone_UVex02, public VertexInformation::UV_ex3
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SingleBone_UVEx03;
+	}
 };
 struct Vertex_Model_SingleBone_UVex04 :public Vertex_Model_SingleBone_UVex03, public VertexInformation::UV_ex4
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SingleBone_UVEx04;
+	}
 };
 
 
@@ -231,15 +256,27 @@ struct Vertex_Model_DoubleBone :public VertexInformation::Vertex, public VertexI
 
 struct Vertex_Model_DoubleBone_UVex01 :public Vertex_Model_DoubleBone, public VertexInformation::UV_ex1
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_DoubleBone_UVEx01;
+	}
 };
 struct Vertex_Model_DoubleBone_UVex02 :public Vertex_Model_DoubleBone_UVex01, public VertexInformation::UV_ex2
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_DoubleBone_UVEx02;
+	}
 };
 struct Vertex_Model_DoubleBone_UVex03 :public Vertex_Model_DoubleBone_UVex02, public VertexInformation::UV_ex3
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_DoubleBone_UVEx03;
+	}
 };
 struct Vertex_Model_DoubleBone_UVex04 :public Vertex_Model_DoubleBone_UVex03, public VertexInformation::UV_ex4
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_DoubleBone_UVEx04;
+	}
 };
 
 struct Vertex_Model_QuadBone :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::QuadBone
@@ -257,40 +294,60 @@ struct Vertex_Model_QuadBone_Tangent :public VertexInformation::Vertex, public V
 
 struct Vertex_Model_QuadBone_UVex01 :public Vertex_Model_QuadBone, public VertexInformation::UV_ex1
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_QuadBone_UVEx01;
+	}
 };
 struct Vertex_Model_QuadBone_UVex02 :public Vertex_Model_QuadBone_UVex01, public VertexInformation::UV_ex2
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_QuadBone_UVEx02;
+	}
 };
 struct Vertex_Model_QuadBone_UVex03 :public Vertex_Model_QuadBone_UVex02, public VertexInformation::UV_ex3
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_QuadBone_UVEx03;
+	}
 };
 struct Vertex_Model_QuadBone_UVex04 :public Vertex_Model_QuadBone_UVex03, public VertexInformation::UV_ex4
 {
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_QuadBone_UVEx04;
+	}
 };
 
 struct Vertex_Model_SdefBone :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::SDEFBone
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SDEFBone;
+	}
 };
 
 
 struct Vertex_Model_SdefBone_UVex01 :public Vertex_Model_SdefBone, public VertexInformation::UV_ex1
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SDEFBone_UVEX01;
+	}
 };
 struct Vertex_Model_SdefBone_UVex02 :public Vertex_Model_SdefBone_UVex01, public VertexInformation::UV_ex2
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SDEFBone_UVEX01;
+	}
 };
 struct Vertex_Model_SdefBone_UVex03 :public Vertex_Model_SdefBone_UVex02, public VertexInformation::UV_ex3
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SDEFBone_UVEX02;
+	}
 };
 struct Vertex_Model_SdefBone_UVex04 :public Vertex_Model_SdefBone_UVex03, public VertexInformation::UV_ex4
 {
-	
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_SDEFBone_UVEX03;
+	}
 };
 
 struct Vertex_Model_PMX :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal, public VertexInformation::PMX
