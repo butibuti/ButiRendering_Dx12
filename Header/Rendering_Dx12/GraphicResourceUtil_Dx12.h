@@ -129,7 +129,7 @@ D3D12_COMPARISON_FUNC_LESS,false, D3D12_DEFAULT_STENCIL_READ_MASK, D3D12_DEFAULT
 	RetDesc.PrimitiveTopologyType = (D3D12_PRIMITIVE_TOPOLOGY_TYPE)arg_topologyType;
 
 	RetDesc.NumRenderTargets = arg_list_outputformat.GetSize();
-	for (std::int32_t i = 0; i < RetDesc.NumRenderTargets; i++) {
+	for (std::uint32_t i = 0; i < RetDesc.NumRenderTargets; i++) {
 		RetDesc.RTVFormats[i] = static_cast<DXGI_FORMAT>(arg_list_outputformat[i]);
 	}
 

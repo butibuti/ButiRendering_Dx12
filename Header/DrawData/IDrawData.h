@@ -15,9 +15,9 @@ struct ObjectDrawData :public IObject {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(vec_exCBuffer);
-		archive(billboardMode);
-		archive(drawFixParam);
+		ARCHIVE_BUTI(vec_exCBuffer);
+		ARCHIVE_BUTI(billboardMode);
+		ARCHIVE_BUTI(drawFixParam);
 	}
 	bool IsContainExCBuffer(const std::string& arg_cbufferName) {
 		for (auto itr = vec_exCBuffer.begin(); itr != vec_exCBuffer.end(); itr++) {

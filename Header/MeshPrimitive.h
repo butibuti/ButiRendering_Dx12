@@ -137,7 +137,7 @@ private:
 	//GraphicsResourceUsage m_usage;
 	//GraphicsResourcePool m_pool;
 	std::int32_t m_primaryIndexCount;
-	//std::vector<byte_t> m_buffer;
+	//List<byte_t> m_buffer;
 	//void* m_rhiMappedBuffer;
 	void* m_mappedBuffer;
 	bool m_initialUpdate;
@@ -217,7 +217,7 @@ private:
 	//GraphicsResourcePool m_pool;
 	size_t m_primarySize;
 
-	//std::vector<byte_t> m_buffer;
+	//List<byte_t> m_buffer;
 	//void* m_rhiMappedBuffer;
 	void* m_mappedBuffer;
 	bool m_initialUpdate;
@@ -257,10 +257,10 @@ public:
 	virtual const void* GetVertexData()const = 0;
 	virtual const std::uint32_t* GetIndexData()const = 0;
 	virtual std::uint32_t GetVertexType()const = 0;
-	virtual void SetIndex(const Value_ptr< std::vector<std::uint32_t>>& arg_vlp_vec_index) = 0;
-	virtual void SetIndex(const std::vector<std::uint32_t>& arg_vec_index) = 0;
-	virtual std::vector<std::uint32_t>& GetIndex() = 0;
-	virtual Value_ptr< std::vector<std::uint32_t>> GetIndexValuePtr()const = 0;
+	virtual void SetIndex(const Value_ptr< List<std::uint32_t>>& arg_vlp_vec_index) = 0;
+	virtual void SetIndex(const List<std::uint32_t>& arg_vec_index) = 0;
+	virtual List<std::uint32_t>& GetIndex() = 0;
+	virtual Value_ptr< List<std::uint32_t>> GetIndexValuePtr()const = 0;
 	template<typename T>
 	inline Value_ptr<T> GetThis() {
 		auto Ptr = dynamic_value_ptr_cast<T>(value_from_this ());
@@ -278,9 +278,9 @@ template<typename T>
 class MeshPrimitive : public MeshPrimitiveBase {
 public:
 	void Clear() {
-		vertices.clear();
+		vertices.Clear();
 		if (indices) {
-			indices->clear();
+			indices->Clear();
 		}		
 	}
 	std::uint32_t GetVertexSize()const override {
@@ -293,10 +293,10 @@ public:
 		return indices->data();
 	}
 	std::uint32_t GetVertexCount()const override {
-		return vertices.size();
+		return vertices.GetSize();
 	}
 	std::uint32_t GetIndexCount()const override {
-		return indices->size();
+		return indices->GetSize();
 	}
 	std::uint32_t GetVertexType()const override {
 		std::uint32_t output=0;
@@ -350,16 +350,16 @@ public:
 		}
 		return output;
 	}
-	void SetIndex(const Value_ptr< std::vector<std::uint32_t>>& arg_vlp_vec_index)override {
+	void SetIndex(const Value_ptr< List<std::uint32_t>>& arg_vlp_vec_index)override {
 		indices = arg_vlp_vec_index;
 	}
-	void SetIndex(const std::vector<std::uint32_t>& arg_vec_index)override {
-		indices = make_value<std::vector<std::uint32_t>>(arg_vec_index);
+	void SetIndex(const List<std::uint32_t>& arg_vec_index)override {
+		indices = make_value<List<std::uint32_t>>(arg_vec_index);
 	}
-	std::vector<std::uint32_t>& GetIndex()override {
+	List<std::uint32_t>& GetIndex()override {
 		return *indices;
 	}
-	Value_ptr< std::vector<std::uint32_t>> GetIndexValuePtr()const override {
+	Value_ptr< List<std::uint32_t>> GetIndexValuePtr()const override {
 		return indices;
 	}
 	bool IsHitRay(const Line& arg_line, Vector3* arg_p_pos, Vector3* arg_p_normal) override {
@@ -375,10 +375,10 @@ public:
 		}
 		return false;
 	}
-	std::vector<T> vertices;
+	List<T> vertices;
 
 private:
-	Value_ptr< std::vector<std::uint32_t>> indices;
+	Value_ptr< List<std::uint32_t>> indices;
 };
 
 

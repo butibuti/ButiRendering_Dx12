@@ -14,10 +14,10 @@ struct Matrices
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(World);
-		archive(View);
-		archive(Projection);
-		archive(MVP);
+		ARCHIVE_BUTI(World);
+		ARCHIVE_BUTI(View);
+		ARCHIVE_BUTI(Projection);
+		ARCHIVE_BUTI(MVP);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "ObjectMatrix";
@@ -44,14 +44,14 @@ struct RendererState {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(fogColor);
-		archive(cameraPos);
-		archive(fogCoord);
-		archive(shadowVP);
-		archive(shadowV);
-		archive(forwordCameraMatrix);
-		archive(shadowCameraPos);
-		archive(Time);
+		ARCHIVE_BUTI(fogColor);
+		ARCHIVE_BUTI(cameraPos);
+		ARCHIVE_BUTI(fogCoord);
+		ARCHIVE_BUTI(shadowVP);
+		ARCHIVE_BUTI(shadowV);
+		ARCHIVE_BUTI(forwordCameraMatrix);
+		ARCHIVE_BUTI(shadowCameraPos);
+		ARCHIVE_BUTI(Time);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "RendererState";
@@ -83,11 +83,11 @@ struct ObjectInformation {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(lightDir);
-		archive(color);
-		archive(Tiling);
-		archive(OffSet);
-		archive(ExInfo);
+		ARCHIVE_BUTI(lightDir);
+		ARCHIVE_BUTI(color);
+		ARCHIVE_BUTI(Tiling);
+		ARCHIVE_BUTI(OffSet);
+		ARCHIVE_BUTI(ExInfo);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "ObjectInformation";
@@ -107,7 +107,7 @@ struct GausParameter {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(gausOffset);
+		ARCHIVE_BUTI(gausOffset);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "GausParameter";
@@ -125,11 +125,11 @@ struct MaterialValue {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(emissive);
-		archive(diffuse);
-		archive(ambient);
-		archive(specular);
-		archive(roughness);
+		ARCHIVE_BUTI(emissive);
+		ARCHIVE_BUTI(diffuse);
+		ARCHIVE_BUTI(ambient);
+		ARCHIVE_BUTI(specular);
+		ARCHIVE_BUTI(roughness);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "Material";
@@ -143,7 +143,7 @@ struct MaterialValue_Deferred {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(datas);
+		ARCHIVE_BUTI(datas);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "MaterialList";
@@ -155,7 +155,7 @@ struct BoneMatrix {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(datas);
+		ARCHIVE_BUTI(datas);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "Bone";
@@ -180,16 +180,16 @@ struct ParticleParameter {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(startColor);
-		archive(endColor);
-		archive(time);
-		archive(power);
-		archive(noise);
-		archive(outer);
-		archive(center);
-		archive(size);
-		archive(minSize);
-		archive(rotationPase);
+		ARCHIVE_BUTI(startColor);
+		ARCHIVE_BUTI(endColor);
+		ARCHIVE_BUTI(time);
+		ARCHIVE_BUTI(power);
+		ARCHIVE_BUTI(noise);
+		ARCHIVE_BUTI(outer);
+		ARCHIVE_BUTI(center);
+		ARCHIVE_BUTI(size);
+		ARCHIVE_BUTI(minSize);
+		ARCHIVE_BUTI(rotationPase);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "ParticleParameter";

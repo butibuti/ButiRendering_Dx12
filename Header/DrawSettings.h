@@ -38,14 +38,14 @@ struct DrawSettings
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(cullMode);
-		archive(isFill);
-		archive(blendMode);
-		archive(vec_samplerMode);
-		archive(topologyType);
-		archive(isShadowMap);
-		archive(isAlpha);
-		archive(isDepth);
+		ARCHIVE_BUTI(cullMode);
+		ARCHIVE_BUTI(isFill);
+		ARCHIVE_BUTI(blendMode);
+		ARCHIVE_BUTI(vec_samplerMode);
+		ARCHIVE_BUTI(topologyType);
+		ARCHIVE_BUTI(isShadowMap);
+		ARCHIVE_BUTI(isAlpha);
+		ARCHIVE_BUTI(isDepth);
 	}
 
 	inline bool operator==(const DrawSettings& other)const {

@@ -26,19 +26,19 @@ struct CameraProperty {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(width);
-		archive(height);
-		archive(left);
-		archive(top);
-		archive(front);
-		archive(angle);
-		archive(farClip);
-		archive(nearClip);
-		archive(isPararell);
-		archive(front);
-		archive(renderingInfo);
-		archive(cameraName);
-		archive(clearColor);
+		ARCHIVE_BUTI(width);
+		ARCHIVE_BUTI(height);
+		ARCHIVE_BUTI(left);
+		ARCHIVE_BUTI(top);
+		ARCHIVE_BUTI(front);
+		ARCHIVE_BUTI(angle);
+		ARCHIVE_BUTI(farClip);
+		ARCHIVE_BUTI(nearClip);
+		ARCHIVE_BUTI(isPararell);
+		ARCHIVE_BUTI(front);
+		ARCHIVE_BUTI(renderingInfo);
+		ARCHIVE_BUTI(cameraName);
+		ARCHIVE_BUTI(clearColor);
 	}
 
 };

@@ -248,13 +248,13 @@ struct ShaderElement
     template<class Archive>
     void serialize(Archive& archive)
     {
-        archive(semanticName);
-        archive(semanticIndex);
-        archive(format);
-        archive(inputSlot);
-        archive(alignedByteOffset);
-        archive(inputSlotClass);
-        archive(instanceDataStepRate);
+        ARCHIVE_BUTI(semanticName);
+        ARCHIVE_BUTI(semanticIndex);
+        ARCHIVE_BUTI(format);
+        ARCHIVE_BUTI(inputSlot);
+        ARCHIVE_BUTI(alignedByteOffset);
+        ARCHIVE_BUTI(inputSlotClass);
+        ARCHIVE_BUTI(instanceDataStepRate);
     }
 };
 }

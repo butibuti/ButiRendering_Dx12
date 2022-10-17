@@ -25,11 +25,11 @@ struct IKLink {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(radianLimit);
-		archive(upLimit);
-		archive(downLimit);
-		archive(bonesLength);
-		archive(linkBone);
+		ARCHIVE_BUTI(radianLimit);
+		ARCHIVE_BUTI(upLimit);
+		ARCHIVE_BUTI(downLimit);
+		ARCHIVE_BUTI(bonesLength);
+		ARCHIVE_BUTI(linkBone);
 	}
 };
 struct IKData {
@@ -45,12 +45,12 @@ struct IKData {
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(targetBoneIndex);
-		archive(extremityBoneIndex);
-		archive(loopCount);
-		archive(maxRadian);
-		archive(sum_bonesLength);
-		archive(links);
+		ARCHIVE_BUTI(targetBoneIndex);
+		ARCHIVE_BUTI(extremityBoneIndex);
+		ARCHIVE_BUTI(loopCount);
+		ARCHIVE_BUTI(maxRadian);
+		ARCHIVE_BUTI(sum_bonesLength);
+		ARCHIVE_BUTI(links);
 	}
 };
 struct Bone

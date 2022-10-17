@@ -83,7 +83,7 @@ public:
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		archive(m_instance);
+		ARCHIVE_BUTI(m_instance);
 		CreateCBufferUpdater();
 	}
 private:

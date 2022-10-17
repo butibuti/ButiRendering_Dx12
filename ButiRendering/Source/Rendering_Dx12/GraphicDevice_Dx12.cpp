@@ -505,7 +505,7 @@ ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetUpl
 
 ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetClearCommandList()
 {
-	throw new ButiException(L"ClearCommand‚Í‘¶Ý‚µ‚Ü‚¹‚ñ");
+	throw ButiException(L"ClearCommand‚Í‘¶Ý‚µ‚Ü‚¹‚ñ");
 	return *m_uqp_impl->cmp_uploadCommandList.Get();
 }
 
@@ -579,7 +579,7 @@ ID3D12Fence& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFence()
 
 IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 {
-	throw new ButiException(L"SwapChain‚Í‘¶Ý‚µ‚Ü‚¹‚ñ");
+	throw ButiException(L"SwapChain‚Í‘¶Ý‚µ‚Ü‚¹‚ñ");
 	IDXGISwapChain* p_d=nullptr;
 	return *p_d;
 }
@@ -598,7 +598,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 
 		if (hr != S_OK) {
 			auto reason = m_uqp_impl->cmp_device->GetDeviceRemovedReason();
-			throw new ButiException(L"WaitGPU“à‚Å‚Ì—áŠO");
+			throw ButiException(L"WaitGPU“à‚Å‚Ì—áŠO");
 			std::int32_t i = 0;
 		}
 	}
