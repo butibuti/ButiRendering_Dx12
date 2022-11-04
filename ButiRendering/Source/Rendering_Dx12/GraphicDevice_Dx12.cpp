@@ -177,25 +177,31 @@ void ButiRendering::GraphicDevice_Dx12_WithWindow::SetWindow(std::int64_t arg_ha
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 
-	DXGI_SWAP_CHAIN_DESC swapChaindesc = {};
-	swapChaindesc.BufferCount = GetFrameCount();
-	swapChaindesc.BufferDesc.Width = arg_width;
-	swapChaindesc.BufferDesc.Height = arg_height;
-	swapChaindesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	swapChaindesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChaindesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-	swapChaindesc.OutputWindow = *reinterpret_cast<HWND*>(&arg_handle);
-	swapChaindesc.Windowed = true;
-	swapChaindesc.SampleDesc.Count = 1;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> swapChain;
+	// Setup swap chain
+	DXGI_SWAP_CHAIN_DESC1 swapChaindesc = {};
+	{
+		swapChaindesc.BufferCount = GetFrameCount();
+		swapChaindesc.Width = 0;
+		swapChaindesc.Height = 0;
+		swapChaindesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChaindesc.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
+		swapChaindesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+		swapChaindesc.SampleDesc.Count = 1;
+		swapChaindesc.SampleDesc.Quality = 0;
+		swapChaindesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+		swapChaindesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+		swapChaindesc.Scaling = DXGI_SCALING_STRETCH;
+		swapChaindesc.Stereo = FALSE;
+	}
+	Microsoft::WRL::ComPtr<IDXGISwapChain1> swapChain;
 	//Create SwapChain.
-	auto hr = m_uqp_impl->cmp_factory4->CreateSwapChain(m_uqp_impl->cmp_commandQueue.Get(), &swapChaindesc, swapChain.GetAddressOf());
+	auto hr = m_uqp_impl->cmp_factory4->CreateSwapChainForHwnd(m_uqp_impl->cmp_commandQueue.Get(), *reinterpret_cast<HWND*>(&arg_handle),&swapChaindesc,nullptr,nullptr, swapChain.GetAddressOf());
 	assert(hr == S_OK);
-
 	// To IDXGISwapChain3.
 	hr = swapChain->QueryInterface(IID_PPV_ARGS(swapChain3.GetAddressOf()));
 	assert(hr == S_OK);
-
+	swapChain3->SetMaximumFrameLatency(GetFrameCount());
+	
 	//Get FrameBufferIndex.
 	m_uqp_impl->frameIndex = swapChain3->GetCurrentBackBufferIndex();
 
