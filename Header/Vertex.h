@@ -4,7 +4,7 @@
 namespace ButiEngine {
 namespace Vertex {
 enum VertexFlag {
-	UV=0b01,Normal=0b10,Tangent=0b100,Color=0b1000, SingleBone = 0b10000, DouleBone = 0b100000, QuadBone=0b1000000,PMX=0b10000000,
+	Position=0b00, UV=0b01,Normal=0b10,Tangent=0b100,Color=0b1000, SingleBone = 0b10000, DouleBone = 0b100000, QuadBone=0b1000000,PMX=0b10000000,
 	UV_ex1 = 0b100000000, UV_ex2 = 0b1000000000, UV_ex3 = 0b1000000000, UV_ex4 = 0b1000000000,
 
 };
