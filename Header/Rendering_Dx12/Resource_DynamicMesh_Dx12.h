@@ -12,6 +12,7 @@ class Resource_DynamicMesh_Dx12 :public Resource_DynamicMesh
 {
 public:
 	BUTIRENDERING_API Resource_DynamicMesh_Dx12(Value_ptr<GraphicDevice> arg_graphicDevice);
+	BUTIRENDERING_API ~Resource_DynamicMesh_Dx12();
 	BUTIRENDERING_API void Draw(const std::uint32_t arg_vertexType)override;
 
 	BUTIRENDERING_API void Initialize()override;

@@ -547,6 +547,12 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::AddUploadResource(GPUResourc
 	}
 }
 
+void ButiEngine::ButiRendering::GraphicDevice_Dx12::RemoveUploadResource(GPUResource* arg_resource)
+{
+	std::lock_guard<std::mutex> lock(m_uqp_impl->mtx_uploadResource);
+	m_uqp_impl->list_uploadResourcesBuffer.Remove(arg_resource);
+}
+
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::UploadResourceBufferMerge()
 {
 	std::lock_guard<std::mutex> lock(m_uqp_impl->mtx_uploadResource);

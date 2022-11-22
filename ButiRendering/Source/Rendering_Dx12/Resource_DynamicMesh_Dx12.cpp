@@ -7,6 +7,10 @@ ButiEngine::ButiRendering::Resource_DynamicMesh_Dx12::Resource_DynamicMesh_Dx12(
 	vwp_graphicDevice = arg_graphicDevice->GetThis<GraphicDevice_Dx12>();
 }
 
+ButiEngine::ButiRendering::Resource_DynamicMesh_Dx12::~Resource_DynamicMesh_Dx12()
+{
+	vwp_graphicDevice.lock()->RemoveUploadResource(this);
+}
 void ButiEngine::ButiRendering::Resource_DynamicMesh_Dx12::Draw(const std::uint32_t arg_vertexType)
 {
 	vwp_graphicDevice.lock()->GetCommandList().IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -84,7 +88,9 @@ Microsoft::WRL::ComPtr<ID3D12Resource> ButiEngine::ButiRendering::Resource_Dynam
 
 void ButiEngine::ButiRendering::Resource_DynamicMesh_Dx12::Update()
 {
-	vwp_graphicDevice.lock()->AddUploadResource(GetThis<GPUResource>().get());
+	if (!isDataRefresh) {
+		vwp_graphicDevice.lock()->AddUploadResource(GetThis<GPUResource>().get());
+	}
 
 	isDataRefresh = true;
 }

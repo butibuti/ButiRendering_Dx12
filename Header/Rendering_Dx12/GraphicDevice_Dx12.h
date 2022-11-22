@@ -47,7 +47,8 @@ public:
 
 	PipelineStateManager& GetPipelineStateManager();
 	RootSignatureManager& GetRootSignatureManager();
-	BUTIRENDERING_API void AddUploadResource(GPUResource* rarg_resource);
+	BUTIRENDERING_API void AddUploadResource(GPUResource* arg_resource);
+	BUTIRENDERING_API void RemoveUploadResource(GPUResource* arg_resource);
 
 	BUTIRENDERING_API void AddOutputResource(GPUResource* rarg_resource, const FileFormat arg_format, const std::string& arg_fileName);
 
