@@ -17,15 +17,15 @@ std::int32_t main() {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	auto vlp_window = make_value<Window>();
 	HINSTANCE instance=nullptr;
-	vlp_window->Initialize("RenderingTest", false, false, instance, 960, 540);
+	vlp_window->Initialize("RenderingTest", false, false, instance, 1920, 1080);
 	auto vlp_graphicDevice = ButiRendering::CreateGraphicDevice(true);
 	vlp_graphicDevice->SetClearColor(ButiColor::DeepPurple());
 	auto winHandle = vlp_window->GetHandle();
-	vlp_graphicDevice->SetWindow(*reinterpret_cast<std::int64_t*> (&(winHandle)), 960, 540);
+	vlp_graphicDevice->SetWindow(*reinterpret_cast<std::int64_t*> (&(winHandle)), 1920, 1080);
 
 	auto vlp_renderer = ButiRendering::CreateRenderer(vlp_graphicDevice);
 	vlp_renderer->AddLayer(); 
-	auto prop = ButiRendering::CameraProperty(960, 540, 0, 0);
+	auto prop = ButiRendering::CameraProperty(1920, 1080, 0, 0);
 	prop.farClip = 200.0f;
 	prop.cameraName = "main";
 	
@@ -44,7 +44,7 @@ std::int32_t main() {
 			auto cubePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 
 			ButiRendering::BoxEightCorner boxEightCorner;
-			ButiRendering::MeshHelper::CreateCube(Vector3(1, 1, 1), std::vector<Vector4>(), *cubePrim, boxEightCorner,true);
+			ButiRendering::MeshHelper::CreateCube(Vector3(1, 1, 1), ButiEngine::List<Vector4>(), *cubePrim, boxEightCorner,true);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uvNormal);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_normal);
 			ButiRendering::MeshHelper::VertexConvert(*cubePrim, *cubePrim_uv);
@@ -58,7 +58,7 @@ std::int32_t main() {
 			auto spherePrim_uv = ObjectFactory::Create<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 
 			ButiRendering::BoxEightCorner boxEightCorner;
-			ButiRendering::MeshHelper::CreateSphere(Vector3(1, 1, 1),24,std::vector<Vector4>(),*spherePrim,boxEightCorner);
+			ButiRendering::MeshHelper::CreateSphere(Vector3(1, 1, 1),24, ButiEngine::List<Vector4>(),*spherePrim,boxEightCorner);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uvNormal);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_normal);
 			ButiRendering::MeshHelper::VertexConvert(*spherePrim, *spherePrim_uv);
@@ -69,7 +69,7 @@ std::int32_t main() {
 		vlp_shader_texture = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateUV(vlp_graphicDevice),
 			ButiRendering::DefaultPixelShader::CreateUV(vlp_graphicDevice), nullptr, "TextureMap");
 		vlp_material_onlyColor = ButiRendering::CreateMaterial("", ButiRendering::MaterialValue(), vlp_shader_onlyMaterial, List<Value_ptr<ButiRendering::IResource_Texture>>(), ButiRendering::DrawSettings(), vlp_graphicDevice);
-		list_vlp_texture.Add(ButiRendering::CreateTextureFromImageFile("Resource/ngineLogo.png", vlp_graphicDevice));
+		list_vlp_texture.Add(ButiRendering::CreateTextureFromImageFile("Resource/EngineLogo.png", vlp_graphicDevice));
 		vlp_material_textureMap = ButiRendering::CreateMaterial("", ButiRendering::MaterialValue(), vlp_shader_texture, list_vlp_texture, ButiRendering::DrawSettings(), vlp_graphicDevice);
 		vlp_material_textureMap->SetIsAlpha(true);
 	}

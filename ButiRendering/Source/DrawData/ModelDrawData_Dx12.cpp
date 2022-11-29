@@ -24,8 +24,8 @@ ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelDrawObject_Dx12(const Valu
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::Initialize()
 {
-	cbuffer_bone = drawData.GetCBuffer<BoneMatrix>();
 	DrawObject_Dx12::Initialize();
+	cbuffer_bone = drawData.GetCBuffer<BoneMatrix>();
 }
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::DrawBefore()
@@ -39,15 +39,18 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::DrawBefore()
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::Draw()
 {
 	BufferUpdate();
-	//CommandExecute();
+	CommandSet();
 }
 
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelUpdate()
 {
 	std::int32_t i = 0;	
+	if(cbuffer_bone)
 	for (auto itr :vlp_bone-> m_list_bone) {
-		cbuffer_bone->Get().datas[i] = (itr)->GetPoseMatrix();
+		auto mat = (itr)->GetPoseMatrix();
+		//std::cout << std::to_string(mat)<<std::endl;
+		cbuffer_bone->Get().datas[i] = mat;
 		i++;
 	}
 }

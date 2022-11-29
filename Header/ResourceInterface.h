@@ -355,6 +355,7 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShaderFromBinary
 BUTIRENDERING_API Value_ptr<IResource_PixelShader> CreatePixelShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateGeometryShaderFromBinary(const std::string& arg_shaderName, const unsigned char* arg_data, const std::uint64_t arg_size,Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 namespace DefaultVertexShader {
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateImmediate(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreatePosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateShadowMap_UV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -365,6 +366,7 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVColor(Value_ptr<Grap
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVFog(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVFog_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormal_QuadBone(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalAttribute(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
@@ -379,6 +381,7 @@ BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent(Value_
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVNormalTangent_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateUVPosition(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal_QuadBone(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalPhong(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateNormalColor(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

@@ -1,5 +1,7 @@
 #include"DefaultShader.hlsli"
 
+Use_ObjectMatrix(b0)
+Use_Bone(b3)
 Pixel_UV_Normal VSMain(Vertex_UV_Normal_QuadBone vertex)
 {
 	Pixel_UV_Normal output;
@@ -7,6 +9,7 @@ Pixel_UV_Normal VSMain(Vertex_UV_Normal_QuadBone vertex)
 
 	output.position = mul(bm, vertex.position);
 
+	output.position = output.position * 0 + vertex.position;
 	output.position = mul(output.position, mvpMatrix);
 	output.normal = mul(vertex.normal, (float3x3)bm);
 	output.normal = mul(output.normal, (float3x3)modelMatrix);

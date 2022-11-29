@@ -131,20 +131,20 @@ inline Format ShaderTypeToFormat(const std::string& arg_formatStr, const std::st
 		{
 			return  Format::R16_UINT;
 		}
-		else if (arg_formatStr == "int4")
+		else if (arg_formatStr == "sint4")
 		{
 
 			return  Format::R32G32B32A32_SINT;
 		}
-		else if (arg_formatStr == "int3")
+		else if (arg_formatStr == "sint3")
 		{
 			return  Format::R32G32B32_SINT;
 		}
-		else if (arg_formatStr == "int2")
+		else if (arg_formatStr == "sint2")
 		{
 			return  Format::R32G32_SINT;
 		}
-		else if (arg_formatStr == "int")
+		else if (arg_formatStr == "sint")
 		{
 			return  Format::R32_SINT;
 		}

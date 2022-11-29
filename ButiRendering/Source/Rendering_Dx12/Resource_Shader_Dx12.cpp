@@ -28,8 +28,14 @@ namespace UVFog {
 namespace UVNormal {
 #include"../../CompiledShader/VS_UVNormal.fxc"
 }
+namespace UVNormal_QuadBone {
+#include"../../CompiledShader/VS_UVNormal_QuadBone.fxc"
+}
 namespace Normal {
 #include"../../CompiledShader/VS_Normal.fxc"
+}
+namespace Normal_QuadBone {
+#include"../../CompiledShader/VS_Normal_QuadBone.fxc"
 }
 namespace NormalColor {
 #include"../../CompiledShader/VS_NormalColor.fxc"
@@ -428,14 +434,15 @@ void ButiEngine::ButiRendering::Resource_VertexShader_Dx12::CreateShaderData(con
 			m_inputVertexType |= Vertex::VertexFlag::SingleBone;
 		}
 		else if (elem.semanticName == "BONEINDEXTWO") {
+			m_inputVertexType &= ~Vertex::VertexFlag::SingleBone;
 			m_inputVertexType |= Vertex::VertexFlag::DouleBone;
 		}
 		else if (elem.semanticName == "BONEINDEXFOUR") {
-			m_inputVertexType ^= Vertex::VertexFlag::DouleBone;
+			m_inputVertexType &= ~Vertex::VertexFlag::DouleBone;
 			m_inputVertexType |= Vertex::VertexFlag::QuadBone;
 		}
 		else if (elem.semanticName == "SDEFC") {
-			m_inputVertexType ^= Vertex::VertexFlag::QuadBone;
+			m_inputVertexType &= ~Vertex::VertexFlag::QuadBone;
 			m_inputVertexType |= Vertex::VertexFlag::PMX;
 		}
 	}
@@ -569,7 +576,18 @@ void ButiEngine::ButiRendering::ShaderCompile(const std::string& arg_sourceFileP
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormal(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
-	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal::g_VSMain, sizeof(VS::UVNormal::g_VSMain), "UVNormal",  arg_vlp_graphicDevice);
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal::g_VSMain, sizeof(VS::UVNormal::g_VSMain), "UVNormal", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateImmediate(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::ImmediateParticle::g_VSMain, sizeof(VS::ImmediateParticle::g_VSMain), "ImmediateParticle", arg_vlp_graphicDevice);
+}
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormal_QuadBone(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::UVNormal_QuadBone::g_VSMain, sizeof(VS::UVNormal_QuadBone::g_VSMain), "UVNormal_QuadBone", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateUVNormal_Shadow(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
@@ -653,6 +671,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEng
 {
 	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
 	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal::g_VSMain, sizeof(VS::Normal::g_VSMain), "Normal", arg_vlp_graphicDevice);
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormal_QuadBone(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+{
+	static Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> shader = nullptr;
+	return shader ? shader : shader = ObjectFactory::Create<Resource_VertexShader_Dx12>(VS::Normal_QuadBone::g_VSMain, sizeof(VS::Normal_QuadBone::g_VSMain), "Normal_QuadBone", arg_vlp_graphicDevice);
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_VertexShader> ButiEngine::ButiRendering::DefaultVertexShader::CreateNormalPhong(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)

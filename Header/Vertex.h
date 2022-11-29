@@ -26,6 +26,7 @@ enum class VertexType:std::uint8_t {
 	Vertex_Model_DoubleBone_UVEx02,
 	Vertex_Model_DoubleBone_UVEx03,
 	Vertex_Model_DoubleBone_UVEx04,
+	Vertex_Model_Normal_QuadBone,
 	Vertex_Model_QuadBone,
 	Vertex_Model_QuadBone_UVEx01,
 	Vertex_Model_QuadBone_UVEx02,
@@ -283,6 +284,12 @@ struct Vertex_Model_QuadBone :public VertexInformation::Vertex, public VertexInf
 {
 	static VertexType GetType() {
 		return VertexType::Vertex_Model_QuadBone;
+	}
+};
+struct Vertex_Model_Normal_QuadBone :public VertexInformation::Vertex, public VertexInformation::Normal, public VertexInformation::QuadBone
+{
+	static VertexType GetType() {
+		return VertexType::Vertex_Model_Normal_QuadBone;
 	}
 };
 struct Vertex_Model_QuadBone_Tangent :public VertexInformation::Vertex, public VertexInformation::UV, public VertexInformation::Normal,public VertexInformation::Tangent, public VertexInformation::QuadBone

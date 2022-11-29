@@ -19,9 +19,9 @@ static const float2 array_UV[6]={
     float2(0.0,0.0),
 };
 
-[maxvertexcount(18)]
+[maxvertexcount(6)]
 void GSMain(
-    triangle Vertex_UV_Normal_Color input[3],
+    point Vertex_UV_Normal_Color input[1],
     inout TriangleStream<Pixel_UV_Color> stream)
 {
 
@@ -29,26 +29,26 @@ void GSMain(
    
 
     Pixel_UV_Color pixel;
-    for (uint j = 0; j < 3; j++) {
-        float4 position = input[j].position;
-        pixel.color = input[j].color;
-        float scale = input[j].uv.x;
-        for (uint i = 0; i < 6; i += 3) {
+	float4 position = input[0].position;
+	pixel.color.x = input[0].normal.x;
+	pixel.color.y = input[0].normal.y;
+	pixel.color.z = input[0].normal.z;
+	pixel.color.w = 1.0f;
+	float scale = input[0].uv.x;
+	for (uint i = 0; i < 6; i += 3) {
 
-            pixel.position = position + array_Offset[i] * scale;
-            pixel.uv = array_UV[i];
-            stream.Append(pixel);
-            pixel.position = position + array_Offset[i + 1] * scale;
-            pixel.uv = array_UV[i + 1];
-            stream.Append(pixel);
-            pixel.position = position + array_Offset[i + 2] * scale;
-            pixel.uv = array_UV[i + 2];
-            stream.Append(pixel);
+		pixel.position = position + array_Offset[i] * scale;
+		pixel.uv = array_UV[i];
+		stream.Append(pixel);
+		pixel.position = position + array_Offset[i + 1] * scale;
+		pixel.uv = array_UV[i + 1];
+		stream.Append(pixel);
+		pixel.position = position + array_Offset[i + 2] * scale;
+		pixel.uv = array_UV[i + 2];
+		stream.Append(pixel);
 
-            stream.RestartStrip();
-        }
-    }
-
+		stream.RestartStrip();
+	}
 
 
 }

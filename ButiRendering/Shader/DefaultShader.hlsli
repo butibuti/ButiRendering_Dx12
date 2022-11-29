@@ -278,17 +278,30 @@ struct Vertex_UV_Normal_SingleBone
 
 struct Vertex_UV_Normal_QuadBone
 {
-    float4 position : POSITION;
-    float2 uv:TEXCOORD;
-    float3 normal : NORMAL;
-    min16int boneIndex_1 :BONEINDEXONE;
-    min16int boneIndex_2 : BONEINDEXTWO;
-    min16int boneIndex_3 : BONEINDEXTHREE;
-    min16int boneIndex_4 : BONEINDEXFOUR;
-    float weight_01 : BONEWEIGHTONE;
-    float weight_02 : BONEWEIGHTTWO;
-    float weight_03 : BONEWEIGHTTHREE;
-    float weight_04 : BONEWEIGHTFOUR;
+	float4 position : POSITION;
+	float2 uv:TEXCOORD;
+	float3 normal : NORMAL;
+	min16int boneIndex_1 :BONEINDEXONE;
+	min16int boneIndex_2 : BONEINDEXTWO;
+	min16int boneIndex_3 : BONEINDEXTHREE;
+	min16int boneIndex_4 : BONEINDEXFOUR;
+	float weight_01 : BONEWEIGHTONE;
+	float weight_02 : BONEWEIGHTTWO;
+	float weight_03 : BONEWEIGHTTHREE;
+	float weight_04 : BONEWEIGHTFOUR;
+};
+struct Vertex_Normal_QuadBone
+{
+	float4 position : POSITION;
+	float3 normal : NORMAL;
+	min16int boneIndex_1 :BONEINDEXONE;
+	min16int boneIndex_2 : BONEINDEXTWO;
+	min16int boneIndex_3 : BONEINDEXTHREE;
+	min16int boneIndex_4 : BONEINDEXFOUR;
+	float weight_01 : BONEWEIGHTONE;
+	float weight_02 : BONEWEIGHTTWO;
+	float weight_03 : BONEWEIGHTTHREE;
+	float weight_04 : BONEWEIGHTFOUR;
 };
 
 struct Vertex_PMX

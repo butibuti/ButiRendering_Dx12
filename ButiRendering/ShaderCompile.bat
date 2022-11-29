@@ -4,6 +4,8 @@ fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVAttribute.fxc Shader/VS_UVAtt
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVColor.fxc Shader/VS_UVColor.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVFog.fxc Shader/VS_UVFog.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormal.fxc Shader/VS_UVNormal.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormal_QuadBone.fxc Shader/VS_QuadBone.hlsl
+fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_Normal_QuadBone.fxc Shader/VS_Normal_QuadBone.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormal_Shadow.fxc Shader/VS_UVNormal_Shadow.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalAttribute.fxc Shader/VS_UVNormalAttribute.hlsl
 fxc.exe/T vs_5_1 /E VSMain /Fh CompiledShader/VS_UVNormalFog.fxc Shader/VS_UVNormalFog.hlsl
