@@ -89,8 +89,8 @@ ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEn
 		std::int32_t parentTransformIndex = (*itr)->parentBoneIndex;
 		if (parentTransformIndex >= 0) {
 			(*itr)->parentBone = out.at(parentTransformIndex);
-			(*itr)->transform->SetBaseTransform((*itr)->parentBone->transform->GetBaseTransform(), false);
-			(*itr)->transform->SetParentTransform(dynamic_value_ptr_cast<BoneTransform>( (*itr)->parentBone->transform),false);
+			(*itr)->transform->SetBaseTransform((*itr)->parentBone->transform, false);
+			(*itr)->transform->SetParentTransform(dynamic_value_ptr_cast<BoneTransform>( (*itr)->parentBone->transform),true);
 		}
 		(*itr)->bindPose = dynamic_value_ptr_cast<BoneTransform>((*itr)->transform)->GetBoneMatrix();
 		(*itr)->bindPoseInverse = (*itr)->bindPose.GetInverse();

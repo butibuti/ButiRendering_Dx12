@@ -111,33 +111,33 @@ struct SingleBone {
 	std::int16_t boneIndex = -1;
 };
 struct DoubleBone {
-	std::int16_t boneIndex_1 = -1;
-	std::int16_t boneIndex_2 = -1;
+	std::int32_t boneIndex_1 = -1;
+	std::int32_t boneIndex_2 = -1;
 	float weight = 0.0f;
 };
 struct QuadBone {
-	std::int16_t boneIndex_1 = -1;
-	std::int16_t boneIndex_2 = -1;
-	std::int16_t boneIndex_3 = -1;
-	std::int16_t boneIndex_4 = -1;
+	std::int32_t boneIndex_1 = -1;
+	std::int32_t boneIndex_2 = -1;
+	std::int32_t boneIndex_3 = -1;
+	std::int32_t boneIndex_4 = -1;
 	float weight_1 = 0.0f;
 	float weight_2 = 0.0f;
 	float weight_3 = 0.0f;
 	float weight_4 = 0.0f;
 };
 struct SDEFBone {
-	std::int16_t boneIndex_1 = -1;
-	std::int16_t boneIndex_2 = -1;
+	std::int32_t boneIndex_1 = -1;
+	std::int32_t boneIndex_2 = -1;
 	float weight = 0.0f;
 	Vector3 SDEF_C;
 	Vector3 SDEF_R0;
 	Vector3 SDEF_R1;
 };
 struct PMX {
-	std::int16_t boneIndex_1 = -1;
-	std::int16_t boneIndex_2 = -1;
-	std::int16_t boneIndex_3 = -1;
-	std::int16_t boneIndex_4 = -1;
+	std::int32_t boneIndex_1 = -1;
+	std::int32_t boneIndex_2 = -1;
+	std::int32_t boneIndex_3 = -1;
+	std::int32_t boneIndex_4 = -1;
 	float weight_1 = 0.0f;
 	float weight_2 = 0.0f;
 	float weight_3 = 0.0f;

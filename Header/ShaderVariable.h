@@ -152,10 +152,11 @@ struct MaterialValue_Deferred {
 };
 struct BoneMatrix {
 	Matrix4x4 datas[256];
+	BoneMatrix() { std::memset(datas, 0, sizeof(datas)); }
 	template<class Archive>
 	void serialize(Archive& archive)
 	{
-		ARCHIVE_BUTI(datas);
+		//ARCHIVE_BUTI(datas);
 	}
 	static const std::string& GetConstantBufferName() {
 		static const std::string bufferName = "Bone";
