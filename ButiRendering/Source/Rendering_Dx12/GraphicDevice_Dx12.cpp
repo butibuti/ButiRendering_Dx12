@@ -400,7 +400,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 	hr = m_uqp_impl->cmp_device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_uqp_impl->cmp_fence.GetAddressOf()));
 	if (hr!=S_OK)
 	{
-		throw ButiException(L"フェンスの生成失敗");
+		throw ButiException("フェンスの生成失敗");
 	}
 
 	// フェンスイベントを生成
@@ -408,7 +408,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::Initialize()
 	m_uqp_impl->fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 	if (m_uqp_impl->fenceEvent == nullptr)
 	{
-		throw ButiException(L"フェンスイベントの生成失敗");
+		throw ButiException("フェンスイベントの生成失敗");
 	}
 	m_uqp_impl->vlp_DescriptorManager = make_value<DescriptorHeapManager>(GetThis<GraphicDevice_Dx12>());
 
@@ -511,7 +511,7 @@ ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetUpl
 
 ID3D12GraphicsCommandList& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetClearCommandList()
 {
-	throw ButiException(L"ClearCommandは存在しません");
+	throw ButiException("ClearCommandは存在しません");
 	return *m_uqp_impl->cmp_uploadCommandList.Get();
 }
 
@@ -591,7 +591,7 @@ ID3D12Fence& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetFence()
 
 IDXGISwapChain& ButiEngine::ButiRendering::GraphicDevice_Dx12::GetSwapChain()
 {
-	throw ButiException(L"SwapChainは存在しません");
+	throw ButiException("SwapChainは存在しません");
 	IDXGISwapChain* p_d=nullptr;
 	return *p_d;
 }
@@ -610,7 +610,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::WaitGPU()
 
 		if (hr != S_OK) {
 			auto reason = m_uqp_impl->cmp_device->GetDeviceRemovedReason();
-			throw ButiException(L"WaitGPU内での例外");
+			throw ButiException("WaitGPU内での例外");
 			std::int32_t i = 0;
 		}
 	}
@@ -707,7 +707,7 @@ void ButiEngine::ButiRendering::GraphicDevice_Dx12::ClearWindow()
 void ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList(ID3D12GraphicsCommandList* arg_currentCommandList, const std::int32_t index)
 {
 	if (m_uqp_impl->p_currentCommandList) {
-		throw ButiException(L"commandList is already seted.", L"if (!currentCommandList)", L"ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList");
+		throw ButiException("commandList is already seted.if (!currentCommandList) ButiEngine::ButiRendering::GraphicDevice_Dx12::SetCommandList");
 	}
 	m_uqp_impl->p_currentCommandList = arg_currentCommandList;
 	ResetDrawStatus();

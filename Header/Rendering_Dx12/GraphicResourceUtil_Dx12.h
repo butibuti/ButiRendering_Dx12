@@ -199,7 +199,7 @@ static inline  void Reset(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pip
 
 	auto hr = commandList->Reset(&arg_commandAllocator, pipelineState.Get());
 	if (hr != S_OK) {
-		throw ButiException(L"", L"", L"");
+		throw ButiException("");
 	}
 }
 static inline  void BundleReset(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState, const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList, ID3D12CommandAllocator& arg_commandAllocator) {
@@ -211,7 +211,7 @@ static inline  void BundleReset(const Microsoft::WRL::ComPtr<ID3D12PipelineState
 		hr = commandList->Reset(&arg_commandAllocator, nullptr);
 	}
 	if (hr != S_OK) {
-		throw ButiException(L"", L"", L"");
+		THROWBUTIEXCEPTION("");
 	}
 }
 static inline  void BundleSetPipeLine(const Microsoft::WRL::ComPtr<ID3D12PipelineState>& pipelineState, ID3D12GraphicsCommandList& commandList) {
@@ -222,7 +222,7 @@ static inline  void BundleSetPipeLine(const Microsoft::WRL::ComPtr<ID3D12Pipelin
 static inline  void Close(const Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>& commandList) {
 	auto hr = commandList->Close();
 	if (hr != S_OK) {
-		throw ButiException(L"", L"", L"");
+		THROWBUTIEXCEPTION("");
 	}
 }
 

@@ -4,7 +4,8 @@
 
 ButiEngine::Matrix4x4 ButiEngine::ButiRendering::Bone::GetPoseMatrix()
 {
-	return  bindPoseInverse*transform->GetBoneMatrix();
+	//std::cout << std::to_string(bindPoseInverse)<<std::endl;
+	return  transform->GetBoneMatrix()* bindPoseInverse;
 }
 
 void ButiEngine::ButiRendering::Bone::SetOtherBoneLinks(const List<Value_ptr< Bone>>& arg_vec_bones)

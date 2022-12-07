@@ -165,7 +165,6 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 		AddHeapRange();
 		top = index;
 		index += numRequired;
-		//throw ButiException(L"", L"", L"");
 	}
 	else if ((!isUseSpace)) {
 		top = index;
@@ -246,7 +245,7 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::AddHeapRange()
 		std::cout << "AddHeapRange" << std::endl;
 		maxCbv *= 2;
 		if (maxCbv > DescriptorHeapSize)
-			throw ButiException(L"", L"", L"");
+			throw ButiException("");
 
 		expandSize = static_cast<std::uint64_t>(maxCbv) * 0x100;
 

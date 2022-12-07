@@ -48,8 +48,16 @@ void ButiEngine::ButiRendering::Resource_Model::SetEngComment(const std::string&
 
 void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone & arg_bone)
 {
-	arg_bone.ownIndex = list_bone.GetSize();
-	list_bone.Add(arg_bone);
+	if (arg_bone.ownIndex == -1) {
+		arg_bone.ownIndex = list_bone.GetSize();
+		list_bone.Add(arg_bone);
+	}
+	else {
+		if (list_bone.GetSize() < arg_bone.ownIndex) {
+			list_bone.Resize(arg_bone.ownIndex+1);
+		}
+		list_bone[arg_bone.ownIndex] = arg_bone;
+	}
 }
 
 void ButiEngine::ButiRendering::Resource_Model::AddMorph(Value_ptr<Morph::Morph> arg_morph)
@@ -89,12 +97,13 @@ ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEn
 		std::int32_t parentTransformIndex = (*itr)->parentBoneIndex;
 		if (parentTransformIndex >= 0) {
 			(*itr)->parentBone = out.at(parentTransformIndex);
-			(*itr)->transform->SetBaseTransform((*itr)->parentBone->transform, false);
-			(*itr)->transform->SetParentTransform(dynamic_value_ptr_cast<BoneTransform>( (*itr)->parentBone->transform),true);
+			(*itr)->transform->SetBaseTransform((*itr)->parentBone->transform, true);
+			(*itr)->transform->SetParentTransform((*itr)->parentBone->transform, true);
 		}
-		(*itr)->bindPose = dynamic_value_ptr_cast<BoneTransform>((*itr)->transform)->GetBoneMatrix();
+	}
+	for (auto itr = out.begin(); itr != out.end(); itr++) {
+		(*itr)->bindPose = (*itr)->transform->GetBoneMatrix();
 		(*itr)->bindPoseInverse = (*itr)->bindPose.GetInverse();
-
 	}
 
 

@@ -73,20 +73,12 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12::Attach(std::int32_t slot)
 void ButiEngine::ButiRendering::Resource_Texture_Dx12::CreateTexture(Image* srcImages, size_t nimages, const TexMetadata& metadata)
 {
 	if (metadata.IsVolumemap()) {
-		throw ButiException(
-			L"この形式には対応してません",
-			L"if (metadata.IsVolumemap())",
-			L"Resource_Texture_Dx12::CreateTexture()"
-		);
+		THROWBUTIEXCEPTION("この形式には対応してません");
 	}
 
 	std::unique_ptr<CUSTAM_SUBRESOURCE_DATA[]> initData(new (std::nothrow) CUSTAM_SUBRESOURCE_DATA[metadata.mipLevels * metadata.arraySize]);
 	if (!initData) {
-		throw ButiException(
-			L"テクスチャデータの領域取得に失敗しました",
-			L"if (!initData)",
-			L"Resource_Texture_Dx12::CreateTexture()"
-		);
+		THROWBUTIEXCEPTION("テクスチャデータの領域取得に失敗しました");
 
 	}
 
@@ -98,35 +90,19 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12::CreateTexture(Image* srcI
 		{
 			size_t index = metadata.ComputeIndex(level, item, 0);
 			if (index >= nimages) {
-				throw ButiException(
-					L"データのインデックスが範囲外です",
-					L"if (index >= nimages)",
-					L"Resource_Texture_Dx12::CreateTexture()"
-				);
 
+				THROWBUTIEXCEPTION("データのインデックスが範囲外です");
 			}
 			Image& img = srcImages[index];
 
 			if (img.format != metadata.format) {
-				throw ButiException(
-					L"データのフォーマットが違います",
-					L"if (img.format != metadata.format)",
-					L"Resource_Texture_Dx12::CreateTexture()"
-				);
+				THROWBUTIEXCEPTION("データのフォーマットが違います");
 			}
 			if (!img.vlp_imageData->rawData) {
-				throw ButiException(
-					L"データのポインタが不正です",
-					L"if (!img.pixels)",
-					L"Resource_Texture_Dx12::CreateTexture()"
-				);
+				THROWBUTIEXCEPTION("データのポインタが不正です");
 			}
 			if (idx >= (metadata.mipLevels * metadata.arraySize)) {
-				throw ButiException(
-					L"データの並びが不定です",
-					L"if (idx >= (metadata.mipLevels * metadata.arraySize))",
-					L"Resource_Texture_Dx12::CreateTexture()"
-				);
+				THROWBUTIEXCEPTION("データの並びが不定です");
 			}
 			++idx;
 		}

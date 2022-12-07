@@ -55,7 +55,7 @@ struct IKData {
 };
 struct Bone
 {
-	std::int32_t ownIndex;
+	std::int32_t ownIndex=-1;
 	std::string boneName;
 	std::string boneNameEng;
 

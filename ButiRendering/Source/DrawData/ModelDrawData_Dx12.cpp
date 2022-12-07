@@ -45,14 +45,15 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::Draw()
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelUpdate()
 {
-	std::int32_t i = 0;	
+	std::int32_t index = 0;	
 	if(cbuffer_bone)
 	for (auto itr :vlp_bone-> m_list_bone) {
 		auto mat = (itr)->GetPoseMatrix();
 		//std::cout << std::to_string(mat)<<std::endl;
-		cbuffer_bone->Get().datas[i] = mat;
-		i++;
+		cbuffer_bone->Get().datas[index] = mat;
+		index++;
 	}
+
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IDrawObject> ButiEngine::ButiRendering::CreateModelDrawObject(const Value_weak_ptr<IResource_Model>& arg_vwp_model, Value_ptr<IRenderer> arg_vlp_renderer, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice, Value_ptr< ObjectDrawData >arg_vlp_drawInfo, Value_ptr<Transform>arg_vlp_transform, Value_ptr<IBoneObject> arg_vlp_bone) {
