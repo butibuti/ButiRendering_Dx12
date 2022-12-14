@@ -5,7 +5,17 @@
 ButiEngine::Matrix4x4 ButiEngine::ButiRendering::Bone::GetPoseMatrix()
 {
 	//std::cout << std::to_string(bindPoseInverse)<<std::endl;
-	return  transform->GetBoneMatrix()* bindPoseInverse;
+	return  bindPoseInverse*transform->GetBoneMatrix();
+}
+
+ButiEngine::Matrix4x4 ButiEngine::ButiRendering::Bone::GetOriginalBoneMatrix(const List<Bone>& arg_bones)const {
+
+	Matrix4x4 boneMatrix = rotation;
+	boneMatrix.SetPosition(position);
+	if (parentBoneIndex >= 0) {
+		boneMatrix *= arg_bones[parentBoneIndex].GetOriginalBoneMatrix(arg_bones);
+	}
+	return boneMatrix;
 }
 
 void ButiEngine::ButiRendering::Bone::SetOtherBoneLinks(const List<Value_ptr< Bone>>& arg_vec_bones)

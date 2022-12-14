@@ -107,7 +107,7 @@ struct Bone
 
 	BUTIRENDERING_API void InverseKinematic();
 	BUTIRENDERING_API void CCDInverseKinematic();
-
+	BUTIRENDERING_API Matrix4x4 GetOriginalBoneMatrix(const List<Bone>& arg_bones)const ;
 };
 }
 }

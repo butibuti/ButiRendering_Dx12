@@ -53,7 +53,7 @@ void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone & arg_bone)
 		list_bone.Add(arg_bone);
 	}
 	else {
-		if (list_bone.GetSize() < arg_bone.ownIndex) {
+		if (list_bone.GetSize() <= arg_bone.ownIndex) {
 			list_bone.Resize(arg_bone.ownIndex+1);
 		}
 		list_bone[arg_bone.ownIndex] = arg_bone;
@@ -93,17 +93,22 @@ ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEn
 	}
 
 
-	for (auto itr = out.begin(); itr != out.end(); itr++) {
-		std::int32_t parentTransformIndex = (*itr)->parentBoneIndex;
+	for (auto outputBone : out) {
+		std::int32_t parentTransformIndex = outputBone->parentBoneIndex;
 		if (parentTransformIndex >= 0) {
-			(*itr)->parentBone = out.at(parentTransformIndex);
-			(*itr)->transform->SetBaseTransform((*itr)->parentBone->transform, true);
-			(*itr)->transform->SetParentTransform((*itr)->parentBone->transform, true);
+			outputBone->parentBone = out.at(parentTransformIndex);
+			outputBone->transform->SetBaseTransform(outputBone->parentBone->transform, true);
+			outputBone->transform->SetParentTransform(outputBone->parentBone->transform, true);
 		}
 	}
-	for (auto itr = out.begin(); itr != out.end(); itr++) {
-		(*itr)->bindPose = (*itr)->transform->GetBoneMatrix();
-		(*itr)->bindPoseInverse = (*itr)->bindPose.GetInverse();
+	for (auto outputBone : out) {
+		if (outputBone->bindPose == Matrix4x4()) {
+			outputBone->bindPose = outputBone->transform->GetBoneMatrix();
+			outputBone->bindPoseInverse = outputBone->bindPose.GetInverse();
+		}
+
+		std::cout << outputBone->ownIndex << ":"+std::to_string(outputBone->bindPose.GetPosition()) << std::endl;
+		//std::cout << "inverse:" << std::to_string(outputBone->bindPoseInverse) << std::endl;
 	}
 
 
