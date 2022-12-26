@@ -214,7 +214,6 @@
     <ClInclude Include="..\Header\Resource_Material.h" />
     <ClInclude Include="..\Header\Resource_Mesh.h" />
     <ClInclude Include="..\Header\Resource_Model.h" />
-    <ClInclude Include="..\Header\Resource_Motion.h" />
     <ClInclude Include="..\Header\Resource_DynamicMesh.h" />
     <ClInclude Include="..\Header\Resource_Shader.h" />
     <ClInclude Include="..\Header\Resource_Texture.h" />

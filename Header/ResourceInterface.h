@@ -31,6 +31,7 @@ class RenderingPathData;
 class IRenderTarget;
 class IDepthStencil;
 class IResource_Shader;
+class IResource_Motion;
 
 struct BoxSurface {
 	float up, down, left, right, front, back;
@@ -118,7 +119,6 @@ public:
 	virtual bool IsCurrentActive()const = 0;
 	virtual Value_ptr<ICamera> GetCamera()const { return nullptr; }
 };
-class ModelAnimation;
 struct MotionKeyFrameData;
 struct Bone;
 namespace Morph {
@@ -128,6 +128,7 @@ class IRenderer;
 class ICBuffer;
 class MeshPrimitiveBase;
 class GraphicDevice;
+class IBoneObject;
 class IRenderTarget {
 public:
 	virtual void SetRenderTarget() = 0;
@@ -153,6 +154,40 @@ public:
 	virtual void OnDescriptorHeapUpdate() = 0;
 };
 
+class IMotionTimeLine :public IObject {
+public:
+	virtual void Start() = 0;
+	virtual void FrameSet(const float) = 0;
+	virtual void Reset() = 0;
+	virtual float GetEndFrame() = 0;
+	virtual void PreStart() = 0;
+	virtual void SetBone(Value_ptr<Bone> arg_vlp_bone) = 0;
+	virtual void SetBoneName(const std::string& arg_name) = 0;
+	virtual void SetMotionData(const MotionKeyFrameData& arg_motionData) = 0;
+	virtual void SetMotionData(const List<MotionKeyFrameData>& arg_motionDatas) = 0;
+	virtual std::string GetContentsName() = 0;
+	virtual const List< MotionKeyFrameData >& GetKeyFrameDatas()const = 0;
+};
+class IModelAnimation {
+public:
+	virtual void Update(const float arg_frame) = 0;
+	virtual void IKTest() = 0;
+	virtual void Reset() = 0;
+	virtual void BoneSet() = 0;
+	virtual Value_ptr<IMotionTimeLine> AddMotionTimeLine(Value_ptr<IMotionTimeLine> arg_motion) = 0;
+	virtual const List<Value_ptr<IMotionTimeLine>>& GetMotionTimeLine()const = 0;
+	virtual bool SetIsLoop(const bool arg_isLoop) = 0;
+	virtual void SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj) = 0;
+	virtual float GetFrame()const = 0;
+	virtual bool IsEnd()const = 0;
+	virtual Value_ptr<IResource_Motion> GetResource()const = 0;
+};
+class IAnimationController {
+public:
+	virtual void Update(const float arg_frame=1.0f)=0;
+	virtual void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim)=0;
+	virtual Value_ptr<IModelAnimation> GetCurrentModelAnimation()=0;
+};
 
 class IRootSignature :public IObject {
 public:
@@ -167,9 +202,11 @@ public:
 
 class IResource_Motion :public IObject {
 public:
-	virtual Value_ptr<ModelAnimation> GetAnimation() = 0;
+	virtual const std::string& GetName()const = 0;
+	virtual void SetName(const std::string& arg_name) = 0;
+	virtual Value_ptr<IModelAnimation> GetAnimation() = 0;
 	virtual void AddKeyFrame(const std::string& arg_boneName, const MotionKeyFrameData& arg_data) = 0;
-	virtual void AddKeyFrameLane(const std::string& arg_boneName, const std::vector<MotionKeyFrameData>& arg_datas) = 0;
+	virtual void AddKeyFrameLane(const std::string& arg_boneName, const List<MotionKeyFrameData>& arg_datas) = 0;
 };
 class IResource_VertexShader :public IObject {
 public:
@@ -287,8 +324,8 @@ public:
 };
 class IResource_Model :public IObject {
 public:
-	virtual void SetMesh(const Value_weak_ptr< IResource_Mesh>& arg_vwp_mesh) = 0;
-	virtual void SetMaterial(const List<Value_weak_ptr< IResource_Material>>& arg_list_vwp_material) = 0;
+	virtual void SetMesh(const Value_ptr< IResource_Mesh>& arg_vlp_mesh) = 0;
+	virtual void SetMaterial(const List<Value_ptr< IResource_Material>>& arg_list_vlp_material) = 0;
 	virtual void SetName(const std::string& arg_name) = 0;
 	virtual void SetEngName(const std::string& arg_engName) = 0;
 	virtual void SetModelName(const std::string& arg_modelName) = 0;
@@ -308,9 +345,12 @@ public:
 	virtual const std::string& GetComment() = 0;
 	virtual const std::string& GetEngComment() = 0;
 	virtual List<Value_ptr<Bone>> GetBone() = 0;
-	virtual Value_weak_ptr<IResource_Mesh> GetMesh()const = 0;
-	virtual const List<Value_weak_ptr<IResource_Material>>& GetMaterial()const = 0;
-	virtual List<Value_weak_ptr<IResource_Material>>& GetMaterial() = 0;
+	virtual Value_ptr<IResource_Mesh> GetMesh()const = 0;
+	virtual const List<Value_ptr<IResource_Material>>& GetMaterial()const = 0;
+	virtual List<Value_ptr<IResource_Material>>& GetMaterial() = 0;
+	virtual void AddMotion(Value_ptr<IResource_Motion> arg_vlp_model) = 0;
+	virtual const List<Value_ptr<IResource_Motion>>& GetMotion()const = 0;
+	virtual Value_ptr<IResource_Motion> GetMotion(const std::string& arg_)const = 0;
 };
 class IResource_Font:public IObject {
 public:
@@ -324,15 +364,22 @@ BUTIRENDERING_API void SetGlobalSpeed(const float arg_speed);
 BUTIRENDERING_API float GetGlobalSpeed();
 
 BUTIRENDERING_API void ShaderCompile(const std::string& arg_sourceFilePath, const std::string& arg_outputFilePath);
-BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_weak_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_weak_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
+BUTIRENDERING_API Value_ptr<IResource_Model> CreateModel(const Value_ptr<IResource_Mesh>& arg_vwp_mesh, const List<Value_ptr<IResource_Material>>& arg_list_vwp_material, const List<Bone>& arg_list_bone,const std::string& arg_name);
+
+BUTIRENDERING_API Value_ptr<IResource_Model> CreateModelFromGLTFBinary(Value_ptr<IBinaryReader> arg_reader, const std::string& arg_modelPath, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData,const BoxEightCorner & arg_boxEightCorner ,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Mesh>CreateDynamicMesh(const std::string& arg_meshName, const List< ButiEngine::Value_ptr< ButiRendering::MeshPrimitiveBase>>& arg_list_vlp_inputMeshData, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const std::string& arg_materialName, const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
-BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const std::string& arg_materialName, const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterial(const std::string& arg_materialName, const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader,const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings,Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Material> CreateMaterialList(const std::string& arg_materialName, const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture,const List<Value_ptr<IResource_Material>>& arg_list_material ,const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTexture(Value_ptr<ImageFileIO::TextureResourceData> arg_vlp_imageData, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromImageFile(const std::string& arg_filePath, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_Texture> CreateTextureFromMemory(const char* arg_data,const std::int64_t arg_dataSize, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_Motion> CreateMotion(const std::string& arg_name, const std::unordered_map<std::string, List<MotionKeyFrameData> >& arg_keyFrameData);
+BUTIRENDERING_API Value_ptr<IResource_Motion> CreateMotion();
+BUTIRENDERING_API Value_ptr<IMotionTimeLine> CreateMotionTimeLine();
+BUTIRENDERING_API Value_ptr<IModelAnimation> CreateModelAnimation(Value_ptr<IResource_Motion> arg_vlp_resource);
+BUTIRENDERING_API Value_ptr<IAnimationController> CreateAnimationController(Value_ptr<IBoneObject> arg_vlp_boneDrawObj);
 
 
 BUTIRENDERING_API Value_ptr<IResource_Font> CreateFontFromFile(const std::string& arg_trueTypeFontFilePath, const std::int32_t arg_size,Value_ptr<IResource_Shader> arg_vlp_shader, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

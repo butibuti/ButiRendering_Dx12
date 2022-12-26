@@ -13,8 +13,8 @@ public:
 	void Initialize()override {};
 	void PreInitialize()override {};
 
-	BUTIRENDERING_API void SetMesh(const Value_weak_ptr< IResource_Mesh>& arg_vwp_mesh) override;
-	BUTIRENDERING_API void SetMaterial(const List<Value_weak_ptr< IResource_Material>>& arg_list_vwp_material) override;
+	BUTIRENDERING_API void SetMesh(const Value_ptr< IResource_Mesh>& arg_vwp_mesh) override;
+	BUTIRENDERING_API void SetMaterial(const List<Value_ptr<IResource_Material>>& arg_list_vlp_material) override;
 	BUTIRENDERING_API void SetName(const std::string& arg_name) override;
 	BUTIRENDERING_API void SetEngName(const std::string& arg_engName) override;
 	BUTIRENDERING_API void SetModelName(const std::string& arg_modelName) override;
@@ -34,26 +34,24 @@ public:
 	BUTIRENDERING_API const std::string& GetComment() override;
 	BUTIRENDERING_API const std::string& GetEngComment() override;
 	BUTIRENDERING_API List<Value_ptr<Bone>> GetBone() override;
-	BUTIRENDERING_API Value_weak_ptr<IResource_Mesh> GetMesh()const override;
-	BUTIRENDERING_API const List<Value_weak_ptr<IResource_Material>>& GetMaterial()const override;
-	BUTIRENDERING_API List<Value_weak_ptr<IResource_Material>>& GetMaterial() override;
+	BUTIRENDERING_API Value_ptr<IResource_Mesh> GetMesh()const override;
+	BUTIRENDERING_API const List<Value_ptr<IResource_Material>>& GetMaterial()const override;
+	BUTIRENDERING_API List<Value_ptr<IResource_Material>>& GetMaterial() override;
+	BUTIRENDERING_API void AddMotion(Value_ptr<IResource_Motion> arg_vlp_model) override;
+	BUTIRENDERING_API const List<Value_ptr<IResource_Motion>>& GetMotion()const override;
+	BUTIRENDERING_API Value_ptr<IResource_Motion> GetMotion(const std::string& arg_)const override;
 private:
-	std::string modelName;
-	std::string modelNameEng;
-	std::string comment;
-	std::string commentEng;
-	std::string name;
-	std::string nameEng;
-	std::vector<Value_ptr< Morph::Morph>> vec_morphs;
+	std::string m_modelName, m_modelNameEng, m_comment, m_commentEng, m_name,m_nameEng;
+	std::vector<Value_ptr< Morph::Morph>> m_vec_morphs;
 
-	std::vector<std::uint32_t> subset;
+	std::vector<std::uint32_t> m_subset;
 
-	Value_weak_ptr<IResource_Mesh> vwp_mesh;
-	List<Value_weak_ptr<IResource_Material>> list_vwp_material;
+	Value_ptr<IResource_Mesh> m_vlp_mesh;
+	List<Value_ptr<IResource_Material>> m_list_vlp_material;
 
-	List<Bone> list_bone;
-
-	float version;
+	List<Bone> m_list_bone;
+	List<Value_ptr<IResource_Motion>>m_list_motion;
+	float m_version;
 };
 }
 }

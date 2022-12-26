@@ -87,9 +87,6 @@
     <ClInclude Include="..\Header\Resource_Model.h">
       <Filter>ヘッダー ファイル\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="..\Header\Resource_Motion.h">
-      <Filter>ヘッダー ファイル\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="..\Header\Resource_DynamicMesh.h">
       <Filter>ヘッダー ファイル\Resource</Filter>
     </ClInclude>

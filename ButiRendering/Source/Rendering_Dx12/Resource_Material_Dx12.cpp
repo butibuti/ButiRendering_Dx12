@@ -7,7 +7,7 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/PipelineStateManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/RootSignatureManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/PipelineState_Dx12.h"
-ButiEngine::ButiRendering::Resource_Material_Dx12::Resource_Material_Dx12(const MaterialValue & arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice)
+ButiEngine::ButiRendering::Resource_Material_Dx12::Resource_Material_Dx12(const MaterialValue & arg_var, Value_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice)
 	: Resource_Material(arg_var, arg_vlp_shader,arg_list_texture,arg_drawSettings),  m_vwp_graphicDevice(arg_vwp_graphicDevice) {}
 
 void ButiEngine::ButiRendering::Resource_Material_Dx12::Initialize()
@@ -88,7 +88,7 @@ void ButiEngine::ButiRendering::Resource_Material_Dx12::OnDescriptorHeapUpdate()
 	Update();
 }
 
-ButiEngine::ButiRendering::Resource_MaterialList_Dx12::Resource_MaterialList_Dx12(const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture, const List<Value_ptr<IResource_Material>>& arg_list_material, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice)
+ButiEngine::ButiRendering::Resource_MaterialList_Dx12::Resource_MaterialList_Dx12(const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader, const List< Value_ptr<IResource_Texture>>& arg_list_texture, const List<Value_ptr<IResource_Material>>& arg_list_material, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice)
 	:Resource_Material(arg_var,arg_vlp_shader,arg_list_texture,arg_drawSettings)	, m_vwp_graphicDevice(arg_vwp_graphicDevice) {}
 
 void ButiEngine::ButiRendering::Resource_MaterialList_Dx12::Initialize()
@@ -153,14 +153,14 @@ void ButiEngine::ButiRendering::Resource_MaterialList_Dx12::SetMaterialList(cons
 {
 	m_list_material = arg_list_material;
 }
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterial(const std::string& arg_materialName, const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List<Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterial(const std::string& arg_materialName, const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader, const List<Value_ptr<IResource_Texture>>& arg_list_texture, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
 	auto material = ObjectFactory::Create<ButiRendering::Resource_Material_Dx12>(arg_var, arg_vlp_shader, arg_list_texture, arg_drawSettings, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>());;
 	material->SetMaterialName(arg_materialName);
 	return material;
 }
 
-ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterialList(const std::string& arg_materialName, const MaterialValue& arg_var, Value_weak_ptr<IResource_Shader> arg_vlp_shader, const List<Value_ptr<IResource_Texture>>& arg_list_texture, const List<Value_ptr<IResource_Material>>& arg_list_material, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Material> ButiEngine::ButiRendering::CreateMaterialList(const std::string& arg_materialName, const MaterialValue& arg_var, Value_ptr<IResource_Shader> arg_vlp_shader, const List<Value_ptr<IResource_Texture>>& arg_list_texture, const List<Value_ptr<IResource_Material>>& arg_list_material, const DrawSettings& arg_drawSettings, Value_weak_ptr<GraphicDevice> arg_vwp_graphicDevice)
 {
 	auto material= ObjectFactory::Create<ButiRendering::Resource_MaterialList_Dx12>(arg_var, arg_vlp_shader, arg_list_texture, arg_list_material, arg_drawSettings, arg_vwp_graphicDevice.lock()->GetThis<GraphicDevice_Dx12>());
 	material->SetMaterialName(arg_materialName);

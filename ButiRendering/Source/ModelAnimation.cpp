@@ -3,9 +3,126 @@
 #include"ButiRendering_Dx12/Header/DrawData/IDrawData.h"
 #include"ButiRendering_Dx12/Header/Bone.h"
 
+namespace ButiEngine {
+namespace ButiRendering {
+
+class BoneMotionTimeLine :public IMotionTimeLine {
+public:
+	BoneMotionTimeLine();
+	~BoneMotionTimeLine();
+	void SetBone(Value_ptr<Bone> arg_vlp_bone)override;
+	void PreStart()override;
+	void Reset()override;
+	void SetMotionData(const MotionKeyFrameData& arg_motionData) override;
+	void SetMotionData(const List<MotionKeyFrameData>& arg_motionDatas) override;
+	void Start() override;
+	void FrameSet(const float frame)override;
+	float GetEndFrame() override;
+	void SetBoneName(const std::string& arg_name)override;
+	std::string GetContentsName()override;
+	const List< MotionKeyFrameData >& GetKeyFrameDatas()const override { return m_list_keyFrameData; }
+private:
+	bool isActive = false;
+	Quat initRotate;
+	Vector3 initPosition;
+	List< MotionKeyFrameData > m_list_keyFrameData;
+	List< MotionKeyFrameData >::iterator_type currentMotionItr;
+	List< MotionKeyFrameData >::iterator_type befMotionItr;
+	Value_ptr<Bone> bone;
+	std::string boneName;
+};
+class ModelAnimation :public IObject, public IModelAnimation
+{
+public:
+	void Update(const float arg_frame)override;
+	void IKTest()override;
+	void Reset()override;
+	void BoneSet()override;
+	Value_ptr<IMotionTimeLine> AddMotionTimeLine(Value_ptr<IMotionTimeLine> arg_motion)override;
+	bool SetIsLoop(const bool arg_isLoop)override;
+	const List<Value_ptr<IMotionTimeLine>>& GetMotionTimeLine()const override{ return m_list_timeLines; }
+	void SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj)override;
+	float GetFrame()const override;
+	bool IsEnd()const override { return frame >= endFrame; }
+	Value_ptr<IResource_Motion> GetResource()const override{ return m_vlp_resource; }
+	void SetResource(Value_ptr<IResource_Motion> arg_vlp_resource) { m_vlp_resource = arg_vlp_resource; }
+private:
+	bool isActive = true, isLoop = false;
+	float frame = 0.0f, endFrame = 0;
+
+
+	List<Value_ptr<IMotionTimeLine>> m_list_timeLines;
+	Value_ptr<IBoneObject> m_vlp_boneDrawObj;
+	Value_ptr<IResource_Motion> m_vlp_resource;
+};
+
+class AnimationController:public IAnimationController {
+public:
+	void Update(const float arg_frame) override {
+		m_frame += arg_frame;
+		if (m_vlp_transitionAnim) {
+			m_vlp_transitionAnim->Update(arg_frame);
+			if (m_vlp_transitionAnim->IsEnd()) {
+				m_vlp_transitionAnim = nullptr;
+			}
+		}
+		else if(m_vlp_anim) {
+			m_vlp_anim->Update(arg_frame);
+		}
+	}
+	void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim) override {
+		if (!arg_anim) { return; }
+		if (m_vlp_anim && m_vlp_anim->GetResource() == arg_anim->GetResource()) { return; }
+		m_vlp_anim = arg_anim;
+		m_vlp_anim->SetBoneDrawObj(m_vlp_boneDrawObj);
+		auto newTransitionAnim = ObjectFactory::Create<ModelAnimation>();
+		newTransitionAnim->SetBoneDrawObj(m_vlp_boneDrawObj);
+		
+		for (auto line:arg_anim->GetMotionTimeLine()) {
+			auto transLine = ObjectFactory::Create<BoneMotionTimeLine>();
+			auto lineBoneName = line->GetContentsName();
+			auto boneItr = m_vlp_boneDrawObj->GetBones().Find([lineBoneName](Value_ptr<Bone> arg_bone)->bool {return lineBoneName == arg_bone->boneName; });
+			if (boneItr == nullptr) { continue; }
+			MotionKeyFrameData start, end;
+			end.endFrame = arg_frame;
+			
+
+			start.pose.position = (*boneItr)->transform->GetLocalPosition();
+			start.pose.rotation = (*boneItr)->transform->GetLocalRotation().ToQuat();
+			start.pose.scale = (*boneItr)->transform->GetLocalScale();
+			start.isTranslation = true;
+			start.isRotation = true;
+			start.isScale = true;
+			end.isTranslation = true;
+			end.isRotation = true;
+			end.isScale = true;
+
+			end.pose = line->GetKeyFrameDatas().GetFront().pose;
+
+			transLine->SetMotionData(start);
+			transLine->SetMotionData(end);
+			transLine->SetBoneName(lineBoneName);
+			newTransitionAnim->AddMotionTimeLine(transLine);
+		}
+		m_vlp_transitionAnim = newTransitionAnim;
+		m_vlp_transitionAnim->BoneSet();
+	}
+	Value_ptr<IModelAnimation> GetCurrentModelAnimation() override { return m_vlp_anim; }
+
+	void SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj) {
+		m_vlp_boneDrawObj = arg_vlp_boneDrawObj;
+	}
+private:
+	float m_frame,m_transitionFrame;
+	Value_ptr<IModelAnimation> m_vlp_anim, m_vlp_transitionAnim;
+	Value_ptr<IBoneObject> m_vlp_boneDrawObj;
+};
+}
+}
+
 ButiEngine::ButiRendering::BoneMotionTimeLine::BoneMotionTimeLine()
 {
-	auto itr = vec_data.begin();
+	auto itr = m_list_keyFrameData.begin();
 }
 
 ButiEngine::ButiRendering::BoneMotionTimeLine::~BoneMotionTimeLine()
@@ -19,8 +136,8 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::SetBone(Value_ptr<Bone> arg_
 
 void ButiEngine::ButiRendering::BoneMotionTimeLine::PreStart()
 {
-	currentMotionItr = vec_data.begin();
-	befMotionItr = vec_data.begin();
+	currentMotionItr = m_list_keyFrameData.begin();
+	befMotionItr = m_list_keyFrameData.begin();
 	isActive = true;
 	Start();
 }
@@ -33,12 +150,12 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::Reset()
 
 void ButiEngine::ButiRendering::BoneMotionTimeLine::SetMotionData(const MotionKeyFrameData& arg_motionData)
 {
-	vec_data.push_back(arg_motionData);
+	m_list_keyFrameData.push_back(arg_motionData);
 }
 
-void ButiEngine::ButiRendering::BoneMotionTimeLine::SetMotionData(const std::vector<MotionKeyFrameData>& arg_motionDatas)
+void ButiEngine::ButiRendering::BoneMotionTimeLine::SetMotionData(const List<MotionKeyFrameData>& arg_motionDatas)
 {
-	vec_data = arg_motionDatas;
+	m_list_keyFrameData = arg_motionDatas;
 }
 
 void ButiEngine::ButiRendering::BoneMotionTimeLine::Start()
@@ -58,11 +175,11 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
 		return;
 	}
 
-	if (frame >= (float)currentMotionItr-> endFrame) {
+	if (frame >= currentMotionItr-> endFrame) {
 
 		befMotionItr = currentMotionItr;
 		currentMotionItr++;
-		if (currentMotionItr == vec_data.end()) {
+		if (currentMotionItr == m_list_keyFrameData.end()) {
 			isActive = false;
 			return;
 		}
@@ -71,39 +188,25 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
 
 		}
 	}
-	auto relativeFrame = frame - (float)befMotionItr-> endFrame;
+	auto relativeFrame = frame - befMotionItr-> endFrame;
 	auto frameRange = currentMotionItr->endFrame - befMotionItr->endFrame;
 	if (frameRange) {
-		auto t = (float)relativeFrame / (float)frameRange;
-
-		auto rotateT = currentMotionItr->larp.rotationBezier.GetYFromNuton(t);
+		auto t = relativeFrame / frameRange;
+		if (currentMotionItr->isRotation) {
+			auto rotateT = currentMotionItr->larp.rotationBezier.GetYFromNuton(t);
+			Quat currentRotation = MathHelper::LearpQuat(initRotate, currentMotionItr->pose.rotation, t);
+			bone->transform->SetLocalRotation(Matrix4x4((currentRotation)));
+		}
 		
-		//std::cout << t << std::endl;
-
-		Quat currentRotation = MathHelper::LearpQuat(initRotate, currentMotionItr->pose.rotation, rotateT);
-
-
-		bone->transform->SetLocalRotation(Matrix4x4((currentRotation)));
-		
-
-		auto xt = currentMotionItr->larp.translationXBezier.GetYFromNuton(t);
-		auto yt = currentMotionItr->larp.translationYBezier.GetYFromNuton(t);
-		auto zt = currentMotionItr->larp.translationZBezier.GetYFromNuton(t);
-
-		bone->transform->SetLocalPosition(MathHelper::LerpPosition(initPosition, currentMotionItr->pose.position,xt,yt,zt));
+		if (currentMotionItr->isTranslation) {
+			bone->transform->SetLocalPosition(MathHelper::LerpPosition(initPosition, currentMotionItr->pose.position, t,t,t));
+		}
 	}
 }
 
-std::uint32_t ButiEngine::ButiRendering::BoneMotionTimeLine::GetEndFrame()
+float ButiEngine::ButiRendering::BoneMotionTimeLine::GetEndFrame()
 {
-	return vec_data.rbegin()->endFrame;
-}
-
-void ButiEngine::ButiRendering::BoneMotionTimeLine::LocalPoseSet(Value_ptr<Transform> arg_parentBone)
-{
-	for (auto itr = vec_data.begin(); itr != vec_data.end(); itr++) {
-		itr->pose.position += bone->transform->GetLocalPosition();
-	}
+	return m_list_keyFrameData.GetLast().endFrame;
 }
 
 void ButiEngine::ButiRendering::BoneMotionTimeLine::SetBoneName(const std::string& arg_name)
@@ -119,7 +222,7 @@ std::string ButiEngine::ButiRendering::BoneMotionTimeLine::GetContentsName()
 void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 {
 	if (frame >= endFrame) {
-		if (isRoop) {
+		if (isLoop) {
 			frame = 0;
 			Reset();
 		}
@@ -127,11 +230,10 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 			return;
 		}
 	}
-	auto end = vec_timeLines.end();
 	frame += arg_frame;
 	frame = max(frame, 0);
-	for (auto itr = vec_timeLines.begin(); itr !=end; itr++) {
-		(*itr)->FrameSet(frame);
+	for (auto line:m_list_timeLines) {
+		(line)->FrameSet(frame);
 	}
 	//vlp_boneDrawObj->InverseKinematic();
 	//vlp_boneDrawObj->BonePowerAdd();
@@ -139,50 +241,50 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 
 void ButiEngine::ButiRendering::ModelAnimation::IKTest()
 {
-	vlp_boneDrawObj->InverseKinematic();
-	vlp_boneDrawObj->BonePowerAdd();
+	m_vlp_boneDrawObj->InverseKinematic();
+	m_vlp_boneDrawObj->BonePowerAdd();
 }
 
 
 void ButiEngine::ButiRendering::ModelAnimation::Reset()
 {
-	for (auto itr = vec_timeLines.begin(); itr != vec_timeLines.end(); itr++) {
-		(*itr)->Reset();
+	for (auto line:m_list_timeLines) {
+		line->Reset();
 	}
 }
 
-void ButiEngine::ButiRendering::ModelAnimation::PreMotionStart(Value_ptr<Transform> arg_parentBoneTransform)
+void ButiEngine::ButiRendering::ModelAnimation::BoneSet()
 {
-	for (auto itr = vec_timeLines.begin(); itr != vec_timeLines.end();itr++ ) {
-		auto bone = vlp_boneDrawObj->searchBoneByName((*itr)->GetContentsName());
+	for (auto line:m_list_timeLines) {
+		auto bone = m_vlp_boneDrawObj->searchBoneByName(line->GetContentsName());
 		if (!bone) {
 			continue;
 		}
-		(*itr)->SetBone(bone);
-		(*itr)->LocalPoseSet(arg_parentBoneTransform);
-		(*itr)->PreStart();
+		line->SetBone(bone);
+		line->PreStart();
 		//(itr->second)->Start();
-		endFrame = max((*itr)->GetEndFrame(), endFrame);
+		endFrame = max(line->GetEndFrame(), endFrame);
 	}
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IMotionTimeLine> ButiEngine::ButiRendering::ModelAnimation::AddMotionTimeLine( Value_ptr<IMotionTimeLine> arg_motion)
 {
 
-	vec_timeLines.push_back(arg_motion);
+	m_list_timeLines.push_back(arg_motion);
 
 	return arg_motion;
 }
 
-bool ButiEngine::ButiRendering::ModelAnimation::SetLoop(const bool arg_isloop)
+bool ButiEngine::ButiRendering::ModelAnimation::SetIsLoop(const bool arg_isloop)
 {
-	isRoop = arg_isloop;
-	return isRoop;
+	isLoop = arg_isloop;
+	return isLoop;
 }
 
 void ButiEngine::ButiRendering::ModelAnimation::SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj)
 {
-	vlp_boneDrawObj = arg_vlp_boneDrawObj;
+	m_vlp_boneDrawObj = arg_vlp_boneDrawObj;
+	BoneSet();
 }
 
 float ButiEngine::ButiRendering::ModelAnimation::GetFrame() const
@@ -205,12 +307,12 @@ ButiEngine::ButiRendering::Pose::Pose(const Vector3& arg_position, const Vector3
 	rotation = rotationMatrix.ToQuat();
 }
 
-ButiEngine::ButiRendering::MotionKeyFrameData::MotionKeyFrameData(const std::uint32_t arg_endFrame, const Vector3& arg_position, const Vector3& arg_rotation,const Vector3& arg_scale)
+ButiEngine::ButiRendering::MotionKeyFrameData::MotionKeyFrameData(const float arg_endFrame, const Vector3& arg_position, const Vector3& arg_rotation,const Vector3& arg_scale)
 	:MotionKeyFrameData(arg_endFrame,Pose(arg_position,arg_rotation,arg_scale))
 {
 }
 
-ButiEngine::ButiRendering::MotionKeyFrameData::MotionKeyFrameData(const std::uint32_t arg_endFrame, const Pose& arg_pose)
+ButiEngine::ButiRendering::MotionKeyFrameData::MotionKeyFrameData(const float arg_endFrame, const Pose& arg_pose)
 {
 	endFrame = arg_endFrame;
 	pose = arg_pose;
@@ -231,4 +333,25 @@ ButiEngine::ButiRendering::LarpData::LarpData()
 	,translationZBezier(Vector2(0,0), Vector2(0,0), Vector2(1,1), Vector2(1,1))
 {
 	
+}
+
+
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IMotionTimeLine> ButiEngine::ButiRendering::CreateMotionTimeLine()
+{
+	return ObjectFactory::Create<BoneMotionTimeLine>();
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IModelAnimation> ButiEngine::ButiRendering::CreateModelAnimation(Value_ptr<IResource_Motion> arg_vlp_resource)
+{
+	auto output= ObjectFactory::Create<ModelAnimation>();
+	output->SetResource(arg_vlp_resource);
+	return output;
+}
+
+ButiEngine::Value_ptr<ButiEngine::ButiRendering::IAnimationController> ButiEngine::ButiRendering::CreateAnimationController(Value_ptr<IBoneObject> arg_vlp_boneDrawObj)
+{
+	auto output = ObjectFactory::Create<AnimationController>();
+	output->SetBoneDrawObj(arg_vlp_boneDrawObj);
+	return output;
 }
