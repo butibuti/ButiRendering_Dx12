@@ -12,7 +12,7 @@ float4 PSMain(Pixel_UV pixel) : SV_TARGET
 	float Color = (0.2f);
 
 
-	pixel.uv*=divisions;
+	pixel.uv *= divisions;
    
     pixel.uv.x = frac(pixel.uv.x );
     pixel.uv.x =min(pixel.uv.x, 1.0 - pixel.uv.x);

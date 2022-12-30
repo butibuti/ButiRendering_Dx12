@@ -30,7 +30,6 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::Initialize()
 
 void ButiEngine::ButiRendering::ModelDrawObject_Dx12::DrawBefore()
 {
-
 	drawData.transform = drawData.vlp_transform->ToMatrix();
 	ModelUpdate();
 }

@@ -144,7 +144,7 @@
       <Command>xcopy /y /d "$(SolutionDir)Libs\dll\$(Configuration)\$(ProjectName).dll" "$(SolutionDir)output\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>ShaderCompile.bat</Command>
+      <Command>HLSLCompileSupporter.exe ShaderCompileList.txt</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,7 +175,7 @@
       <Command>xcopy /y /d "$(SolutionDir)Libs\dll\$(Configuration)\$(ProjectName).dll" "$(SolutionDir)output\$(Configuration)\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>ShaderCompile.bat</Command>
+      <Command>HLSLCompileSupporter.exe ShaderCompileList.txt</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

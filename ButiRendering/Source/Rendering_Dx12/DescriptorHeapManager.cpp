@@ -138,24 +138,18 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 	{
 		std::lock_guard lock(m_mtx_memory);
 		if (vec_space.size()) {
-			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;) {
+			for (auto itr = vec_space.begin(), end = vec_space.end(); itr != end;itr++) {
 				if (itr->size >= numRequired) {
 					isUseSpace = true;
 
 					top = itr->index;
-					itr->index + numRequired;
+					itr->index += numRequired;
 					itr->size -= numRequired;
 					if (itr->size == 0) {
-						itr = vec_space.erase(itr);
-						end = vec_space.end();
-						break;
+						vec_space.erase(itr);
 					}
-					else {
-						itr++;
-					}
-				}
-				else {
-					itr++;
+
+					break;
 				}
 			}
 		}
@@ -167,6 +161,7 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 		index += numRequired;
 	}
 	else if ((!isUseSpace)) {
+		std::lock_guard lock(m_mtx_memory);
 		top = index;
 		index += numRequired;
 	}
@@ -196,6 +191,7 @@ std::uint32_t ButiEngine::ButiRendering::DescriptorHeapManager::GetIndex()
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::Release(const BlankSpace& arg_releaseSpace)
 {
+	std::lock_guard lock(m_mtx_memory);
 	vec_space.push_back(arg_releaseSpace);
 }
 

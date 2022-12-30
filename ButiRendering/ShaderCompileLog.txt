@@ -1,0 +1,314 @@
+{
+    "value0": {
+        "value0": [
+            {
+                "key": "G CompiledShader/GS_OutLine.fxc Shader/GS_OutLine.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "G CompiledShader/GS_PointToCube.fxc Shader/GS_PointToCube.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "G CompiledShader/GS_PointToCube_WithoutUV.fxc Shader/GS_PointToCube_WithoutUV.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "G CompiledShader/GS_PointToPlane.fxc Shader/GS_PointToPlane.hlsl",
+                "value": 13314096465
+            },
+            {
+                "key": "G CompiledShader/GS_PointToTriPolygon_WithoutUV.fxc Shader/GS_PointToTriPolygon_WithoutUV.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_DeferredShading.fxc Shader/PS_DeferredShading.hlsl",
+                "value": 13306413903
+            },
+            {
+                "key": "P CompiledShader/PS_Grid.fxc Shader/PS_Grid.hlsl",
+                "value": 13316675268
+            },
+            {
+                "key": "P CompiledShader/PS_GridFog.fxc Shader/PS_GridFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_Grid_MRT_Shadow.fxc Shader/PS_Grid_MRT_Shadow.hlsl",
+                "value": 13306309731
+            },
+            {
+                "key": "P CompiledShader/PS_Grid_Shadow.fxc Shader/PS_Grid_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_Grid_worldColor.fxc Shader/PS_Grid_worldColor.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_NormalColor.fxc Shader/PS_NormalColor.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_NormalColorFog.fxc Shader/PS_NormalColorFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_NormalFog.fxc Shader/PS_NormalFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_NormalMap_MRT.fxc Shader/PS_NormalMap_MRT.hlsl",
+                "value": 13306309835
+            },
+            {
+                "key": "P CompiledShader/PS_NormalMap_MRT_Shadow.fxc Shader/PS_NormalMap_MRT_Shadow.hlsl",
+                "value": 13306310730
+            },
+            {
+                "key": "P CompiledShader/PS_OnlyMaterial.fxc Shader/PS_OnlyMaterial.hlsl",
+                "value": 13313830958
+            },
+            {
+                "key": "P CompiledShader/PS_OnlyMaterial_BloomSource.fxc Shader/PS_OnlyMaterial_BloomSource.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_OnlyMaterial_MRT.fxc Shader/PS_OnlyMaterial_MRT.hlsl",
+                "value": 13306352787
+            },
+            {
+                "key": "P CompiledShader/PS_OnlyMaterial_MRT_Shadow.fxc Shader/PS_OnlyMaterial_MRT_Shadow.hlsl",
+                "value": 13306352786
+            },
+            {
+                "key": "P CompiledShader/PS_PostEffect_GausBlur.fxc Shader/PS_PostEffect_GausBlur.hlsl",
+                "value": 13303925433
+            },
+            {
+                "key": "P CompiledShader/PS_PostEffect_GausBlurFloat2.fxc Shader/PS_PostEffect_GausBlurFloat2.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_ShadowMap.fxc Shader/PS_ShadowMap.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_ShadowMap_UV.fxc Shader/PS_ShadowMap_UV.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_SpriteAnimation.fxc Shader/PS_SpriteAnimation.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UV.fxc Shader/PS_UV.hlsl",
+                "value": 13303449388
+            },
+            {
+                "key": "P CompiledShader/PS_UVColor.fxc Shader/PS_UVColor.hlsl",
+                "value": 13314096970
+            },
+            {
+                "key": "P CompiledShader/PS_UVColorFog.fxc Shader/PS_UVColorFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVColorFog_Shadow.fxc Shader/PS_UVColorFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVColor_Shadow.fxc Shader/PS_UVColor_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVColor_floatTexture.fxc Shader/PS_UVColor_floatTexture.hlsl",
+                "value": 13306234068
+            },
+            {
+                "key": "P CompiledShader/PS_UVDepth.fxc Shader/PS_UVDepth.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVFog.fxc Shader/PS_UVFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVFog_Shadow.fxc Shader/PS_UVFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormal.fxc Shader/PS_UVNormal.hlsl",
+                "value": 13303575672
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalColor.fxc Shader/PS_UVNormalColor.hlsl",
+                "value": 13303575672
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalColorFog.fxc Shader/PS_UVNormalColorFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalColorFog_Shadow.fxc Shader/PS_UVNormalColorFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalColor_Shadow.fxc Shader/PS_UVNormalColor_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalFog.fxc Shader/PS_UVNormalFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormalFog_Shadow.fxc Shader/PS_UVNormalFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormal_MRT.fxc Shader/PS_UVNormal_MRT.hlsl",
+                "value": 13306310730
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormal_MRT_Alpha.fxc Shader/PS_UVNormal_MRT_Alpha.hlsl",
+                "value": 13306310730
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormal_MRT_Shadow.fxc Shader/PS_UVNormal_MRT_Shadow.hlsl",
+                "value": 13306310730
+            },
+            {
+                "key": "P CompiledShader/PS_UVNormal_Shadow.fxc Shader/PS_UVNormal_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "P CompiledShader/PS_UV_floatTexture.fxc Shader/PS_UV_floatTexture.hlsl",
+                "value": 13306234033
+            },
+            {
+                "key": "V CompiledShader/VS_ImmediateParticle.fxc Shader/VS_ImmediateParticle.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_Normal.fxc Shader/VS_Normal.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_NormalColor.fxc Shader/VS_NormalColor.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_NormalColorFog.fxc Shader/VS_NormalColorFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_Normal_Phong.fxc Shader/VS_Normal_Phong.hlsl",
+                "value": 13306354099
+            },
+            {
+                "key": "V CompiledShader/VS_Normal_QuadBone.fxc Shader/VS_Normal_QuadBone.hlsl",
+                "value": 13314204728
+            },
+            {
+                "key": "V CompiledShader/VS_Normal_Shadow.fxc Shader/VS_Normal_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_Position.fxc Shader/VS_Position.hlsl",
+                "value": 13307181770
+            },
+            {
+                "key": "V CompiledShader/VS_ShadowMap.fxc Shader/VS_ShadowMap.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_ShadowMap_UV.fxc Shader/VS_ShadowMap_UV.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UV.fxc Shader/VS_UV.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVAttribute.fxc Shader/VS_UVAttribute.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVColor.fxc Shader/VS_UVColor.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVFog.fxc Shader/VS_UVFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVFog_Shadow.fxc Shader/VS_UVFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormal.fxc Shader/VS_UVNormal.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalAttribute.fxc Shader/VS_UVNormalAttribute.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalColor.fxc Shader/VS_UVNormalColor.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalColorFog.fxc Shader/VS_UVNormalColorFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalColorFog_Shadow.fxc Shader/VS_UVNormalColorFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalFog.fxc Shader/VS_UVNormalFog.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalFog_Shadow.fxc Shader/VS_UVNormalFog_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalPhong.fxc Shader/VS_UVNormalPhong.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalPhong_Shadow.fxc Shader/VS_UVNormalPhong_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalPosition.fxc Shader/VS_UVNormalPosition.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalTangent.fxc Shader/VS_UVNormalTangent.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormalTangent_Shadow.fxc Shader/VS_UVNormalTangent_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormal_QuadBone.fxc Shader/VS_QuadBone.hlsl",
+                "value": 13313829846
+            },
+            {
+                "key": "V CompiledShader/VS_UVNormal_Shadow.fxc Shader/VS_UVNormal_Shadow.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UVPosition.fxc Shader/VS_UVPosition.hlsl",
+                "value": 13302345877
+            },
+            {
+                "key": "V CompiledShader/VS_UV_Shadow.fxc Shader/VS_UV_Shadow.hlsl",
+                "value": 13302345877
+            }
+        ]
+    }
+}
