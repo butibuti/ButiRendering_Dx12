@@ -227,7 +227,7 @@ std::int32_t GetParentJoint(std::int32_t arg_child, const std::vector<std::int32
 
 template<typename VertexType>
 void LoadVertexGLTF(const std::int32_t vertexCount, tinygltf::Model& model, tinygltf::Primitive& primitive,
-	ButiEngine::List<ButiEngine::Value_ptr<ButiEngine::ButiRendering::MeshPrimitiveBase>>& arg_list_primitiveBase,
+	std::map<std::int32_t, ButiEngine::Value_ptr<ButiEngine::ButiRendering::MeshPrimitiveBase>>& arg_map_primitiveBase,
 	const ButiEngine::List<ButiEngine::Matrix4x4>& arg_list_bindPose) {
 	using namespace ButiEngine;
 	auto meshPrimitive = make_value<ButiRendering::MeshPrimitive<VertexType>>();
@@ -306,30 +306,65 @@ void LoadVertexGLTF(const std::int32_t vertexCount, tinygltf::Model& model, tiny
 		&& !std::is_same_v<Vertex::ModelVertex::Vertex_Model_Normal_QuadBone, VertexType>) {
 		auto vlp_primitive_normQuadBone = make_value<ButiRendering::MeshPrimitive<Vertex::ModelVertex::Vertex_Model_Normal_QuadBone>>();
 		ButiRendering::MeshHelper::VertexConvert(*meshPrimitive, *vlp_primitive_normQuadBone);
-		arg_list_primitiveBase.Add(vlp_primitive_normQuadBone);
+
+		if (arg_map_primitiveBase.count(vlp_primitive_normQuadBone->GetVertexType())) {
+			arg_map_primitiveBase[vlp_primitive_normQuadBone->GetVertexType()]->Merge(vlp_primitive_normQuadBone);
+		}
+		else {
+			arg_map_primitiveBase.emplace(vlp_primitive_normQuadBone->GetVertexType(),vlp_primitive_normQuadBone);
+		}
 	}
 	if constexpr (std::is_base_of_v<Vertex::VertexInformation::Normal, VertexType> && std::is_base_of_v<Vertex::VertexInformation::UV, VertexType>
 		&& !std::is_same_v<Vertex::Vertex_UV_Normal, VertexType>) {
 		auto vlp_primitive_UVNormal = make_value<ButiRendering::MeshPrimitive<Vertex::Vertex_UV_Normal>>();
 		ButiRendering::MeshHelper::VertexConvert(*meshPrimitive, *vlp_primitive_UVNormal);
-		arg_list_primitiveBase.Add(vlp_primitive_UVNormal);
+
+		if (arg_map_primitiveBase.count(vlp_primitive_UVNormal->GetVertexType())) {
+			arg_map_primitiveBase[vlp_primitive_UVNormal->GetVertexType()]->Merge(vlp_primitive_UVNormal);
+		}
+		else {
+			arg_map_primitiveBase.emplace(vlp_primitive_UVNormal->GetVertexType(), vlp_primitive_UVNormal);
+		}
 	}
 	if constexpr (std::is_base_of_v<Vertex::VertexInformation::UV, VertexType> && !std::is_same_v<Vertex::Vertex_UV, VertexType>) {
 		auto vlp_primitive_UV = make_value<ButiRendering::MeshPrimitive<Vertex::Vertex_UV>>();
 		ButiRendering::MeshHelper::VertexConvert(*meshPrimitive, *vlp_primitive_UV);
-		arg_list_primitiveBase.Add(vlp_primitive_UV);
+
+		if (arg_map_primitiveBase.count(vlp_primitive_UV->GetVertexType())) {
+			arg_map_primitiveBase[vlp_primitive_UV->GetVertexType()]->Merge(vlp_primitive_UV);
+		}
+		else {
+			arg_map_primitiveBase.emplace(vlp_primitive_UV->GetVertexType(), vlp_primitive_UV);
+		}
 	}
 	if constexpr (std::is_base_of_v<Vertex::VertexInformation::Normal, VertexType> && !std::is_same_v<Vertex::Vertex_Normal, VertexType>) {
 		auto vlp_primitive_Normal = make_value<ButiRendering::MeshPrimitive<Vertex::Vertex_Normal>>();
 		ButiRendering::MeshHelper::VertexConvert(*meshPrimitive, *vlp_primitive_Normal);
-		arg_list_primitiveBase.Add(vlp_primitive_Normal);
+
+		if (arg_map_primitiveBase.count(vlp_primitive_Normal->GetVertexType())) {
+			arg_map_primitiveBase[vlp_primitive_Normal->GetVertexType()]->Merge(vlp_primitive_Normal);
+		}
+		else {
+			arg_map_primitiveBase.emplace(vlp_primitive_Normal->GetVertexType(), vlp_primitive_Normal);
+		}
 	}
 	if constexpr (std::is_base_of_v<Vertex::VertexInformation::Vertex, VertexType>) {
 		auto vlp_primitive = make_value<ButiRendering::MeshPrimitive<Vertex::Vertex>>();
 		ButiRendering::MeshHelper::VertexConvert(*meshPrimitive, *vlp_primitive);
-		arg_list_primitiveBase.Add(vlp_primitive);
+
+		if (arg_map_primitiveBase.count(vlp_primitive->GetVertexType())) {
+			arg_map_primitiveBase[vlp_primitive->GetVertexType()]->Merge(vlp_primitive);
+		}
+		else {
+			arg_map_primitiveBase.emplace(vlp_primitive->GetVertexType(), vlp_primitive);
+		}
 	}
-	arg_list_primitiveBase.Add(meshPrimitive);
+	if (arg_map_primitiveBase.count(meshPrimitive->GetVertexType())) {
+		arg_map_primitiveBase[meshPrimitive->GetVertexType()]->Merge(meshPrimitive);
+	}
+	else {
+		arg_map_primitiveBase.emplace(meshPrimitive->GetVertexType(),meshPrimitive);
+	}
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::ButiRendering::CreateModelFromGLTFBinary(ButiEngine::Value_ptr<ButiEngine::IBinaryReader> arg_reader, const std::string& arg_modelPath,
 	ButiEngine::Value_weak_ptr<ButiEngine::ButiRendering::GraphicDevice> arg_vwp_graphicDevice) {
@@ -346,10 +381,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 		reinterpret_cast<const unsigned char*> (arg_reader->GetAllData()), size) :
 		gltf_ctx.LoadBinaryFromFile(&model, &err, &warn,
 			arg_reader->GetFilePath());
-	List< Value_ptr< ButiRendering::MeshPrimitiveBase>> list_vlp_primtive;
+	std::map<std::int32_t, Value_ptr< ButiRendering::MeshPrimitiveBase>> map_vlp_primitive;
 	List<Value_ptr<ButiRendering::IResource_Material>> list_vlp_material;
+	List< std::int32_t> list_materialUse;
 	std::vector<std::uint32_t> list_subset;
 	auto vlp_index = make_value<List<std::uint32_t>>();
+	std::int32_t indexOffSet = 0;
 	ButiRendering::BoxSurface boxSurface;
 
 	List<Matrix4x4> list_inverse;
@@ -476,10 +513,10 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				}
 			}
 			if (vertexType & Vertex::VertexFlag::QuadBone) {
-				LoadVertexGLTF<Vertex::ModelVertex::Vertex_Model_QuadBone>(vertexCount, model, primitive, list_vlp_primtive, list_inverse);
+				LoadVertexGLTF<Vertex::ModelVertex::Vertex_Model_QuadBone>(vertexCount, model, primitive, map_vlp_primitive, list_inverse);
 			}
 			else {
-				LoadVertexGLTF<Vertex::Vertex_UV_Normal>(vertexCount, model, primitive, list_vlp_primtive, list_inverse);
+				LoadVertexGLTF<Vertex::Vertex_UV_Normal>(vertexCount, model, primitive, map_vlp_primitive, list_inverse);
 			}
 			// index
 			{
@@ -491,67 +528,77 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				auto sizeInBytes = static_cast<std::uint32_t>(glTFBufferView.byteLength - glTFAccessor.byteOffset);
 
 				auto indexCount = static_cast<uint32_t>(glTFAccessor.count);
-				vlp_index->Reserve(indexCount);
+				vlp_index->Reserve(vlp_index->GetSize()+ indexCount);
 				switch (glTFAccessor.componentType) {
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 					for (std::int32_t index = 0; index < indexCount; index++) {
-						vlp_index->Add(*reinterpret_cast<const std::uint8_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint8_t)]));
+						vlp_index->Add(indexOffSet + *reinterpret_cast<const std::uint8_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint8_t)]));
 					}
 					break;
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 					for (std::int32_t index = 0; index < indexCount; index++) {
-						vlp_index->Add(*reinterpret_cast<const std::uint16_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint16_t)]));
+						vlp_index->Add(indexOffSet+ *reinterpret_cast<const std::uint16_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint16_t)]));
 					}
 					break;
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-					*vlp_index = List<std::uint32_t>(&glTFBuffer.data.data()[location], indexCount * sizeof(std::uint32_t));
+					if (indexOffSet) {
+						for (std::int32_t index = 0; index < indexCount; index++) {
+							vlp_index->Add(indexOffSet + *reinterpret_cast<const std::uint32_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint32_t)]));
+						}
+					}
+					else {
+						*vlp_index = List<std::uint32_t>(&glTFBuffer.data.data()[location], indexCount * sizeof(std::uint32_t));
+					}					
 					break;
 				}
+
+				list_subset.push_back(indexCount);
+
+				list_materialUse.Add(primitive.material);
 			}
-			// subset
-			if (primitive.material >= 0) {
-				list_subset.push_back(vlp_index->GetSize());
-			}
-			else {
-				list_subset.push_back(vlp_index->GetSize());
-			}
+			indexOffSet += vertexCount;
 		}
 	}
+	
+	for (auto glTFMaterialIndex : list_materialUse) {
 
-	for (auto& glTFMaterial : model.materials) {
+		auto gltfMaterial = glTFMaterialIndex >= 0 ? &model.materials[glTFMaterialIndex] : nullptr;
 
-		std::string  materialName = glTFMaterial.name;
-		auto filePath = arg_modelPath + "/" + glTFMaterial.name;
+		std::string  materialName = gltfMaterial? gltfMaterial->name:"noneMaterial";
+		auto filePath = arg_modelPath + "/" + materialName;
 		MaterialValue value;
 		DrawSettings drawSettings;
-		if (glTFMaterial.alphaMode == "OPAQUE") {
-			drawSettings.isAlpha = false;
-		}
-		if (glTFMaterial.alphaMode == "MASK") {
+		if (gltfMaterial) {
+			if (gltfMaterial->alphaMode == "OPAQUE") {
+				drawSettings.isAlpha = false;
+			}
+			if (gltfMaterial->alphaMode == "MASK") {
 
-		}
-		else {
-			drawSettings.blendMode = ButiRendering::BlendMode::AlphaBlend;
+			}
+			else {
+				drawSettings.blendMode = ButiRendering::BlendMode::AlphaBlend;
+			}
+
+			if (gltfMaterial->doubleSided) {
+				drawSettings.cullMode = ButiRendering::CullMode::none;
+			}
+			else {
+				drawSettings.cullMode = ButiRendering::CullMode::back;
+			}
+
+			if (gltfMaterial->pbrMetallicRoughness.baseColorFactor.size()) {
+				value.diffuse.x = gltfMaterial->pbrMetallicRoughness.baseColorFactor[0];
+				value.diffuse.y = gltfMaterial->pbrMetallicRoughness.baseColorFactor[1];
+				value.diffuse.z = gltfMaterial->pbrMetallicRoughness.baseColorFactor[2];
+				value.diffuse.w = gltfMaterial->pbrMetallicRoughness.baseColorFactor[3];
+			}
+			if (gltfMaterial->emissiveFactor.size()) {
+				value.emissive.x = gltfMaterial->emissiveFactor[0];
+				value.emissive.y = gltfMaterial->emissiveFactor[1];
+				value.emissive.z = gltfMaterial->emissiveFactor[2];
+			}
 		}
 
-		if (glTFMaterial.doubleSided) {
-			drawSettings.cullMode = ButiRendering::CullMode::none;
-		}
-		else {
-			drawSettings.cullMode = ButiRendering::CullMode::back;
-		}
-
-		if (glTFMaterial.pbrMetallicRoughness.baseColorFactor.size()) {
-			value.diffuse.x = glTFMaterial.pbrMetallicRoughness.baseColorFactor[0];
-			value.diffuse.y = glTFMaterial.pbrMetallicRoughness.baseColorFactor[1];
-			value.diffuse.z = glTFMaterial.pbrMetallicRoughness.baseColorFactor[2];
-			value.diffuse.w = glTFMaterial.pbrMetallicRoughness.baseColorFactor[3];
-		}
-		if (glTFMaterial.emissiveFactor.size()) {
-			value.emissive.x = glTFMaterial.emissiveFactor[0];
-			value.emissive.y = glTFMaterial.emissiveFactor[1];
-			value.emissive.z = glTFMaterial.emissiveFactor[2];
-		}
 		List<Value_ptr<ButiRendering::IResource_Texture>> list_vlp_texture;
 		Value_ptr<ButiRendering::IResource_Shader> vlp_shader;
 		if (model.skins.size()) {
@@ -560,7 +607,6 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 		else {
 			vlp_shader = ButiRendering::CreateShader(ButiRendering::DefaultVertexShader::CreateNormal(arg_vwp_graphicDevice), ButiRendering::DefaultPixelShader::CreateOnlyMaterial(arg_vwp_graphicDevice), nullptr, "OnlyMaterial");
 		}
-
 
 		list_vlp_material.push_back(ButiRendering::CreateMaterial(filePath, value, vlp_shader, list_vlp_texture, drawSettings, arg_vwp_graphicDevice));
 
@@ -686,9 +732,13 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 		output->AddMotion(motion);
 	}
 
-	list_vlp_primtive.ForEach([vlp_index](Value_ptr< ButiRendering::MeshPrimitiveBase> prim)->void {prim->SetIndex(vlp_index); });
+	List< Value_ptr< ButiRendering::MeshPrimitiveBase>> list_vlp_primitive;
+	for (auto& prim : map_vlp_primitive) {
+		prim.second->SetIndex(vlp_index);
+		list_vlp_primitive.push_back(prim.second);
+	}
 
-	output->SetMesh(ButiRendering::CreateMesh(arg_modelPath, list_vlp_primtive, ButiRendering::BoxEightCorner(boxSurface), arg_vwp_graphicDevice));
+	output->SetMesh(ButiRendering::CreateMesh(arg_modelPath, list_vlp_primitive, ButiRendering::BoxEightCorner(boxSurface), arg_vwp_graphicDevice));
 	output->SetMaterial(list_vlp_material);
 	output->SetSubset(list_subset);
 	return output;

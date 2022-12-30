@@ -36,7 +36,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::MeshPrimitiveBase> ButiEngine::
 
 bool ButiEngine::ButiRendering::Resource_DynamicMesh::GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line)
 {
-    return vlp_meshPrimitive->IsHitRay(arg_line, arg_p_pos,arg_p_normal);
+	return false;// vlp_meshPrimitive->IsHitRay(arg_line, arg_p_pos, arg_p_normal);
 }
 
 const std::string& ButiEngine::ButiRendering::Resource_DynamicMesh::GetTagName() const

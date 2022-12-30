@@ -25,7 +25,7 @@ std::uint32_t ButiEngine::ButiRendering::Resource_Mesh::GetIndexCount()
 
 bool ButiEngine::ButiRendering::Resource_Mesh::GetPosRayCast(Vector3* arg_p_pos, Vector3* arg_p_normal, const Line& arg_line)
 {
-	return map_vlp_meshPrimitive.at(Vertex::VertexFlag::UV| Vertex::VertexFlag::Normal)->IsHitRay(arg_line, arg_p_pos, arg_p_normal);
+	return false;//map_vlp_meshPrimitive.at(Vertex::VertexFlag::UV| Vertex::VertexFlag::Normal)->IsHitRay(arg_line, arg_p_pos, arg_p_normal);
 }
 
 const ButiEngine::ButiRendering::MeshPrimitiveBase* ButiEngine::ButiRendering::Resource_Mesh::GetBackUpdata(std::uint32_t arg_vertexType) const

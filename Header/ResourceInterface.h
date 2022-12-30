@@ -171,6 +171,7 @@ public:
 class IModelAnimation {
 public:
 	virtual void Update(const float arg_frame) = 0;
+	virtual void SetProgress(const float arg_progress) = 0;
 	virtual void IKTest() = 0;
 	virtual void Reset() = 0;
 	virtual void BoneSet() = 0;
@@ -185,6 +186,7 @@ public:
 class IAnimationController {
 public:
 	virtual void Update(const float arg_frame=1.0f)=0;
+	virtual void SetProgress(const float arg_progress) = 0;
 	virtual void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim)=0;
 	virtual Value_ptr<IModelAnimation> GetCurrentModelAnimation()=0;
 };

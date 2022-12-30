@@ -250,7 +250,7 @@ public:
 	MeshPrimitiveBase() {}
 	virtual ~MeshPrimitiveBase() {
 	}
-	virtual bool IsHitRay(const Line& arg_line, Vector3* arg_p_pos, Vector3* arg_p_normal) = 0;
+
 	virtual std::uint32_t GetVertexSize()const = 0;
 	virtual std::uint32_t GetVertexCount()const = 0;
 	virtual std::uint32_t GetIndexCount()const=0;
@@ -261,6 +261,7 @@ public:
 	virtual void SetIndex(const List<std::uint32_t>& arg_vec_index) = 0;
 	virtual List<std::uint32_t>& GetIndex() = 0;
 	virtual Value_ptr< List<std::uint32_t>> GetIndexValuePtr()const = 0;
+	virtual void Merge(Value_ptr<MeshPrimitiveBase> arg_other) = 0;
 	template<typename T>
 	inline Value_ptr<T> GetThis() {
 		auto Ptr = dynamic_value_ptr_cast<T>(value_from_this ());
@@ -362,19 +363,11 @@ public:
 	Value_ptr< List<std::uint32_t>> GetIndexValuePtr()const override {
 		return indices;
 	}
-	bool IsHitRay(const Line& arg_line, Vector3* arg_p_pos, Vector3* arg_p_normal) override {
-		assert(0 && "Œ»ÝŽg—p’âŽ~’†");
-		for (auto itr = indices->begin(),endItr= indices->end(); itr != endItr; itr = itr + 3) {
 
-			/*if (Geometry::SurfaceHit::IsHitLinePolygon(arg_line, *arg_p_pos, vertices.at(*itr).position, vertices.at(*(itr + 1)).position, vertices.at(*(itr + 2)).position)) {
-
-				*arg_p_normal = (vertices.at(*(itr + 1)).position - vertices.at(*itr).position).Cross(vertices.at(*(itr + 2)).position - vertices.at(*itr).position).GetNormalize();
-
-				return true;
-			}*/
-		}
-		return false;
+	virtual void Merge(Value_ptr<MeshPrimitiveBase> arg_other) {
+		vertices.Add(arg_other->GetThis<MeshPrimitive<T>>()->vertices);
 	}
+
 	List<T> vertices;
 
 private:

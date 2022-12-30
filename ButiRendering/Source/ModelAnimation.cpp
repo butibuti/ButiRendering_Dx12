@@ -35,6 +35,7 @@ class ModelAnimation :public IObject, public IModelAnimation
 {
 public:
 	void Update(const float arg_frame)override;
+	void SetProgress(const float arg_progress)override;
 	void IKTest()override;
 	void Reset()override;
 	void BoneSet()override;
@@ -58,6 +59,17 @@ private:
 
 class AnimationController:public IAnimationController {
 public:
+	void SetProgress(const float arg_progress)override {
+		if (m_vlp_transitionAnim) {
+			m_vlp_transitionAnim->SetProgress(arg_progress);
+			if (arg_progress>=1.0f) {
+				m_vlp_transitionAnim = nullptr;
+			}
+		}
+		else if (m_vlp_anim) {
+			m_vlp_anim->SetProgress(arg_progress);
+		}
+	}
 	void Update(const float arg_frame) override {
 		m_frame += arg_frame;
 		if (m_vlp_transitionAnim) {
@@ -195,11 +207,13 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
 		if (currentMotionItr->isRotation) {
 			auto rotateT = currentMotionItr->larp.rotationBezier.GetYFromNuton(t);
 			Quat currentRotation = MathHelper::LearpQuat(initRotate, currentMotionItr->pose.rotation, t);
+			//Quat currentRotation = currentMotionItr->pose.rotation;
 			bone->transform->SetLocalRotation(Matrix4x4((currentRotation)));
 		}
 		
 		if (currentMotionItr->isTranslation) {
-			bone->transform->SetLocalPosition(MathHelper::LerpPosition(initPosition, currentMotionItr->pose.position, t,t,t));
+			bone->transform->SetLocalPosition(MathHelper::LerpPosition(initPosition, currentMotionItr->pose.position, t, t, t));
+			//bone->transform->SetLocalPosition(currentMotionItr->pose.position);
 		}
 	}
 }
@@ -237,6 +251,14 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 	}
 	//vlp_boneDrawObj->InverseKinematic();
 	//vlp_boneDrawObj->BonePowerAdd();
+}
+
+void ButiEngine::ButiRendering::ModelAnimation::SetProgress(const float arg_progress)
+{
+	frame = endFrame *max( min(arg_progress,1.0f),0.0f);
+	for (auto line : m_list_timeLines) {
+		(line)->FrameSet(frame);
+	}
 }
 
 void ButiEngine::ButiRendering::ModelAnimation::IKTest()
