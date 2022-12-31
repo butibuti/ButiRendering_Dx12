@@ -87,6 +87,8 @@ public:
 		if (m_vlp_anim && m_vlp_anim->GetResource() == arg_anim->GetResource()) { return; }
 		m_vlp_anim = arg_anim;
 		m_vlp_anim->SetBoneDrawObj(m_vlp_boneDrawObj);
+		if (arg_frame <= 0.0f) { return; }
+
 		auto newTransitionAnim = ObjectFactory::Create<ModelAnimation>();
 		newTransitionAnim->SetBoneDrawObj(m_vlp_boneDrawObj);
 		
