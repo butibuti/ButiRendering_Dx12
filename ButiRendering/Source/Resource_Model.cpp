@@ -657,13 +657,18 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				}
 
 				if (channel.target_path == "translation") {
-					itr->isTranslation = true;
 					itr->pose.position =*reinterpret_cast<Vector3*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector3)]);
 
+					if (itr != p_list_motionKeyFrameData->begin()) {
+						auto befItr = itr - 1;
+						itr->isTranslation = befItr->pose.position == itr->pose.position ? false : true;
+					}
+					else {
+						itr->isTranslation = true;
+					}
 				}
 
 				if (channel.target_path == "rotation") {
-					itr->isRotation = true;
 					switch (outputAccessor.componentType)
 					{
 					case TINYGLTF_COMPONENT_TYPE_FLOAT: {
@@ -720,10 +725,23 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 						itr->pose.rotation = (armatureMatrix.GetRemovePosition() * itr->pose.rotation.ToMatrix()).ToQuat();
 						itr->pose.position *= armatureMatrix.GetRemoveRotation();
 					}
+					if (itr != p_list_motionKeyFrameData->begin()) {
+						auto befItr = itr - 1;
+						itr->isRotation = befItr->pose.rotation == itr->pose.rotation ? false : true;
+					}
+					else {
+						itr->isRotation = true;
+					}
 				}
 				if (channel.target_path == "scale") {
-					itr->isScale = true;
 					itr->pose.scale = *reinterpret_cast<Vector3*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector3)]);
+					if (itr != p_list_motionKeyFrameData->begin()) {
+						auto befItr = itr - 1;
+						itr->isScale =befItr->pose.scale==itr->pose.scale?false: true;
+					}
+					else {
+						itr->isScale = true;
+					}
 				}
 			}
 		}

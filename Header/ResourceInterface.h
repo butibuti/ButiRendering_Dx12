@@ -182,6 +182,7 @@ public:
 	virtual float GetFrame()const = 0;
 	virtual bool IsEnd()const = 0;
 	virtual Value_ptr<IResource_Motion> GetResource()const = 0;
+	virtual float GetEnd()const = 0;
 };
 class IAnimationController {
 public:
