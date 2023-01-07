@@ -110,9 +110,6 @@ public:
 		}
 		else if(m_vlp_anim) {
 			m_vlp_anim->Update(arg_frame);
-			if (m_vlp_anim->IsEnd()) {
-				m_vlp_anim = nullptr;
-			}
 		}
 	}
 	void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim) override {
@@ -314,6 +311,14 @@ std::string ButiEngine::ButiRendering::BoneMotionTimeLine::GetContentsName()
 
 void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 {
+	if (m_frame >= m_endFrame) {
+		if (m_isLoop) {
+			m_frame = 0;
+		}
+		else {
+			return;
+		}
+	}
 	m_frame += arg_frame;
 	m_frame = min(m_frame, m_endFrame);
 	float currentFrame = m_easeType == Easing::EasingType::Liner ? m_frame 
@@ -323,11 +328,6 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 	}
 	//vlp_boneDrawObj->InverseKinematic();
 	//vlp_boneDrawObj->BonePowerAdd();
-	if (m_frame >= m_endFrame) {
-		if (m_isLoop) {
-			m_frame = 0;
-		}
-	}
 }
 
 void ButiEngine::ButiRendering::ModelAnimation::SetProgress(const float arg_progress)
