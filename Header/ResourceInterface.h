@@ -6,9 +6,11 @@
 #include"ButiMemorySystem/ButiMemorySystem/ButiPtr.h"
 #include"ButiMemorySystem/ButiMemorySystem/ButiList.h"
 #include"ButiUtil/ButiUtil/ObjectFactory.h"
+#include"ButiUtil/ButiUtil/Easing.h"
 #include"ShaderVariable.h"
 #include "DrawSettings.h"
 #include"ShaderReflection.h"
+#include"ModelAnimation.h"
 namespace ButiFont {
 class IFontInformation;
 }
@@ -167,6 +169,7 @@ public:
 	virtual void SetMotionData(const List<MotionKeyFrameData>& arg_motionDatas) = 0;
 	virtual std::string GetContentsName() = 0;
 	virtual const List< MotionKeyFrameData >& GetKeyFrameDatas()const = 0;
+	virtual Pose GetPose(const float arg_frame)const = 0;
 };
 class IModelAnimation {
 public:
@@ -183,12 +186,15 @@ public:
 	virtual bool IsEnd()const = 0;
 	virtual Value_ptr<IResource_Motion> GetResource()const = 0;
 	virtual float GetEnd()const = 0;
+	virtual void SetEasing(const Easing::EasingType arg_easeType) = 0;
+	virtual Easing::EasingType GetEasing() = 0;
 };
 class IAnimationController {
 public:
 	virtual void Update(const float arg_frame=1.0f)=0;
 	virtual void SetProgress(const float arg_progress) = 0;
 	virtual void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim)=0;
+	virtual void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim, const float arg_poseFrame) = 0;
 	virtual Value_ptr<IModelAnimation> GetCurrentModelAnimation()=0;
 };
 

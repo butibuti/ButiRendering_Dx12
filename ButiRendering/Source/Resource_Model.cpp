@@ -114,7 +114,7 @@ ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEn
 			outputBone->bindPoseInverse = outputBone->bindPose.GetInverse();
 		}
 
-		std::cout << outputBone->ownIndex << ":"+std::to_string(outputBone->bindPose.GetPosition()) << std::endl;
+		//std::cout << outputBone->ownIndex << ":"+std::to_string(outputBone->bindPose.GetPosition()) << std::endl;
 		//std::cout << "inverse:" << std::to_string(outputBone->bindPoseInverse) << std::endl;
 	}
 
@@ -441,7 +441,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				inverseMatrix._31 = static_cast<float>(mat[8]); inverseMatrix._32 = static_cast<float>(mat[9]); inverseMatrix._33 = static_cast<float>(mat[10]); inverseMatrix._34 = static_cast<float>(mat[11]);
 				inverseMatrix._41 = static_cast<float>(mat[12]); inverseMatrix._42 = static_cast<float>(mat[13]); inverseMatrix._43 = static_cast<float>(mat[14]); inverseMatrix._44 = static_cast<float>(mat[15]);
 				list_inverse[index] = inverseMatrix.Inverse();
-				std::cout << std::to_string(mat) << std::endl;
+				//std::cout << std::to_string(mat) << std::endl;
 			}
 			for (std::int32_t index = 0; index < list_inverse.GetSize(); index++) {
 				//std::cout << index << ":" + std::to_string(list_inverse[index]) << std::endl;

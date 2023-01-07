@@ -21,12 +21,36 @@ public:
 	void SetBoneName(const std::string& arg_name)override;
 	std::string GetContentsName()override;
 	const List< MotionKeyFrameData >& GetKeyFrameDatas()const override { return m_list_keyFrameData; }
+	Pose GetPose(const float arg_frame)const override {
+		
+		auto itr = m_list_keyFrameData.begin();
+		while (arg_frame > itr->endFrame) {
+			itr++;
+			if (itr == m_list_keyFrameData.end()) {
+				itr--;
+				break;
+			}
+		}
+		if (itr == m_list_keyFrameData.begin()) {
+			return itr->pose;
+		}
+		Pose output;
+		auto relativeFrame = arg_frame - (itr-1)->endFrame;
+		auto frameRange = itr->endFrame - (itr - 1)->endFrame;
+		if (frameRange) {
+			auto t = relativeFrame / frameRange;
+			output.rotation = MathHelper::LearpQuat((itr-1)->pose.rotation, itr->pose.rotation, t);
+			output.position= MathHelper::LerpPosition((itr - 1)->pose.position, itr->pose.position, t, t, t);
+			output.scale = MathHelper::LerpPosition((itr - 1)->pose.scale, itr->pose.scale, t, t, t);
+		}
+		return output;
+	}
 private:
 	bool m_isActive = false;
-	Quat m_initRotate;
+	Quat m_initRotation;
 	Vector3 m_initPosition,m_initScale;
 	List< MotionKeyFrameData > m_list_keyFrameData;
-	List< MotionKeyFrameData >::iterator_type m_currentMotionItr,m_befMotionItr;
+	List< MotionKeyFrameData >::iterator_type m_currentMotionItr;
 	Value_ptr<Bone> m_bone;
 	std::string m_boneName;
 };
@@ -43,15 +67,21 @@ public:
 	const List<Value_ptr<IMotionTimeLine>>& GetMotionTimeLine()const override{ return m_list_timeLines; }
 	void SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj)override;
 	float GetFrame()const override;
-	bool IsEnd()const override { return frame >= endFrame; }
-	float GetEnd()const override { return endFrame; }
+	bool IsEnd()const override { return m_frame >= m_endFrame; }
+	float GetEnd()const override { return m_endFrame; }
 	Value_ptr<IResource_Motion> GetResource()const override{ return m_vlp_resource; }
 	void SetResource(Value_ptr<IResource_Motion> arg_vlp_resource) { m_vlp_resource = arg_vlp_resource; }
+	void SetEasing(const Easing::EasingType arg_easeType) override {
+		m_easeType = arg_easeType;
+	}
+	Easing::EasingType GetEasing()override {
+		return m_easeType;
+	}
 private:
-	bool isActive = true, isLoop = false;
-	float frame = 0.0f, endFrame = 0;
+	bool m_isActive = true, m_isLoop = false;
+	float m_frame = 0.0f, m_endFrame = 0;
 
-
+	Easing::EasingType m_easeType=Easing::EasingType::Liner;
 	List<Value_ptr<IMotionTimeLine>> m_list_timeLines;
 	Value_ptr<IBoneObject> m_vlp_boneDrawObj;
 	Value_ptr<IResource_Motion> m_vlp_resource;
@@ -80,6 +110,9 @@ public:
 		}
 		else if(m_vlp_anim) {
 			m_vlp_anim->Update(arg_frame);
+			if (m_vlp_anim->IsEnd()) {
+				m_vlp_anim = nullptr;
+			}
 		}
 	}
 	void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim) override {
@@ -121,6 +154,42 @@ public:
 		m_vlp_transitionAnim = newTransitionAnim;
 		m_vlp_transitionAnim->BoneSet();
 	}
+	void ChangeAnimation(const float arg_frame, Value_ptr<IModelAnimation> arg_anim,const float arg_poseFrame)override{
+		if (!arg_anim) { return; }
+
+		auto newAnim = ObjectFactory::Create<ModelAnimation>();
+		newAnim->SetBoneDrawObj(m_vlp_boneDrawObj);
+
+		for (auto line : arg_anim->GetMotionTimeLine()) {
+			auto transLine = ObjectFactory::Create<BoneMotionTimeLine>();
+			auto lineBoneName = line->GetContentsName();
+			auto boneItr = m_vlp_boneDrawObj->GetBones().Find([lineBoneName](Value_ptr<Bone> arg_bone)->bool {return lineBoneName == arg_bone->boneName; });
+			if (boneItr == nullptr) { continue; }
+			MotionKeyFrameData start, end;
+			end.endFrame = arg_frame>0.0f?arg_frame:1.0f;
+
+
+			start.pose.position = (*boneItr)->transform->GetLocalPosition();
+			start.pose.rotation = (*boneItr)->transform->GetLocalRotation().ToQuat();
+			start.pose.scale = (*boneItr)->transform->GetLocalScale();
+			start.isTranslation = true;
+			start.isRotation = true;
+			start.isScale = true;
+			end.isTranslation = true;
+			end.isRotation = true;
+			end.isScale = true;
+
+			end.pose = line->GetPose(arg_poseFrame);
+
+			transLine->SetMotionData(start);
+			transLine->SetMotionData(end);
+			transLine->SetBoneName(lineBoneName);
+			newAnim->AddMotionTimeLine(transLine);
+		}
+		m_vlp_anim = newAnim;
+		m_vlp_anim->BoneSet();
+	}
+	
 	Value_ptr<IModelAnimation> GetCurrentModelAnimation() override { return m_vlp_anim; }
 
 	void SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj) {
@@ -151,7 +220,6 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::SetBone(Value_ptr<Bone> arg_
 void ButiEngine::ButiRendering::BoneMotionTimeLine::PreStart()
 {
 	m_currentMotionItr = m_list_keyFrameData.begin();
-	m_befMotionItr = m_list_keyFrameData.begin();
 	m_isActive = true;
 	Start();
 }
@@ -178,10 +246,10 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::Start()
 		m_isActive = false;
 		return;
 	}
-	m_initPosition = m_befMotionItr->pose.position;
+	m_initPosition = m_list_keyFrameData.begin() == m_currentMotionItr ? m_currentMotionItr->pose.position : (m_currentMotionItr - 1)->pose.position;
+	m_initRotation = m_list_keyFrameData.begin() == m_currentMotionItr ? m_currentMotionItr->pose.rotation : (m_currentMotionItr - 1)->pose.rotation;
+	m_initScale = m_list_keyFrameData.begin()== m_currentMotionItr? m_currentMotionItr->pose.scale:(m_currentMotionItr-1)->pose.scale;
 
-	m_initRotate = m_befMotionItr->pose.rotation;
-	m_initScale = m_befMotionItr->pose.scale;
 }
 
 void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
@@ -189,9 +257,17 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
 	if (!m_isActive) {
 		return;
 	}
+	if (frame == 0.0f) {
+		m_currentMotionItr = m_list_keyFrameData.begin();
+	}
+	else if ((m_list_keyFrameData.begin()!= m_currentMotionItr)&&( (m_currentMotionItr-1)->endFrame>frame)) {
+		m_currentMotionItr = m_list_keyFrameData.begin();
+		while (frame > m_currentMotionItr->endFrame) {
+			m_currentMotionItr++;
+		}
+		Start();
+	}else
 	while (frame > m_currentMotionItr-> endFrame) {
-
-		m_befMotionItr = m_currentMotionItr;
 		m_currentMotionItr++;
 		if (m_currentMotionItr == m_list_keyFrameData.end()) {
 			m_isActive = false;
@@ -202,26 +278,22 @@ void ButiEngine::ButiRendering::BoneMotionTimeLine::FrameSet(const float frame)
 
 		}
 	}
-	auto relativeFrame = frame - m_befMotionItr-> endFrame;
-	auto frameRange = m_currentMotionItr->endFrame - m_befMotionItr->endFrame;
+
+	if (m_currentMotionItr == m_list_keyFrameData.begin()) {
+
+		m_bone->transform->SetLocalRotation(Matrix4x4( m_currentMotionItr->pose.rotation));
+		m_bone->transform->SetLocalPosition(m_currentMotionItr->pose.position);
+		m_bone->transform->SetLocalScale(m_currentMotionItr->pose.scale);
+		return;
+	}
+	auto relativeFrame = frame - (m_currentMotionItr-1)->endFrame;
+	auto frameRange = m_currentMotionItr->endFrame - (m_currentMotionItr-1)->endFrame;
 	if (frameRange) {
 		auto t = relativeFrame / frameRange;
-		if (m_currentMotionItr->isRotation) {
-			//auto rotateT = m_currentMotionItr->larp.rotationBezier.GetYFromNuton(t);
-			Quat currentRotation = MathHelper::LearpQuat(m_initRotate, m_currentMotionItr->pose.rotation, t);
-			//Quat currentRotation = m_currentMotionItr->pose.rotation;
-			m_bone->transform->SetLocalRotation(Matrix4x4((currentRotation)));
-			
-		}
-
-		if (m_currentMotionItr->isTranslation) {
-			m_bone->transform->SetLocalPosition(MathHelper::LerpPosition(m_initPosition, m_currentMotionItr->pose.position, t, t, t));
-			std::cout << frame << ":" << std::to_string(m_bone->transform->GetLocalPosition()) << std::endl;
-		}
-		if (m_currentMotionItr->isScale) {
-			m_bone->transform->SetLocalScale(MathHelper::LerpPosition(m_initScale, m_currentMotionItr->pose.scale, t, t, t));
-			
-		}
+		Quat currentRotation = MathHelper::LearpQuat(m_initRotation, m_currentMotionItr->pose.rotation, t);
+		m_bone->transform->SetLocalRotation(Matrix4x4((currentRotation)));
+		m_bone->transform->SetLocalPosition(MathHelper::LerpPosition(m_initPosition, m_currentMotionItr->pose.position, t, t, t));
+		m_bone->transform->SetLocalScale(MathHelper::LerpPosition(m_initScale, m_currentMotionItr->pose.scale, t, t, t));
 	}
 }
 
@@ -242,19 +314,21 @@ std::string ButiEngine::ButiRendering::BoneMotionTimeLine::GetContentsName()
 
 void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 {
-	if (frame >= endFrame) {
-		if (isLoop) {
-			frame = 0;
+	if (m_frame >= m_endFrame) {
+		if (m_isLoop) {
+			m_frame = 0;
 			Reset();
 		}
 		else {
 			return;
 		}
 	}
-	frame += arg_frame;
-	frame = min(frame, endFrame);
+	m_frame += arg_frame;
+	m_frame = min(m_frame, m_endFrame);
+	float currentFrame = m_easeType == Easing::EasingType::Liner ? m_frame 
+		: m_endFrame * Easing::GetEase(m_frame/m_endFrame, m_easeType);
 	for (auto line:m_list_timeLines) {
-		(line)->FrameSet(frame);
+		(line)->FrameSet(currentFrame);
 	}
 	//vlp_boneDrawObj->InverseKinematic();
 	//vlp_boneDrawObj->BonePowerAdd();
@@ -262,9 +336,11 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 
 void ButiEngine::ButiRendering::ModelAnimation::SetProgress(const float arg_progress)
 {
-	frame = endFrame *max( min(arg_progress,1.0f),0.0f);
+	m_frame = m_endFrame *max( min(arg_progress,1.0f),0.0f);
+	float currentFrame = m_easeType == Easing::EasingType::Liner ? m_frame
+		: m_endFrame * Easing::GetEase(m_frame / m_endFrame, m_easeType);
 	for (auto line : m_list_timeLines) {
-		(line)->FrameSet(frame);
+		(line)->FrameSet(currentFrame);
 	}
 }
 
@@ -292,7 +368,7 @@ void ButiEngine::ButiRendering::ModelAnimation::BoneSet()
 		line->SetBone(bone);
 		line->PreStart();
 		//(itr->second)->Start();
-		endFrame = max(line->GetEndFrame(), endFrame);
+		m_endFrame = max(line->GetEndFrame(), m_endFrame);
 	}
 }
 
@@ -306,8 +382,8 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IMotionTimeLine> ButiEngine::Bu
 
 bool ButiEngine::ButiRendering::ModelAnimation::SetIsLoop(const bool arg_isloop)
 {
-	isLoop = arg_isloop;
-	return isLoop;
+	m_isLoop = arg_isloop;
+	return m_isLoop;
 }
 
 void ButiEngine::ButiRendering::ModelAnimation::SetBoneDrawObj(Value_ptr<IBoneObject> arg_vlp_boneDrawObj)
@@ -318,7 +394,7 @@ void ButiEngine::ButiRendering::ModelAnimation::SetBoneDrawObj(Value_ptr<IBoneOb
 
 float ButiEngine::ButiRendering::ModelAnimation::GetFrame() const
 {
-	return frame;
+	return m_frame;
 }
 
 ButiEngine::ButiRendering::Pose::Pose(const Vector3& arg_position, const Vector3& arg_rotate, const Vector3& arg_scale):position(arg_position),scale(arg_scale)
