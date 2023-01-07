@@ -314,15 +314,6 @@ std::string ButiEngine::ButiRendering::BoneMotionTimeLine::GetContentsName()
 
 void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 {
-	if (m_frame >= m_endFrame) {
-		if (m_isLoop) {
-			m_frame = 0;
-			Reset();
-		}
-		else {
-			return;
-		}
-	}
 	m_frame += arg_frame;
 	m_frame = min(m_frame, m_endFrame);
 	float currentFrame = m_easeType == Easing::EasingType::Liner ? m_frame 
@@ -332,6 +323,11 @@ void ButiEngine::ButiRendering::ModelAnimation::Update(const float arg_frame)
 	}
 	//vlp_boneDrawObj->InverseKinematic();
 	//vlp_boneDrawObj->BonePowerAdd();
+	if (m_frame >= m_endFrame) {
+		if (m_isLoop) {
+			m_frame = 0;
+		}
+	}
 }
 
 void ButiEngine::ButiRendering::ModelAnimation::SetProgress(const float arg_progress)
