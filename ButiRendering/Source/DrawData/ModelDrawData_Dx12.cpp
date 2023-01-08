@@ -48,7 +48,6 @@ void ButiEngine::ButiRendering::ModelDrawObject_Dx12::ModelUpdate()
 	if(cbuffer_bone)
 	for (auto itr :vlp_bone-> m_list_bone) {
 		auto mat = (itr)->GetPoseMatrix();
-		//std::cout << std::to_string(mat)<<std::endl;
 		cbuffer_bone->Get().datas[index] = mat;
 		index++;
 	}

@@ -114,8 +114,6 @@ ButiEngine::List<ButiEngine::Value_ptr< ButiEngine::ButiRendering::Bone>> ButiEn
 			outputBone->bindPoseInverse = outputBone->bindPose.GetInverse();
 		}
 
-		//std::cout << outputBone->ownIndex << ":"+std::to_string(outputBone->bindPose.GetPosition()) << std::endl;
-		//std::cout << "inverse:" << std::to_string(outputBone->bindPoseInverse) << std::endl;
 	}
 
 
@@ -206,7 +204,6 @@ void LoadIntData(tinygltf::Model& arg_model,
 	for (std::int32_t index = 0; index < vertexCount; index++) {
 		memcpy_s(dest, sizeof(dest), &src[location + index * sizeof(dest)], sizeof(dest));
 
-		//std::cout << std::to_string(boneIndex.x) << "," << std::to_string(boneIndex.y) << "," << std::to_string(boneIndex.z) << "," << std::to_string(boneIndex.w) << std::endl;
 		vertices[index].boneIndex_1 = static_cast<std::int32_t> (arg_model.skins[0].joints[dest[0 * byteSize / 4]]);
 		vertices[index].boneIndex_2 = static_cast<std::int32_t> (arg_model.skins[0].joints[dest[1 * byteSize / 4]]);
 		vertices[index].boneIndex_3 = static_cast<std::int32_t> (arg_model.skins[0].joints[dest[2 * byteSize / 4]]);
@@ -426,7 +423,6 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 					memcpy_s(&mat, sizeof(mat), &invBuffer.data.data()[location + index * sizeof(mat)], sizeof(mat));
 
 					list_inverse[index] = mat;
-					//std::cout << m_list_bone[index].ownIndex << ":" << std::to_string(mat) << std::endl;
 				}
 			}
 			else {
@@ -441,11 +437,8 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				inverseMatrix._31 = static_cast<float>(mat[8]); inverseMatrix._32 = static_cast<float>(mat[9]); inverseMatrix._33 = static_cast<float>(mat[10]); inverseMatrix._34 = static_cast<float>(mat[11]);
 				inverseMatrix._41 = static_cast<float>(mat[12]); inverseMatrix._42 = static_cast<float>(mat[13]); inverseMatrix._43 = static_cast<float>(mat[14]); inverseMatrix._44 = static_cast<float>(mat[15]);
 				list_inverse[index] = inverseMatrix.Inverse();
-				//std::cout << std::to_string(mat) << std::endl;
 			}
-			for (std::int32_t index = 0; index < list_inverse.GetSize(); index++) {
-				//std::cout << index << ":" + std::to_string(list_inverse[index]) << std::endl;
-			}
+
 		}
 		index = 0;
 
@@ -480,8 +473,6 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 			if (list_inverse.GetSize()) {
 				bone.bindPoseInverse = list_inverse[index];
 				bone.bindPose = list_inverse[index].GetInverse();
-
-				std::cout << index << ":" + std::to_string(list_inverse[index]) << std::endl;
 			}
 			map_bone.emplace (joint ,bone);
 			output->AddBone(bone);

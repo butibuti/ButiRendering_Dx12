@@ -5,7 +5,7 @@
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/DescriptorHeapManager.h"
 #include"ButiRendering_Dx12/Header/Rendering_Dx12/GraphicResourceUtil_Dx12.h"
-
+#include"ButiEventSystem/ButiTaskSystem/TaskSystem.h"
 namespace ButiEngine {
 namespace ButiRendering {
 struct DrawObjectRegistCommand {
@@ -374,30 +374,41 @@ void ButiEngine::ButiRendering::DrawLayer::BefRendering()
 
 void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 {
-	std::lock_guard lock(m_mtx_commandBuffer);
-	//描画オブジェクトの登録,解除
-	if (m_list_registCommandBuff.GetSize())
 	{
-		m_changed = true;
-		m_list_drawObj.Reserve(m_list_drawObj.GetSize() + m_list_registCommandBuff.GetSize());
-		for (auto itr : m_list_registCommandBuff) {
-			if (itr.isRegist) {
-				Regist(itr.vlp_obj->GetCommands());
-				m_list_drawObj.Add(itr.vlp_obj);
+		std::lock_guard lock(m_mtx_commandBuffer);
+		//描画オブジェクトの登録,解除
+		if (m_list_registCommandBuff.GetSize())
+		{
+			m_changed = true;
+			m_list_drawObj.Reserve(m_list_drawObj.GetSize() + m_list_registCommandBuff.GetSize());
+			for (auto itr : m_list_registCommandBuff) {
+				if (itr.isRegist) {
+					Regist(itr.vlp_obj->GetCommands());
+					m_list_drawObj.Add(itr.vlp_obj);
+				}
+				else {
+					UnRegist(itr.vlp_obj->GetCommands());
+					DeleteDrawObj(itr.vlp_obj);
+				}
 			}
-			else {
-				UnRegist(itr.vlp_obj->GetCommands());
-				DeleteDrawObj(itr.vlp_obj);
-			}
+			m_list_registCommandBuff.Clear();
 		}
-		m_list_registCommandBuff.Clear();
 	}
 
 
 	//描画オブジェクトの行列定数バッファ、ボーン定数バッファの更新
 	{
+		std::vector<std::future<bool>>list_futures;
+		
 		for (auto itr : m_list_drawObj) {
-			itr->DrawBefore();
+			list_futures.push_back(
+			ButiTaskSystem::PushTask(std::function<bool()>(
+				[itr]()->bool {itr->DrawBefore();  return false; }
+				))
+			);			
+		}
+		for (auto& future : list_futures) {
+			future.get();
 		}
 	}
 }

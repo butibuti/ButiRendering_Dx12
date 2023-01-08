@@ -363,16 +363,13 @@ void ButiEngine::ButiRendering::ModelAnimation::BoneSet()
 		}
 		line->SetBone(bone);
 		line->PreStart();
-		//(itr->second)->Start();
-		m_endFrame = max(line->GetEndFrame(), m_endFrame);
 	}
 }
 
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IMotionTimeLine> ButiEngine::ButiRendering::ModelAnimation::AddMotionTimeLine( Value_ptr<IMotionTimeLine> arg_motion)
 {
-
 	m_list_timeLines.push_back(arg_motion);
-
+	m_endFrame = max(arg_motion->GetEndFrame(), m_endFrame);
 	return arg_motion;
 }
 
