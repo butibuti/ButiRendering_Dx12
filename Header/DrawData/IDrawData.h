@@ -99,6 +99,12 @@ public:
 
 		return nullptr;
 	}
+	inline std::vector<Value_ptr<ICBuffer>>& GetICBuffers() {
+		return  vlp_drawInfo->vec_exCBuffer;
+	}
+	inline const std::vector<Value_ptr<ICBuffer>>& GetICBuffers()const {
+		return  vlp_drawInfo->vec_exCBuffer;
+	}
 
 	template <class T>
 	inline Value_ptr<CBuffer<T>> GetCBuffer()const {
@@ -154,6 +160,19 @@ public:
 	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const override {
 		return drawData.GetICBuffer(arg_bufferName);
 	}
+	inline std::vector<Value_ptr<ICBuffer>>& GetICBuffers() override {
+		return drawData.GetICBuffers();
+	}
+	inline const std::vector<Value_ptr<ICBuffer>>& GetICBuffers() const override {
+		return drawData.GetICBuffers();
+	}
+
+	void CreateBuffer()override {
+		drawData.GetCBuffer()->CreateBuffer();
+		for (auto cbuffer : GetICBuffers()) {
+			cbuffer->CreateBuffer();
+		}
+	}
 	List<Value_ptr<IDrawCommand>>& GetCommands() { return m_list_command; }
 	const List<Value_ptr<IDrawCommand>>& GetCommands()const {return m_list_command;}
 	bool IsAlphaObject()const override { return drawData.m_isAlphaDraw; }
@@ -180,13 +199,24 @@ public:
 	bool IsCreated()override {
 		return m_vlp_afterDrawObj->IsCreated() && m_vlp_befDrawObj->IsCreated();
 	}
-	inline Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const override {
+	Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const override {
 		for (auto itr :m_vlp_befDrawObj->GetDrawData().vlp_drawInfo->vec_exCBuffer) {
 			if ((itr)->GetBufferName() == arg_bufferName) {
 				return itr;
 			}
 		}
 		return nullptr;
+	}
+
+	void CreateBuffer() override{
+		m_vlp_befDrawObj->CreateBuffer();
+		m_vlp_afterDrawObj->CreateBuffer();
+	}
+	std::vector<Value_ptr<ICBuffer>>& GetICBuffers() override {
+		return m_vlp_befDrawObj->GetDrawData().GetICBuffers();
+	}
+	const std::vector<Value_ptr<ICBuffer>>& GetICBuffers() const override {
+		return m_vlp_befDrawObj->GetDrawData().GetICBuffers();
 	}
 private:
 	Value_ptr<DrawObject> m_vlp_befDrawObj,m_vlp_afterDrawObj;

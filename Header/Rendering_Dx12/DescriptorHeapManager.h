@@ -25,7 +25,6 @@ struct BackUpConstantBufferData {
 };
 class DescriptorHeapManager
 {
-	const std::uint32_t DescriptorHeapSize =16384;
 public:
 	BUTIRENDERING_API DescriptorHeapManager(Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice, const std::uint32_t arg_max = 512);
 	BUTIRENDERING_API ~DescriptorHeapManager();
@@ -40,7 +39,7 @@ public:
 
 	BUTIRENDERING_API void AddHeapRange();
 	BUTIRENDERING_API HandleInformation CreateConstantBufferView(void* arg_p_value, const bool arg_isKeep, const std::int32_t arg_size = 0x100);
-	BUTIRENDERING_API void ConstantBufferUpdate(void* arg_p_value, const std::uint32_t arg_index, const std::int32_t arg_size = 0x100);
+	BUTIRENDERING_API void ConstantBufferUpdate(void* arg_p_value, const std::int32_t arg_index, const std::int32_t arg_size = 0x100);
 	//HandleInformation CreateShaderResourceView(Microsoft::WRL::ComPtr<ID3D12Resource> resource ,const D3D12_SHADER_RESOURCE_VIEW_DESC& srvDesc,const std::int32_t size );
 	BUTIRENDERING_API HandleInformation GetCurrentHandle(const std::int32_t arg_size = 0x100);
 	BUTIRENDERING_API HandleInformation GetCurrentHandle(std::uint32_t& arg_ref_top, const std::int32_t arg_size = 0x100);

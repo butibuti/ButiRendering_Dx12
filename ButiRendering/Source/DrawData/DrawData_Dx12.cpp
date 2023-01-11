@@ -60,7 +60,6 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 
 	auto cbuffer_Dx12 = CreateCBuffer<Matrices>();
 	cbuffer_Dx12->SetGraphicDevice(Value_weak_ptr<GraphicDevice>( vwp_graphicDevice));
-	cbuffer_Dx12->CreateBuffer();
 	drawData.SetCbuffer( cbuffer_Dx12);
 
 	List<ConstantBufferReflection> list_cbRef;
@@ -91,7 +90,6 @@ void ButiEngine::ButiRendering::DrawObject_Dx12::Initialize()
 
 	for (auto itr : drawData.vlp_drawInfo->vec_exCBuffer) {
 		itr->SetGraphicDevice(vwp_graphicDevice.lock());
-		itr->CreateBuffer();
 	}
 	if (isUseRenderState) {
 		drawData.RemoveCBuffer<RendererState>();

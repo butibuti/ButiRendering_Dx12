@@ -383,6 +383,7 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 			m_list_drawObj.Reserve(m_list_drawObj.GetSize() + m_list_registCommandBuff.GetSize());
 			for (auto itr : m_list_registCommandBuff) {
 				if (itr.isRegist) {
+					itr.vlp_obj->CreateBuffer();
 					Regist(itr.vlp_obj->GetCommands());
 					m_list_drawObj.Add(itr.vlp_obj);
 				}
@@ -399,13 +400,13 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 	//描画オブジェクトの行列定数バッファ、ボーン定数バッファの更新
 	{
 		std::vector<std::future<bool>>list_futures;
-		
+
 		for (auto itr : m_list_drawObj) {
 			list_futures.push_back(
-			ButiTaskSystem::PushTask(std::function<bool()>(
-				[itr]()->bool {itr->DrawBefore();  return false; }
-				))
-			);			
+				ButiTaskSystem::PushTask(std::function<bool()>(
+					[itr]()->bool {itr->DrawBefore();  return false; }
+					))
+			);
 		}
 		for (auto& future : list_futures) {
 			future.get();

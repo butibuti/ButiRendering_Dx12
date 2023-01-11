@@ -24,6 +24,9 @@ public:
 	virtual Value_ptr<Transform> GetTransform()const = 0;
 	virtual void SetTransform(const Value_ptr<Transform> arg_vlp_transform)=0;
 	virtual Value_ptr<ICBuffer> GetICBuffer(const std::string& arg_bufferName)const = 0;
+	virtual std::vector<Value_ptr<ICBuffer>>& GetICBuffers() = 0;
+	virtual const std::vector<Value_ptr<ICBuffer>>& GetICBuffers() const = 0;
+	virtual void CreateBuffer() = 0;
 	template <typename T> Value_ptr<CBuffer<T>> GetCBuffer()const {
 		auto out = GetICBuffer(T::GetConstantBufferName());
 		if (out && out->IsThis<CBuffer<T>>()) {

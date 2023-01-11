@@ -17,6 +17,7 @@ public:
 		}
 	}
 	void CreateBuffer(void* arg_p_data, const bool arg_mapKeep)override {
+		if (m_index >= 0) { return; }
 		auto out = vwp_heapManager.lock()->CreateConstantBufferView(arg_p_data, arg_mapKeep, m_size);
 		m_index = out.index;
 		gpuDescriptorHandle = out.GPUHandle;
@@ -43,7 +44,7 @@ private:
 	D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorHandle;
 	Value_weak_ptr<GraphicDevice_Dx12> vwp_graphicDevice;
 	Value_weak_ptr<DescriptorHeapManager> vwp_heapManager;
-	std::int32_t m_size = 0, m_index = 0;
+	std::int32_t m_size = 0, m_index = -1;
 };
 }
 }

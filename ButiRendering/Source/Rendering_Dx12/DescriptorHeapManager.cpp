@@ -3,6 +3,7 @@
 #include"../../../Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include"..\../../Header/Rendering_Dx12/DescriptorHeapManager.h"
 
+constexpr std::uint32_t DescriptorHeapSize = 16384;
 ButiEngine::ButiRendering::DescriptorHeapManager::DescriptorHeapManager( Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice,const std::uint32_t arg_max  )
 {
 	vwp_graphicDevice= arg_vwp_graphicDevice;
@@ -118,8 +119,9 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 	return handle;
 }
 
-void ButiEngine::ButiRendering::DescriptorHeapManager::ConstantBufferUpdate(void* arg_p_value, const std::uint32_t arg_index, const std::int32_t arg_size)
+void ButiEngine::ButiRendering::DescriptorHeapManager::ConstantBufferUpdate(void* arg_p_value, const std::int32_t arg_index, const std::int32_t arg_size)
 {
+	assert(arg_index >= 0);
 	std::lock_guard lock(m_mtx_memory);
 	memcpy(mappedConstantBuffer + arg_index, arg_p_value, arg_size);
 }
