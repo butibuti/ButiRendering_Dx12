@@ -3,7 +3,7 @@
 #include"../../../Header/Rendering_Dx12/GraphicDevice_Dx12.h"
 #include"..\../../Header/Rendering_Dx12/DescriptorHeapManager.h"
 
-constexpr std::uint32_t DescriptorHeapSize = 16384;
+constexpr std::uint64_t DescriptorHeapSize = 0x10000;
 ButiEngine::ButiRendering::DescriptorHeapManager::DescriptorHeapManager( Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice,const std::uint32_t arg_max  )
 {
 	vwp_graphicDevice= arg_vwp_graphicDevice;

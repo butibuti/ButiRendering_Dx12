@@ -151,7 +151,7 @@ struct MaterialValue_Deferred {
 	}
 };
 struct BoneMatrix {
-	Matrix4x4 datas[256];
+	Matrix4x4 datas[64];
 	BoneMatrix() { std::memset(datas, 0, sizeof(datas)); }
 	template<class Archive>
 	void serialize(Archive& archive)

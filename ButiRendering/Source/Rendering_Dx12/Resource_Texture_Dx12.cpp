@@ -174,7 +174,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12::CreateTexture(Image* srcI
 	heapProp.CreationNodeMask = 1;
 	heapProp.VisibleNodeMask = 1;
 
-	vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(
+	auto hr=vwp_graphicDevice.lock()->GetDevice().CreateCommittedResource(
 		&heapProp,
 		D3D12_HEAP_FLAG_NONE, &textureResDesc,
 		D3D12_RESOURCE_STATE_COPY_DEST,
@@ -182,6 +182,7 @@ void ButiEngine::ButiRendering::Resource_Texture_Dx12::CreateTexture(Image* srcI
 		IID_PPV_ARGS(&texture));
 	//
 
+	assert(hr == S_OK);
 	dataRefresh = true;
 
 }

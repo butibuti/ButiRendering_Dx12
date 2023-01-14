@@ -54,7 +54,7 @@ struct Material_Deferred {
 };
 #define Use_MaterialList(registerIndex)cbuffer MaterialList:register(registerIndex) {Material_Deferred Material_DeferredList[256]:packoffset(c0);};
 #define Use_GausParameter(registerIndex)cbuffer GausParameter : register(registerIndex){float4 gausOffset[16]: packoffset(c0);};
-#define Use_Bone(registerIndex)cbuffer Bone : register(registerIndex){matrix bones[256]: packoffset(c0);};
+#define Use_Bone(registerIndex)cbuffer Bone : register(registerIndex){matrix bones[64]: packoffset(c0);};
 #define Use_RendererStatus(registerIndex)cbuffer RendererState:register(registerIndex){float4 fogColor:packoffset(c0);float4 cameraPos:packoffset(c1);float2 fogCoord:packoffset(c2);float2 pixelScale:packoffset(c2.z);matrix shadowvpMatrix: packoffset(c3);matrix shadowvMatrix: packoffset(c7);matrix forwordCameraMatrix: packoffset(c11);float3 shadowCameraPos : packoffset(c15);float Time : packoffset(c15.w);};
 #define Use_ParticleParameter(registerIndex)cbuffer ParticleParameter:register(registerIndex){float4 startColor: packoffset(c0);float4 endColor: packoffset(c1);float time : packoffset(c2);float power : packoffset(c2.y);uint noise: packoffset(c2.z);float MaxRange : packoffset(c2.w);float MinRange : packoffset(c3.x);float size : packoffset(c3.y);float minSize : packoffset(c3.z);float rotationPase : packoffset(c3.w);};
 
