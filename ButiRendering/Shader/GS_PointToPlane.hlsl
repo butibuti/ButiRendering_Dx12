@@ -24,12 +24,8 @@ void GSMain(
     point Vertex_UV_Normal_Color input[1],
     inout TriangleStream<Pixel_UV_Color> stream)
 {
-
-
-   
-
     Pixel_UV_Color pixel;
-	float4 position = input[0].position;
+	float4 position =mul( input[0].position, mul(viewMatrix, projectionMatrix));
 	pixel.color.x = input[0].normal.x;
 	pixel.color.y = input[0].normal.y;
 	pixel.color.z = input[0].normal.z;
