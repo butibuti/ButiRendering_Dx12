@@ -282,6 +282,9 @@
     <Image Include="Texture\MaterialIcon\folder-plus.png" />
     <Image Include="Texture\MaterialIcon\folder.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="ShaderCompileList.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -492,6 +492,7 @@ BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreateOutLine(Value_ptr<Gr
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreatePointToCube(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreatePointToCube_WithoutUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreatePointToPlane(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
+BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreatePointToSpriteParticle(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 BUTIRENDERING_API Value_ptr<IResource_GeometryShader> CreatePointToTriPolygon_WithoutUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice);
 }
 BUTIRENDERING_API Value_ptr<IResource_VertexShader> CreateVertexShaderFromSource(const std::string& arg_shaderName, const std::string& arg_source, Value_ptr<GraphicDevice> arg_vlp_graphicDevice);

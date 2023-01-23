@@ -153,5 +153,5 @@ int main(const std::int32_t argCount, const char* args[])
 		return 0;
 		break;
 	}
-
+	std::system("pause");
 }

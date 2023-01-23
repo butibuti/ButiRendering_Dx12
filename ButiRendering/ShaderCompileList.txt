@@ -74,4 +74,5 @@ G CompiledShader/GS_OutLine.fxc Shader/GS_OutLine.hlsl
 G CompiledShader/GS_PointToCube.fxc Shader/GS_PointToCube.hlsl
 G CompiledShader/GS_PointToCube_WithoutUV.fxc Shader/GS_PointToCube_WithoutUV.hlsl
 G CompiledShader/GS_PointToPlane.fxc Shader/GS_PointToPlane.hlsl
+G CompiledShader/GS_PointToSpriteParticle.fxc Shader/GS_PointToSpriteParticle.hlsl
 G CompiledShader/GS_PointToTriPolygon_WithoutUV.fxc Shader/GS_PointToTriPolygon_WithoutUV.hlsl

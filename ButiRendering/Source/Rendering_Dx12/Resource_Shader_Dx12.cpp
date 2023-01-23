@@ -244,6 +244,9 @@ namespace PointToCube_WithoutUV {
 namespace PointToPlane {
 #include"../../CompiledShader/GS_PointToPlane.fxc"
 }
+namespace PointToSpriteParticle {
+#include"../../CompiledShader/GS_PointToSpriteParticle.fxc"
+}
 namespace PointToTriPolygon_WithoutUV {
 #include"../../CompiledShader/GS_PointToTriPolygon_WithoutUV.fxc"
 }
@@ -1024,6 +1027,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_PixelShader> ButiEngi
  {
 	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
 	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToPlane::g_GSMain, sizeof(GS::PointToPlane::g_GSMain), "PointToPlane", arg_vlp_graphicDevice);
+ }
+
+ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToSpriteParticle(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)
+ {
+	 static Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> shader = nullptr;
+	 return shader ? shader : shader = ObjectFactory::Create<Resource_GeometryShader_Dx12>(GS::PointToSpriteParticle::g_GSMain, sizeof(GS::PointToSpriteParticle::g_GSMain), "PointToSpriteParticle", arg_vlp_graphicDevice);
  }
 
  ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_GeometryShader> ButiEngine::ButiRendering::DefaultGeometryShader::CreatePointToTriPolygon_WithoutUV(Value_ptr<GraphicDevice> arg_vlp_graphicDevice)

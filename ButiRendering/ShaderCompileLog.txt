@@ -18,6 +18,10 @@
                 "value": 13318132514
             },
             {
+                "key": "G CompiledShader/GS_PointToSpriteParticle.fxc Shader/GS_PointToSpriteParticle.hlsl",
+                "value": 13318915599
+            },
+            {
                 "key": "G CompiledShader/GS_PointToTriPolygon_WithoutUV.fxc Shader/GS_PointToTriPolygon_WithoutUV.hlsl",
                 "value": 13302345877
             },
