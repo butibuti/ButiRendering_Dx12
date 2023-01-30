@@ -126,21 +126,22 @@ std::int32_t ButiEngine::ButiRendering::Camera::IsContaineVisibility(Value_ptr<G
 
 ButiEngine::Vector3 ButiEngine::ButiRendering::Camera::WorldToScreen(const Vector3& arg_pos) const
 {
-	Matrix4x4 convertedPos;
+	Matrix4x4 convert;
 
+	auto l_viewMatrix = vlp_transform->GetMatrix().GetInverse();
 
 	auto projection =
 		Matrix4x4::PersepectiveFovLH(
-			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle) * 2.0f),
+			MathHelper::ToRadian(static_cast<float>(GetCameraProperty().angle)),
 			static_cast<float>(GetCameraProperty().currentWidth) / static_cast<float>(GetCameraProperty().currentHeight),
 			static_cast<float>(GetCameraProperty().nearClip),
 			static_cast<float>(GetCameraProperty().farClip)
 		);
-	convertedPos = (projection * ((Matrix4x4::Scale(Vector3{ 6.5, 6.5, 1 }) * vlp_transform->GetMatrix()).GetInverse()).Transpose());
-	auto pos = Vector4(arg_pos, 1.0f) * convertedPos.Transpose();
-	auto t = Vector3(pos.x / pos.w, pos.y / pos.w, pos.z/pos.w);
-	t.x *= -1.0f * GetCameraProperty().currentWidth;
-	t.y *= -1.0f * GetCameraProperty().currentHeight;
+	convert = (l_viewMatrix*projection);
+	auto pos = Vector4(arg_pos, 1.0f) * convert;
+	auto t = Vector3(pos.x / ( pos.w), pos.y / ( pos.w), pos.z/pos.w);
+	t.x *=  GetCameraProperty().currentWidth*0.5f;
+	t.y *=  GetCameraProperty().currentHeight*0.5f;
 	return t;
 }
 
