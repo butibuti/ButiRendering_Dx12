@@ -176,9 +176,6 @@
     <ClCompile Include="Source\Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CBuffer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Source\GraphicDevice.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>

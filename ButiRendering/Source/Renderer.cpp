@@ -369,7 +369,7 @@ void ButiEngine::ButiRendering::DrawLayer::BefRendering()
 		m_vlp_shadowLayer->BefRendering();
 	}
 	BefUpdate();
-	//vlp_collisionLayer->Update();
+	std::int32_t index = 0;
 }
 
 void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
@@ -445,7 +445,7 @@ void ButiEngine::ButiRendering::DrawLayer::UnRegist(Value_ptr< IDrawObject> arg_
 
 void ButiEngine::ButiRendering::DrawLayer::Regist(List<Value_ptr<IDrawCommand>> arg_list_vwp_drawCommand)
 {
-	for (auto command:arg_list_vwp_drawCommand) {
+	for (auto& command:arg_list_vwp_drawCommand) {
 		if (command->IsAlpha()) {
 			m_list_afterCommand.Add(command);
 			continue;
@@ -500,7 +500,7 @@ void ButiEngine::ButiRendering::DrawLayer::CreateCommandBundle()
 		}
 		pipelineAndList.first->Attach();
 		pipelineAndList.first->GetRootSignature()->Attach();
-		for (auto command : pipelineAndList.second) {
+		for (auto& command : pipelineAndList.second) {
 			command->Execute();
 		}
 	}

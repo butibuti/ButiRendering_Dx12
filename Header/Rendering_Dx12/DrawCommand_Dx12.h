@@ -7,6 +7,9 @@ class GraphicDevice_Dx12;
 class DrawCommand_Dx12 :public IDrawCommand{
 public:
 	DrawCommand_Dx12(const std::int32_t arg_offset, const std::int32_t arg_step, Value_weak_ptr<IDrawObject> arg_vwp_drawObject,Value_weak_ptr<IResource_Mesh> arg_vwp_mesh, Value_weak_ptr<IResource_Material> arg_vwp_material, Value_ptr < CBuffer<Matrices>> arg_vlp_matrixBuffer, std::vector<Value_ptr<ICBuffer>>& arg_ref_vec_exCBuffer,Value_weak_ptr<IRenderer> arg_vwp_renderer,Value_weak_ptr<GraphicDevice_Dx12> arg_vwp_graphicDevice);
+	~DrawCommand_Dx12() {
+		std::int32_t i = 0;
+	}
 	void Execute()override;
 	void Execute_afterRendering()override;
 	void Initialize()override;

@@ -16,6 +16,7 @@ ButiEngine::ButiRendering::DescriptorHeapManager::~DescriptorHeapManager()
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::Initialize(ID3D12Device& device)
 {
+	std::lock_guard lock(m_mtx_memory);
 	cbvSrvUavDescriptorHeap = DescriptorHeapHelper::CreateCbvSrvUavHeap(DescriptorHeapSize,device);
 	samplerDescriptorHeap = DescriptorHeapHelper::CreateSamplerHeap(8,device);
 	cbvSrvDescriptorHandleIncrementSize	=device.GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -135,7 +136,7 @@ ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::Descript
 
 ButiEngine::ButiRendering::HandleInformation ButiEngine::ButiRendering::DescriptorHeapManager::GetCurrentHandle(std::uint32_t& ref_top, const std::int32_t arg_size)
 {
-	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top;
+	std::uint32_t sizeAligned = arg_size, numRequired = sizeAligned / 0x100, top=0;
 	bool isUseSpace = false;
 	{
 		std::lock_guard lock(m_mtx_memory);
@@ -195,6 +196,9 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::Release(const BlankSpace&
 {
 	std::lock_guard lock(m_mtx_memory);
 	vec_space.push_back(arg_releaseSpace);
+	if (arg_releaseSpace.index == 4294967295) {
+		std::int32_t i = 0;
+	}
 }
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::Release()

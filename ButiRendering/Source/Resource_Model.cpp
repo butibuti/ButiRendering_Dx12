@@ -53,7 +53,7 @@ void ButiEngine::ButiRendering::Resource_Model::SetEngComment(const std::string&
 	m_commentEng = arg_engComment;
 }
 
-void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone & arg_bone)
+void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone& arg_bone)
 {
 	if (arg_bone.ownIndex == -1) {
 		arg_bone.ownIndex = m_list_bone.GetSize();
@@ -61,7 +61,7 @@ void ButiEngine::ButiRendering::Resource_Model::AddBone(Bone & arg_bone)
 	}
 	else {
 		if (m_list_bone.GetSize() <= arg_bone.ownIndex) {
-			m_list_bone.Resize(arg_bone.ownIndex+1);
+			m_list_bone.Resize(arg_bone.ownIndex + 1);
 		}
 		m_list_bone[arg_bone.ownIndex] = arg_bone;
 	}
@@ -144,32 +144,32 @@ std::vector<std::uint32_t> ButiEngine::ButiRendering::Resource_Model::GetSubset(
 	return m_subset;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetName()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetName()
 {
 	return m_name;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetEngName()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetEngName()
 {
 	return m_nameEng;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetModelName()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetModelName()
 {
 	return m_modelName;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetEngModelName()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetEngModelName()
 {
 	return m_modelNameEng;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetComment()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetComment()
 {
 	return m_comment;
 }
 
-const std::string & ButiEngine::ButiRendering::Resource_Model::GetEngComment()
+const std::string& ButiEngine::ButiRendering::Resource_Model::GetEngComment()
 {
 	return m_commentEng;
 }
@@ -182,7 +182,7 @@ const ButiEngine::List<ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResourc
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Motion> ButiEngine::ButiRendering::Resource_Model::GetMotion(const std::string& arg_motionName)const {
 	auto itr = m_list_motion.Find([arg_motionName](Value_ptr<IResource_Motion> arg_vlp_motion)->bool {return arg_vlp_motion->GetName() == arg_motionName; });
-	if (itr!=nullptr) {
+	if (itr != nullptr) {
 		return *itr;
 	}return nullptr;
 }
@@ -308,7 +308,7 @@ void LoadVertexGLTF(const std::int32_t vertexCount, tinygltf::Model& model, tiny
 			arg_map_primitiveBase[vlp_primitive_normQuadBone->GetVertexType()]->Merge(vlp_primitive_normQuadBone);
 		}
 		else {
-			arg_map_primitiveBase.emplace(vlp_primitive_normQuadBone->GetVertexType(),vlp_primitive_normQuadBone);
+			arg_map_primitiveBase.emplace(vlp_primitive_normQuadBone->GetVertexType(), vlp_primitive_normQuadBone);
 		}
 	}
 	if constexpr (std::is_base_of_v<Vertex::VertexInformation::Normal, VertexType> && std::is_base_of_v<Vertex::VertexInformation::UV, VertexType>
@@ -360,7 +360,7 @@ void LoadVertexGLTF(const std::int32_t vertexCount, tinygltf::Model& model, tiny
 		arg_map_primitiveBase[meshPrimitive->GetVertexType()]->Merge(meshPrimitive);
 	}
 	else {
-		arg_map_primitiveBase.emplace(meshPrimitive->GetVertexType(),meshPrimitive);
+		arg_map_primitiveBase.emplace(meshPrimitive->GetVertexType(), meshPrimitive);
 	}
 }
 ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::ButiRendering::CreateModelFromGLTFBinary(ButiEngine::Value_ptr<ButiEngine::IBinaryReader> arg_reader, const std::string& arg_modelPath,
@@ -387,7 +387,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 	ButiRendering::BoxSurface boxSurface;
 
 	List<Matrix4x4> list_inverse;
-	std::map<std::int32_t,ButiRendering::Bone> map_bone;
+	std::map<std::int32_t, ButiRendering::Bone> map_bone;
 	Matrix4x4 armatureMatrix;
 	for (auto& skin : model.skins) {
 
@@ -474,7 +474,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				bone.bindPoseInverse = list_inverse[index];
 				bone.bindPose = list_inverse[index].GetInverse();
 			}
-			map_bone.emplace (joint ,bone);
+			map_bone.emplace(joint, bone);
 			output->AddBone(bone);
 			index++;
 		}
@@ -519,7 +519,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				auto sizeInBytes = static_cast<std::uint32_t>(glTFBufferView.byteLength - glTFAccessor.byteOffset);
 
 				auto indexCount = static_cast<uint32_t>(glTFAccessor.count);
-				vlp_index->Reserve(vlp_index->GetSize()+ indexCount);
+				vlp_index->Reserve(vlp_index->GetSize() + indexCount);
 				switch (glTFAccessor.componentType) {
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 					for (std::int32_t index = 0; index < indexCount; index++) {
@@ -528,7 +528,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 					break;
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 					for (std::int32_t index = 0; index < indexCount; index++) {
-						vlp_index->Add(indexOffSet+ *reinterpret_cast<const std::uint16_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint16_t)]));
+						vlp_index->Add(indexOffSet + *reinterpret_cast<const std::uint16_t*>(&glTFBuffer.data.data()[location + index * sizeof(std::uint16_t)]));
 					}
 					break;
 				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
@@ -539,7 +539,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 					}
 					else {
 						*vlp_index = List<std::uint32_t>(&glTFBuffer.data.data()[location], indexCount * sizeof(std::uint32_t));
-					}					
+					}
 					break;
 				}
 
@@ -550,12 +550,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 			indexOffSet += vertexCount;
 		}
 	}
-	
+
 	for (auto glTFMaterialIndex : list_materialUse) {
 
 		auto gltfMaterial = glTFMaterialIndex >= 0 ? &model.materials[glTFMaterialIndex] : nullptr;
 
-		std::string  materialName = gltfMaterial? gltfMaterial->name:"noneMaterial";
+		std::string  materialName = gltfMaterial ? gltfMaterial->name : "noneMaterial";
 		auto filePath = arg_modelPath + "/" + materialName;
 		MaterialValue value;
 		DrawSettings drawSettings;
@@ -605,15 +605,15 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 
 	for (auto& animation : model.animations) {
 		constexpr float frameSec = 60.0f;
-		std::unordered_map<std::string,List<MotionKeyFrameData> >map_motionKeyFramedata;
-		for (std::int32_t index = 0, size = animation.channels.size(); index < size;index++) {
-			
+		std::unordered_map<std::string, List<MotionKeyFrameData> >map_motionKeyFramedata;
+		for (std::int32_t index = 0, size = animation.channels.size(); index < size; index++) {
+
 			auto& channel = animation.channels[index];
 			auto& sampler = animation.samplers[index];
 			auto& targetBone = map_bone[channel.target_node];
 			auto& inputAccessor = model.accessors[sampler.input];
 			auto& outputAccessor = model.accessors[sampler.output];
-			
+
 			auto& inputBufferView = model.bufferViews[inputAccessor.bufferView];
 			auto& inputBuffer = model.buffers[inputBufferView.buffer];
 			auto& outputBufferView = model.bufferViews[outputAccessor.bufferView];
@@ -624,7 +624,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 			List<float> list_frame;
 			list_frame.Reserve(inputAccessor.count);
 			for (std::int32_t inputIndex = 0; inputIndex < inputAccessor.count; inputIndex++) {
-				auto f =(*reinterpret_cast<const float*>(&inputBuffer.data.data()[inputLocation + inputIndex * sizeof(float)]))*frameSec;
+				auto f = (*reinterpret_cast<const float*>(&inputBuffer.data.data()[inputLocation + inputIndex * sizeof(float)])) * frameSec;
 				list_frame.Add(f);
 			}
 			List<MotionKeyFrameData>* p_list_motionKeyFrameData;
@@ -632,12 +632,12 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				p_list_motionKeyFrameData = &map_motionKeyFramedata[targetBone.boneName];
 			}
 			else {
-				p_list_motionKeyFrameData =&map_motionKeyFramedata.emplace(targetBone.boneName, List<MotionKeyFrameData>()).first->second;
+				p_list_motionKeyFrameData = &map_motionKeyFramedata.emplace(targetBone.boneName, List<MotionKeyFrameData>()).first->second;
 			}
 
-			for (std::int32_t index = 0; index < list_frame.GetSize();index++) {
+			for (std::int32_t index = 0; index < list_frame.GetSize(); index++) {
 				auto frame = list_frame[index];
-				auto itr= p_list_motionKeyFrameData->Find(
+				auto itr = p_list_motionKeyFrameData->Find(
 					[frame](const MotionKeyFrameData& arg_data)->bool {return frame == arg_data.endFrame; }
 				);
 				if (itr == nullptr) {
@@ -648,7 +648,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 				}
 
 				if (channel.target_path == "translation") {
-					itr->pose.position =*reinterpret_cast<Vector3*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector3)]);
+					itr->pose.position = *reinterpret_cast<Vector3*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector3)]);
 
 					if (itr != p_list_motionKeyFrameData->begin()) {
 						auto befItr = itr - 1;
@@ -665,19 +665,19 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 					case TINYGLTF_COMPONENT_TYPE_FLOAT: {
 
 						Vector4 vec = *reinterpret_cast<Vector4*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector4)]);
-						itr->pose.rotation = Quat( vec.x, vec.y, vec.z, vec.w);
+						itr->pose.rotation = Quat(vec.x, vec.y, vec.z, vec.w);
 					}
-						break;
+													  break;
 					case TINYGLTF_COMPONENT_TYPE_BYTE:
 					{
 						std::int8_t data[4];
-						memcpy_s(data, sizeof(data), &outputBuffer.data.data()[outputLocation + index * sizeof(data)],sizeof(data));
+						memcpy_s(data, sizeof(data), &outputBuffer.data.data()[outputLocation + index * sizeof(data)], sizeof(data));
 						itr->pose.rotation.x = *reinterpret_cast<float*> (&data[0]);
 						itr->pose.rotation.y = *reinterpret_cast<float*> (&data[1]);
 						itr->pose.rotation.z = *reinterpret_cast<float*> (&data[2]);
 						itr->pose.rotation.w = *reinterpret_cast<float*> (&data[3]);
 					}
-						break;
+					break;
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
 					{
 						std::uint8_t data[4];
@@ -687,7 +687,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 						itr->pose.rotation.z = *reinterpret_cast<float*> (&data[2]);
 						itr->pose.rotation.w = *reinterpret_cast<float*> (&data[3]);
 					}
-						break;
+					break;
 					case TINYGLTF_COMPONENT_TYPE_SHORT:
 					{
 						std::int16_t data[4];
@@ -697,7 +697,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 						itr->pose.rotation.z = *reinterpret_cast<float*> (&data[2]);
 						itr->pose.rotation.w = *reinterpret_cast<float*> (&data[3]);
 					}
-						break;
+					break;
 					case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT:
 					{
 						std::uint16_t data[4];
@@ -707,7 +707,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 						itr->pose.rotation.z = *reinterpret_cast<float*> (&data[2]);
 						itr->pose.rotation.w = *reinterpret_cast<float*> (&data[3]);
 					}
-						break;
+					break;
 					default:
 						break;
 					}
@@ -728,7 +728,7 @@ ButiEngine::Value_ptr<ButiEngine::ButiRendering::IResource_Model> ButiEngine::Bu
 					itr->pose.scale = *reinterpret_cast<Vector3*> (&outputBuffer.data.data()[outputLocation + index * sizeof(Vector3)]);
 					if (itr != p_list_motionKeyFrameData->begin()) {
 						auto befItr = itr - 1;
-						itr->isScale =befItr->pose.scale==itr->pose.scale?false: true;
+						itr->isScale = befItr->pose.scale == itr->pose.scale ? false : true;
 					}
 					else {
 						itr->isScale = true;

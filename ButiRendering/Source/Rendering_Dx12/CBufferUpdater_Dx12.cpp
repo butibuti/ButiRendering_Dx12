@@ -12,7 +12,7 @@ public:
 	CBufferUpdater_Dx12( const std::uint32_t arg_size) :m_size((arg_size + 255) & ~255) {}
 	CBufferUpdater_Dx12() {}
 	void Release()override {
-		if (vwp_heapManager.lock()) {
+		if (vwp_heapManager.lock()&&m_index>=0) {
 			vwp_heapManager.lock()->Release(BlankSpace{ static_cast<std::uint32_t>(m_index),static_cast<std::uint32_t>(m_size) / 0x100 });
 		}
 	}
