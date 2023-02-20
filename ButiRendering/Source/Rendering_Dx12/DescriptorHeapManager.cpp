@@ -196,9 +196,6 @@ void ButiEngine::ButiRendering::DescriptorHeapManager::Release(const BlankSpace&
 {
 	std::lock_guard lock(m_mtx_memory);
 	vec_space.push_back(arg_releaseSpace);
-	if (arg_releaseSpace.index == 4294967295) {
-		std::int32_t i = 0;
-	}
 }
 
 void ButiEngine::ButiRendering::DescriptorHeapManager::Release()
