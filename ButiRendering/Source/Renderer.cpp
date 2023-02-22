@@ -402,11 +402,12 @@ void ButiEngine::ButiRendering::DrawLayer::BefUpdate()
 		std::vector<std::future<bool>>list_futures;
 
 		for (auto itr : m_list_drawObj) {
-			list_futures.push_back(
+			/*list_futures.push_back(
 				ButiTaskSystem::PushTask(std::function<bool()>(
 					[itr]()->bool {itr->DrawBefore();  return false; }
 					))
-			);
+			);*/
+			itr->DrawBefore();
 		}
 		for (auto& future : list_futures) {
 			future.get();
