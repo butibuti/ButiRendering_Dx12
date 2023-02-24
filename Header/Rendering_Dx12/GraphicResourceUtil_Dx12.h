@@ -38,7 +38,7 @@ struct ButiD3DX12_BLEND_DESC : public D3D12_BLEND_DESC
 	}
 	ButiD3DX12_BLEND_DESC(const ButiRendering::BlendMode& arg_blend)
 	{
-		AlphaToCoverageEnable = FALSE;
+		AlphaToCoverageEnable = false;
 		IndependentBlendEnable = FALSE;
 		D3D12_RENDER_TARGET_BLEND_DESC defaultRenderTargetBlendDesc;
 
