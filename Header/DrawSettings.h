@@ -31,9 +31,7 @@ struct DrawSettings
 	BlendMode blendMode = BlendMode::AlphaBlend;
 	std::vector<SamplerState >vec_samplerMode ;
 	TopologyType topologyType = TopologyType::triangleList;
-	bool isShadowMap = false;
-	bool isAlpha = false;
-	bool isDepth = true;
+	bool isShadowMap = false, isAlpha = false, isDepth = true;
 
 	template<class Archive>
 	void serialize(Archive& archive)
